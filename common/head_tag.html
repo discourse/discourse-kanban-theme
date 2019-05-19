@@ -8,6 +8,8 @@
   const showModal = require("discourse/lib/show-modal").default;
   const ModalFunctionality = require("discourse/mixins/modal-functionality")
     .default;
+  const DiscourseURL = require("discourse/lib/url")
+    .default;
   
   api.addDiscoveryQueryParam("board", { replace: true, refreshModel: true });
   
