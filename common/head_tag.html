@@ -189,7 +189,7 @@
             } else {
               const categories = Discourse.Site.currentProp(
                 "categoriesList"
-              ).filter(c => !c.parent_category);
+              ).filter(c => !c.parent_category_id);
   
               lists.push(
                 ...categories.map(category => {
