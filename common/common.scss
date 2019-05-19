@@ -93,6 +93,9 @@ body.kanban-fullscreen {
 		    background: linear-gradient(to bottom, rgba($primary-low,0) 0%, $primary-low 100%);
 		}
 
+		.list-bottom{
+			height: 10px;
+		}
 
 		width: calc((#{$large-width} - (4*4px))/3 );
 		flex-shrink: 0;

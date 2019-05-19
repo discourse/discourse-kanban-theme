@@ -424,7 +424,7 @@
       actions: {
         loadMore() {
           if (!this.list && !this.loading) {
-            this.loadTopics(); // Initial load
+            return this.loadTopics(); // Initial load
           }
   
           if (this.loading || !this.list.canLoadMore || this.loadingMore) {
