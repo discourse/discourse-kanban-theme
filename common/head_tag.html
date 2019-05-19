@@ -443,7 +443,7 @@
           var confirmationMessage = "";
   
           if (
-            oldDefinition.params.tags &&
+            (oldDefinition.params.tags || oldDefinition.params.no_tags) &&
             this.definition.params.tags &&
             oldDefinition.params.tags != this.definition.params.tags
           ) {
