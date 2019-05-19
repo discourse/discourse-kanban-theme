@@ -1,0 +1,719 @@
+<script type="text/discourse-plugin" version="0.8">
+  const computed = require("ember-addons/ember-computed-decorators").default;
+  const on = require("ember-addons/ember-computed-decorators").on;
+  const observes = require("ember-addons/ember-computed-decorators").observes;
+  const renderTag = require("discourse/lib/render-tag").default;
+  const popupAjaxError = require("discourse/lib/ajax-error").popupAjaxError;
+  const Topic = require("discourse/models/topic").default;
+  const showModal = require("discourse/lib/show-modal").default;
+  const ModalFunctionality = require("discourse/mixins/modal-functionality")
+    .default;
+  
+  api.addDiscoveryQueryParam("board", { replace: true, refreshModel: true });
+  
+  api.modifyClass("controller:discovery/topics", {
+    kanbanHelper: Ember.inject.service(),
+  
+    @on("init")
+    @observes("model")
+    modelChange() {
+      this.kanbanHelper.updateCurrentDiscoveryModel(this.model);
+    },
+  
+    @on("init")
+    @observes("category")
+    changeCategory() {
+      this.kanbanHelper.updateCurrentCategory(this.category);
+    }
+  });
+  
+  api.modifyClass("component:navigation-item", {
+    kanbanHelper: Ember.inject.service(),
+    @computed("content.filterMode", "filterMode", "kanbanHelper.active")
+    active(contentFilterMode, filterMode, active) {
+      if (active) {
+        return false;
+      }
+      return this._super(contentFilterMode, filterMode);
+    }
+  });
+  
+  api.registerConnectorClass("extra-nav-item", "kanban-connector", {
+    shouldRender(args, component) {
+      if (settings.display_categories === "") return true;
+  
+      const displayCategories = settings.display_categories.split("|");
+      const lookup = component.get("category.slug") || "@";
+      console.log(lookup, displayCategories);
+      return displayCategories.includes(lookup);
+    }
+  });
+  
+  Discourse.register(
+    "service:kanban-helper",
+    Ember.Service.extend({
+      router: Ember.inject.service(),
+  
+      hrefForCategory(category) {
+        let destinationURL = "/latest";
+        if (category) {
+          const slug = Discourse.Category.slugFor(category);
+          destinationURL = `/c/${slug}/l/latest`;
+        }
+        return destinationURL;
+      },
+  
+      updateCurrentDiscoveryModel(model) {
+        if (model) {
+          this.set("discoveryParams", model.params);
+          this.set("discoveryTopTags", model.get("topic_list.top_tags"));
+        }
+      },
+  
+      updateCurrentCategory(category) {
+        this.set("discoveryCategory", category);
+      },
+  
+      @computed("discoveryParams.board", "router.currentRouteName")
+      active(board, routeName) {
+        return board !== undefined && routeName.startsWith("discovery.latest");
+      },
+  
+      @observes("active")
+      updateClasses() {
+        if (this.active) {
+          document.body.classList.add("kanban-active");
+        } else {
+          document.body.classList.remove("kanban-active");
+          document.body.classList.remove("kanban-fullscreen");
+        }
+      },
+  
+      setFullscreen(fullscreen) {
+        if (fullscreen) {
+          document.body.classList.add("kanban-fullscreen");
+        } else {
+          document.body.classList.remove("kanban-fullscreen");
+        }
+      },
+  
+      @computed("discoveryParams.board", "discoveryTopTags")
+      currentDescriptor(board) {
+        return board;
+      },
+  
+      @computed("currentDescriptor", "category")
+      listDefinitions(descriptor) {
+        const definition = this.findDefinition(descriptor);
+        if (definition) {
+          return definition.lists;
+        }
+      },
+  
+      @computed()
+      definitionBuilders() {
+        return {
+          tags: param => {
+            const lists = [];
+  
+            var tags = [];
+            if (param) {
+              tags.push(...param.split(","));
+            } else if (this.discoveryTopTags) {
+              tags.push(...this.discoveryTopTags);
+            }
+  
+            lists.push(
+              ...tags.map(tag => {
+                return {
+                  title: `#${tag}`,
+                  params: {
+                    tags: tag
+                  }
+                };
+              })
+            );
+  
+            lists.push({
+              title: "Untagged",
+              params: {
+                no_tags: true
+              }
+            });
+  
+            return { lists };
+          },
+  
+          categories: param => {
+            const lists = [];
+  
+            if (param) {
+              var categories = param
+                .split(",")
+                .map(c => Discourse.Category.findBySlug(c));
+              categories.filter(c => c !== undefined);
+  
+              lists.push(
+                ...categories.map(category => {
+                  return {
+                    title: `${category.name}`,
+                    params: {
+                      category: category.id
+                    }
+                  };
+                })
+              );
+            } else if (this.discoveryCategory) {
+              lists.push({
+                title: `${this.discoveryCategory.name}`,
+                params: {
+                  category: this.discoveryCategory.id,
+                  no_subcategories: true
+                }
+              });
+  
+              if (this.discoveryCategory.subcategories) {
+                lists.push(
+                  ...this.discoveryCategory.subcategories.map(category => {
+                    return {
+                      title: `${this.discoveryCategory.name} / ${category.name}`,
+                      params: {
+                        category: category.id
+                      }
+                    };
+                  })
+                );
+              }
+            } else {
+              const categories = Discourse.Site.currentProp(
+                "categoriesList"
+              ).filter(c => !c.parent_category);
+  
+              lists.push(
+                ...categories.map(category => {
+                  return {
+                    title: `${category.name}`,
+                    params: {
+                      category: category.id
+                    }
+                  };
+                })
+              );
+            }
+  
+            return { lists };
+          },
+  
+          assigned: param => {
+            const lists = [];
+  
+            lists.push({
+              title: "Unassigned",
+              icon: "user-minus",
+              params: {
+                assigned: "nobody",
+                status: "open"
+              }
+            });
+  
+            if (param) {
+              lists.push(
+                ...param.split(",").map(u => {
+                  return {
+                    title: u,
+                    icon: "user-plus",
+                    params: {
+                      assigned: u,
+                      status: "open"
+                    }
+                  };
+                })
+              );
+            } else {
+              lists.push({
+                title: "Assigned",
+                icon: "user-plus",
+                params: {
+                  assigned: "*",
+                  status: "open"
+                }
+              });
+            }
+            lists.push({
+              title: "Closed",
+              icon: "lock",
+              params: {
+                status: "closed"
+              }
+            });
+  
+            return { lists };
+          }
+        };
+      },
+  
+      findDefinition(descriptor) {
+        if (typeof descriptor !== "string") return;
+  
+        const setDefaults = settings.default_modes
+          .split("|")
+          .map(m => m.split(":"));
+  
+        const lookup = this.get("discoveryCategory.slug") || "@";
+        const defaultMode = setDefaults.find(m => m[0] === lookup);
+        if (defaultMode && descriptor === "default") {
+          defaultMode.shift();
+          descriptor = defaultMode.join(":");
+        }
+  
+        if (descriptor === "default") {
+          if (!this.discoveryCategory) {
+            descriptor = "categories";
+          } else if (
+            this.discoveryCategory.subcategories &&
+            this.discoveryCategory.subcategories.length > 0
+          ) {
+            descriptor = "categories";
+          } else {
+            descriptor = "tags";
+          }
+        }
+  
+        const parts = descriptor.split(":");
+        const type = parts[0];
+        const param = parts[1];
+  
+        if (this.definitionBuilders[type]) {
+          return this.definitionBuilders[type](param);
+        } else {
+        }
+      }
+    })
+  );
+  
+  Discourse.register(
+    "component:discourse-kanban-nav",
+    Ember.Component.extend({
+      tagName: "a",
+      attributeBindings: "href",
+      classNameBindings: "active",
+      kanbanHelper: Ember.inject.service(),
+  
+      @computed("category")
+      href(category) {
+        return this.kanbanHelper.hrefForCategory(category);
+      },
+  
+      @computed("filterMode", "kanbanHelper.active")
+      active(filterMode, active) {
+        return `/${filterMode}` == this.href && active;
+      },
+  
+      click(event) {
+        event.preventDefault();
+        DiscourseURL.routeTo(`${this.href}?board=default`);
+      }
+    })
+  );
+  
+  Discourse.register(
+    "component:discourse-kanban",
+    Ember.Component.extend({
+      tagName: "div",
+      classNames: "discourse-kanban",
+      classNameBindings: "fullscreen",
+      kanbanHelper: Ember.inject.service(),
+  
+      @computed("kanbanHelper.active")
+      shouldDisplay(active) {
+        return active;
+      },
+  
+      actions: {
+        setDragData(data) {
+          this.set("dragData", data);
+        },
+  
+        toggleFullscreen() {
+          this.toggleProperty("fullscreen");
+          this.kanbanHelper.setFullscreen(this.fullscreen);
+        },
+  
+        openSettings() {
+          showModal("kanban-options");
+        }
+      }
+    })
+  );
+  
+  Discourse.register(
+    "component:discourse-kanban-list",
+    Ember.Component.extend({
+      tagName: "div",
+      classNames: "discourse-kanban-list",
+      classNameBindings: ["acceptDrag"],
+      kanbanHelper: Ember.inject.service(),
+  
+      @computed("definition.title")
+      renderedTitle(title) {
+        return title;
+      },
+  
+      loadTopics() {
+        this.set("loading", true);
+  
+        this.refreshTopics();
+      },
+  
+      refreshTopics() {
+        if (!this.loading && !this.list) return;
+        const defaultParams = {};
+        if (this.kanbanHelper.discoveryCategory) {
+          defaultParams.category = this.kanbanHelper.discoveryCategory.id;
+        }
+  
+        const params = Object.assign(
+          {},
+          defaultParams,
+          this.kanbanHelper.discoveryParams,
+          this.definition.params
+        );
+  
+        this.store
+          .findFiltered("topicList", { filter: "latest", params: params })
+          .then(list => {
+            this.set("list", list);
+            this.set("loading", false);
+          });
+      },
+  
+      @on("didInsertElement")
+      _setupIntersectionObserver() {
+        this.set(
+          "io",
+          new IntersectionObserver(entries => {
+            if (entries[0].intersectionRatio <= 0) return;
+            this.send("loadMore");
+          })
+        );
+        this.io.observe(this.element.querySelector(".list-bottom"));
+      },
+  
+      @on("willDestroyElement")
+      _removeIntersectionObserver() {
+        this.io.disconnect();
+      },
+  
+      dragLeave(event) {
+        event.preventDefault();
+        this.set("acceptDrag", false);
+      },
+  
+      dragOver(event) {
+        event.preventDefault();
+        this.set("acceptDrag", true);
+      },
+  
+      drop(event) {
+        this.send("dropped");
+        this.set("acceptDrag", false);
+      },
+  
+      actions: {
+        loadMore() {
+          if (!this.list && !this.loading) {
+            this.loadTopics(); // Initial load
+          }
+  
+          if (this.loading || !this.list.canLoadMore || this.loadingMore) {
+            return;
+          }
+  
+          this.set("loadingMore", true);
+          this.list.loadMore().then(() => this.set("loadingMore", false));
+        },
+  
+        dropped() {
+          const { topic, oldDefinition, oldRefresh } = this.dragData;
+  
+          var doUpdate = () => {};
+          var requireConfirmation = settings.require_confirmation;
+          var confirmationMessage = "";
+  
+          if (
+            oldDefinition.params.tags &&
+            this.definition.params.tags &&
+            oldDefinition.params.tags != this.definition.params.tags
+          ) {
+            doUpdate = () => {
+              const existingTags = topic.tags;
+              var newTags = existingTags.filter(
+                t => t !== oldDefinition.params.tags
+              );
+              newTags.push(this.definition.params.tags);
+              return Topic.update(topic, { tags: newTags, noBump: true })
+                .then(() => {
+                  this.refreshTopics();
+                  oldRefresh();
+                })
+                .catch(popupAjaxError);
+            };
+            confirmationMessage = I18n.t(themePrefix("confirm_change_tags"), {
+              remove: oldDefinition.params.tags,
+              add: this.definition.params.tags,
+              title: topic.title
+            });
+          } else if (
+            oldDefinition.params.assigned &&
+            this.definition.params.assigned
+          ) {
+            var newUsername = this.definition.params.assigned;
+            if (newUsername === "*" || newUsername === "nobody") {
+              newUsername = undefined;
+            }
+            doUpdate = () => {
+              return showModal("assign-user", {
+                model: {
+                  topic,
+                  username: newUsername,
+                  onSuccess: () => {
+                    this.refreshTopics();
+                    oldRefresh();
+                  }
+                }
+              });
+            };
+            requireConfirmation = false;
+          } else if (
+            this.definition.params.status === "closed" &&
+            oldDefinition.params.status === "open"
+          ) {
+            doUpdate = () => {
+              topic.saveStatus("closed", true).then(() => {
+                this.refreshTopics();
+                oldRefresh();
+              });
+            };
+            confirmationMessage = I18n.t(themePrefix("confirm_close"), {
+              title: topic.title
+            });
+          } else if (
+            this.definition.params.status === "open" &&
+            oldDefinition.params.status === "closed"
+          ) {
+            doUpdate = () => {
+              topic.saveStatus("closed", false).then(() => {
+                this.refreshTopics();
+                oldRefresh();
+              });
+            };
+            confirmationMessage = I18n.t(themePrefix("confirm_open"), {
+              title: topic.title
+            });
+          } else if (
+            this.definition.params.category &&
+            oldDefinition.params.category &&
+            this.definition.params.category !== oldDefinition.params.category
+          ) {
+            doUpdate = () => {
+              Topic.update(topic, {
+                category_id: this.definition.params.category,
+                noBump: true
+              })
+                .then(() => {
+                  this.refreshTopics();
+                  oldRefresh();
+                })
+                .catch(popupAjaxError);
+            };
+            confirmationMessage = I18n.t(themePrefix("confirm_change_category"), {
+              title: topic.title
+            });
+          }
+  
+          if (requireConfirmation && confirmationMessage) {
+            bootbox.confirm(
+              confirmationMessage,
+              I18n.t("no_value"),
+              I18n.t("yes_value"),
+              confirmed => {
+                if (confirmed) {
+                  doUpdate();
+                }
+              }
+            );
+          } else {
+            doUpdate();
+          }
+        },
+  
+        setDragData(data) {
+          data.oldDefinition = this.definition;
+          data.oldRefresh = () => this.refreshTopics();
+          this.setDragData(data);
+        }
+      }
+    })
+  );
+  
+  Discourse.register(
+    "component:discourse-kanban-card",
+    Ember.Component.extend({
+      draggable: "true",
+  
+      dragStart(event) {
+        this.setDragData({ topic: this.topic });
+        this.set("dragging", true);
+      },
+  
+      dragEnd(event) {
+        this.set("dragging", false);
+      }
+    })
+  );
+  
+  Discourse.register(
+    "controller:kanban-options",
+    Ember.Controller.extend(ModalFunctionality, {
+      kanbanHelper: Ember.inject.service(),
+      modes: ["tags", "categories", "assigned"],
+      tags: [],
+      usernames: [],
+      categories: [],
+      mode: "tags",
+  
+      isTags: Ember.computed.equal("mode", "tags"),
+      isCategories: Ember.computed.equal("mode", "categories"),
+      isAssigned: Ember.computed.equal("mode", "assigned"),
+  
+      actions: {
+        apply() {
+          var href = this.kanbanHelper.hrefForCategory(
+            this.kanbanHelper.discoveryCategory
+          );
+          href += "?board=";
+          if (this.isTags) {
+            href += "tags";
+            if (this.tags.length > 0) {
+              href += `:${this.tags.join(",")}`;
+            }
+          } else if (this.isCategories) {
+            href += "categories";
+            if (this.categories.length > 0) {
+              href += `:${this.categories.join(",")}`;
+            }
+          } else if (this.isAssigned) {
+            href += "assigned";
+            if (this.usernames.length > 0) {
+              href += `:${this.usernames}`;
+            }
+          }
+  
+          this.send("closeModal");
+          DiscourseURL.routeTo(href, { replaceURL: true });
+        }
+      }
+    })
+  );  
+</script>
+
+<script type="text/x-handlebars" data-template-name="/connectors/discovery-list-container-top/kanban-connector">
+  {{discourse-kanban}}
+</script>
+
+<script type="text/x-handlebars" data-template-name="/connectors/extra-nav-item/kanban-connector">
+  {{discourse-kanban-nav category=category filterMode=filterMode}}
+</script>
+
+<script type='text/x-handlebars' data-template-name='components/discourse-kanban-nav'>
+  {{theme-i18n "menu_label"}}
+</script>
+
+<script type='text/x-handlebars' data-template-name='components/discourse-kanban'>
+    {{#if shouldDisplay}}
+    <div class="discourse-kanban-container">
+        <div class="kanban-spacer">
+          {{d-button icon=(if fullscreen "discourse-compress" "discourse-expand") action=(action "toggleFullscreen")}}
+          {{d-button icon="filter" action=(action "openSettings")}}
+        </div>
+        {{#each kanbanHelper.listDefinitions as |definition|}}
+          {{discourse-kanban-list definition=definition dragData=dragData setDragData=(action 'setDragData')}}
+        {{/each}}
+        <div class="kanban-spacer"></div>
+    </div>
+    {{/if}}
+</script>
+
+<script type='text/x-handlebars' data-template-name='components/discourse-kanban-list'>
+  <div class="list-title">
+    {{#if definition.icon}}{{d-icon definition.icon}}{{/if}}
+    {{renderedTitle}}
+  </div>
+  <div class="topics">
+    {{#conditional-loading-spinner condition=loading}}
+        {{#each list.topics as |topic|}}
+          {{discourse-kanban-card topic=topic setDragData=(action "setDragData")}}
+        {{else}}
+          <div class="no_topics">
+            {{theme-i18n "no_topics"}}
+          </div>
+        {{/each}}
+      {{conditional-loading-spinner condition=loadingMore}}
+    {{/conditional-loading-spinner}}
+    <div class="list-bottom"></div>
+  </div>
+</script>
+
+
+<script type='text/x-handlebars' data-template-name='components/discourse-kanban-card'>
+  <a href={{topic.lastUnreadUrl}} draggable="true" class="topic-card {{if topic.unseen 'topic-unseen'}} {{if dragging 'dragging'}}">
+    <div class="card-row">
+      {{topic-status topic=topic}}
+      <span class="topic-title">{{topic.title}}</span>
+      {{format-date topic.bumpedAt format="tiny" noTitle="true"}}
+    </div>
+
+    
+    <div class="card-row">
+      <div class="posters">
+        {{#each topic.posters as |poster|}}
+          <a href="{{poster.user.path}}" data-user-card="{{poster.user.username}}" class="{{poster.extraClasses}}">{{avatar poster avatarTemplatePath="user.avatar_template" usernamePath="user.username" namePath="user.name" imageSize="tiny"}}</a>
+        {{/each}}
+      </div>
+
+      {{#if topic.assigned_to_user.username}}
+        <a class='assigned-to' href={{topic.assignedToUserPath}}>
+          {{d-icon 'user-plus'}}{{topic.assigned_to_user.username}}
+        </a>
+      {{/if}}
+    </div>
+  </a>
+</script>
+
+
+<script type='text/x-handlebars' data-template-name='modal/kanban-options'>
+  {{#d-modal-body class="kanban-modal" title=(theme-prefix "modal.title")}}
+    <div class="controls">
+        {{combo-box content=modes value=mode }}
+    </div>
+    
+    <div class="controls">
+      {{#if isTags}}
+        {{tag-chooser tags=tags allowCreate=false filterPlaceholder=(theme-prefix 'modal.tags_placeholder')}}
+      {{else if isCategories}}
+        {{multi-select content=site.categories values=categories filterPlaceholder=(theme-prefix 'modal.categories_placeholder')}}
+      {{else if isAssigned}}
+        {{user-selector usernames=usernames placeholderKey=(theme-prefix 'modal.usernames_placeholder') fullWidthWrap=true}}
+      {{/if}}
+    </div>
+  {{/d-modal-body}}
+
+  <div class="modal-footer">
+    {{d-button class="btn-primary"
+                action=(action "apply")
+                label=(theme-prefix "modal.apply")}}
+  </div>
+    
+</script>
+
+

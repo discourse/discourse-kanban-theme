@@ -1,0 +1,10 @@
+display_categories:
+  type: list
+  default: ""
+default_modes:
+  type: list
+  default: ""
+require_confirmation:
+  default: true
+extra_icons:
+  default: "user-minus"

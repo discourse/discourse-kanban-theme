@@ -1,0 +1,14 @@
+en:
+  no_topics: no topics
+  confirm_change_tags: Remove '#%{remove}' and add '#%{add}' to '%{title}'?
+  confirm_close: Close topic '%{title}'?
+  confirm_open: Reopen topic '%{title}'?
+  confirm_change_category: Move topic '%{title}'?
+  menu_label: "Board"
+  modal:
+    title: "Kanban Board Options"
+    tags_placeholder: Tags to display...
+    categories_placeholder: Categories to display...
+    usernames_placeholder: Users to display...
+    apply: Apply
+    
