@@ -570,6 +570,19 @@
   
       dragEnd(event) {
         this.set("dragging", false);
+      },
+
+      @computed('tags')
+      showTags(tags) {
+        return settings.show_tags && tags.length;
+      },
+
+      @computed("topic.tags", "definition.params.tags")
+      tags(topicTags, definitionTag) {
+        console.log(topicTags, definitionTag);
+        return topicTags
+          .filter(t => t != definitionTag)
+          .map(t => renderTag(t));
       }
     })
   );
@@ -654,7 +667,7 @@
   <div class="topics">
     {{#conditional-loading-spinner condition=loading}}
         {{#each list.topics as |topic|}}
-          {{discourse-kanban-card topic=topic setDragData=(action "setDragData")}}
+          {{discourse-kanban-card topic=topic setDragData=(action "setDragData") definition=definition}}
         {{else}}
           <div class="no_topics">
             {{theme-i18n "no_topics"}}
@@ -675,6 +688,15 @@
       {{format-date topic.bumpedAt format="tiny" noTitle="true"}}
     </div>
 
+    {{#if showTags}}
+      <div class="card-row">
+        <div class="tags">
+          {{#each tags as |tag|}}
+            {{{tag}}}
+          {{/each}}
+        </div>
+      </div>
+    {{/if}}
     
     <div class="card-row">
       <div class="posters">
@@ -717,5 +739,3 @@
   </div>
     
 </script>
-
-
