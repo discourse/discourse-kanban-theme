@@ -31,7 +31,7 @@
 	height: 70vh;
 	display: flex;
 	overflow-x: scroll;
-	padding: 10px 0 20px 0;
+	padding: 10px 0 5px 0;
 	
 
 	&:after {
@@ -107,6 +107,7 @@
 		.topics{
 			overflow-y: scroll;
 			padding: 0 8px;
+			height: 100%;
 		}
 
 		.topic-card {
