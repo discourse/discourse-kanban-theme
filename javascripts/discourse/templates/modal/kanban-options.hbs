@@ -5,7 +5,7 @@
     
     <div class="controls">
       {{#if isTags}}
-        {{tag-chooser tags=tags allowCreate=false filterPlaceholder=(theme-prefix 'modal.tags_placeholder')}}
+        {{tag-chooser tags=tags allowCreate=false filterPlaceholder=(theme-prefix 'modal.tags_placeholder') everyTag=true}}
       {{else if isCategories}}
         {{multi-select content=site.categories values=categories filterPlaceholder=(theme-prefix 'modal.categories_placeholder')}}
       {{else if isAssigned}}
