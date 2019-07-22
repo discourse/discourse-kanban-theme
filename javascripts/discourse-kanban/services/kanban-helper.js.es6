@@ -74,21 +74,23 @@ export default Ember.Service.extend({
 
           lists.push(
             ...tags.map(tag => {
-              return {
-                title: `#${tag}`,
-                params: {
-                  tags: tag
-                }
-              };
+              if(tag === "@untagged"){
+                return {
+                    title: "Untagged",
+                    params: {
+                        no_tags: true
+                    }
+                };
+              }else{
+                return {
+                    title: `#${tag}`,
+                    params: {
+                        tags: tag
+                    }
+                };
+              }
             })
           );
-
-          lists.push({
-            title: "Untagged",
-            params: {
-              no_tags: true
-            }
-          });
 
           return { lists };
         },
