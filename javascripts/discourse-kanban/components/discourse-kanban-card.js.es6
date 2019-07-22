@@ -1,16 +1,24 @@
 import computed from "ember-addons/ember-computed-decorators";
 import renderTag from "discourse/lib/render-tag";
+import DiscourseURL from "discourse/lib/url";
 
 export default Ember.Component.extend({
-    draggable: "true",
+    classNameBindings: [':topic-card', 'dragging', 'topic.unseen:topic-unseen'],
+    attributeBindings: ['draggable'],
+    draggable: true,
 
     dragStart(event) {
-        this.setDragData({ topic: this.topic });
         this.set("dragging", true);
+        this.setDragData({ topic: this.topic });
+        event.dataTransfer.setData('topic', this.topic);
     },
 
     dragEnd(event) {
         this.set("dragging", false);
+    },
+
+    click(event) {
+        DiscourseURL.routeTo(this.topic.lastUnreadUrl);
     },
 
     @computed('tags')

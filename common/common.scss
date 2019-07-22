@@ -112,6 +112,7 @@
 		.topic-card {
 			display: block;
 			color: $primary-medium;
+			cursor: pointer;
 			&.topic-unseen{
 				color: $primary;
 			}
