@@ -103,7 +103,7 @@ export default Ember.Component.extend({
           doUpdate = () => {
             const existingTags = topic.tags;
             var newTags = existingTags.filter(
-              t => t !== oldDefinition.params.tags
+              t => t.toLowerCase() !== oldDefinition.params.tags.toLowerCase()
             );
             newTags.push(this.definition.params.tags);
             return Topic.update(topic, { tags: newTags, noBump: true })
