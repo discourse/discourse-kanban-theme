@@ -579,7 +579,6 @@
 
       @computed("topic.tags", "definition.params.tags")
       tags(topicTags, definitionTag) {
-        console.log(topicTags, definitionTag);
         return topicTags
           .filter(t => t != definitionTag)
           .map(t => renderTag(t));
