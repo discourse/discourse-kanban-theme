@@ -12,11 +12,11 @@ require_confirmation:
   default: true
   description:
     en: Display a confirmation modal before making changes to a topic's tags/category?
+show_tags:
+  default: false
+  description:
+    en: Show tags on topic cards?
 extra_icons:
   default: "user-minus"
   description:
     en: Extra icons to load for the theme component. There is no need to change this setting.
-show_tags:
-  default: false
-  description:
-    en: Show tags on topic cards.
