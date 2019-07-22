@@ -1,0 +1,22 @@
+{{#d-modal-body class="kanban-modal" title=(theme-prefix "modal.title")}}
+    <div class="controls">
+        {{combo-box content=modes value=mode }}
+    </div>
+    
+    <div class="controls">
+      {{#if isTags}}
+        {{tag-chooser tags=tags allowCreate=false filterPlaceholder=(theme-prefix 'modal.tags_placeholder')}}
+      {{else if isCategories}}
+        {{multi-select content=site.categories values=categories filterPlaceholder=(theme-prefix 'modal.categories_placeholder')}}
+      {{else if isAssigned}}
+        {{user-selector usernames=usernames placeholderKey=(theme-prefix 'modal.usernames_placeholder') fullWidthWrap=true}}
+      {{/if}}
+    </div>
+  {{/d-modal-body}}
+
+  <div class="modal-footer">
+    {{d-button class="btn-primary"
+                action=(action "apply")
+                label=(theme-prefix "modal.apply")}}
+  </div>
+    
