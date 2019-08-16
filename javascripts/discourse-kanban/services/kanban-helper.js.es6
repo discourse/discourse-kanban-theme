@@ -12,6 +12,14 @@ export default Ember.Service.extend({
       return destinationURL;
     },
 
+    hrefForTag(tag) {
+      let destinationURL = "/latest";
+      if (tag) {
+          destinationURL = `/tags/${tag.id}/l/latest`;
+      }
+      return destinationURL;
+    },
+
     updateCurrentDiscoveryModel(model) {
       if (model) {
         this.set("discoveryParams", model.params);
@@ -23,9 +31,17 @@ export default Ember.Service.extend({
       this.set("discoveryCategory", category);
     },
 
+    updateCurrentTag(tag) {
+      this.set("discoveryTag", tag);
+    },
+
     @computed("discoveryParams.board", "router.currentRouteName")
     active(board, routeName) {
-      return board !== undefined && routeName.startsWith("discovery.latest");
+      return (
+          board !== undefined &&
+          (routeName.startsWith("discovery.latest") ||
+              routeName.startsWith("tags.showLatest"))
+      );
     },
 
     @observes("active")
@@ -70,6 +86,11 @@ export default Ember.Service.extend({
             tags.push(...param.split(","));
           } else if (this.discoveryTopTags) {
             tags.push(...this.discoveryTopTags);
+          } else {
+            // will need to query the database for columns
+            return {
+              lists: "async_lookup_tags"
+            }
           }
 
           lists.push(
@@ -91,7 +112,7 @@ export default Ember.Service.extend({
               }
             })
           );
-
+          
           return { lists };
         },
 
@@ -206,11 +227,14 @@ export default Ember.Service.extend({
     findDefinition(descriptor) {
       if (typeof descriptor !== "string") return;
 
-      const setDefaults = settings.default_modes
+      const setDefaults = settings.display_modes
         .split("|")
         .map(m => m.split(":"));
 
-      const lookup = this.get("discoveryCategory.slug") || "@";
+      const lookup =
+          this.get("discoveryCategory.slug") ||
+          this.get("discoveryTag.id") ||
+          "@";
       const defaultMode = setDefaults.find(m => m[0] === lookup);
       if (defaultMode && descriptor === "default") {
         defaultMode.shift();
@@ -231,6 +255,7 @@ export default Ember.Service.extend({
       }
 
       const parts = descriptor.split(":");
+      console.log("parts", parts);
       const type = parts[0];
       const param = parts[1];
 

@@ -1,13 +1,18 @@
-display_categories:
+discovery_mode:
+  type: string
+  default: category
+  description:
+    en: . Specify which taxonomy should be used to enable the Kanban Board view. Options - category/tag. Use @ for both.
+display_list:
   type: list
   default: ""
   description:
-    en: A list of categories where the "Board" button should appear. If left blank, it will be shown everywhere. Use @ to denote the top level view.
-default_modes:
+    en: A list of categories or tags where the "Board" button should appear. If left blank, it will be shown everywhere. Use @ to denote the top level view.
+display_modes:
   type: list
   default: ""
   description:
-    en: "Override the default board mode for each category. Use the syntax `category:mode:params`. For example, `support:assigned:david,sam,joffrey`. Use @ to denote the top level view. Use @untagged to display an untagged column."
+    en: "Override the default board display mode for each category/tag. Use the syntax `category:mode:params`/`tag:mode:params`. For example, `support:assigned:david,sam,joffrey`. Use @ to denote the top level view. Use @untagged to display an untagged column. Note: a board in tag discovery mode and tag display mode will not include the discovery tag as column on the board"
 require_confirmation:
   default: true
   description:
