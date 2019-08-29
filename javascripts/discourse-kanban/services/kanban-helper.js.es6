@@ -101,7 +101,7 @@ export default Ember.Service.extend({
           if (param) {
             var categories = param
               .split(",")
-              .map(c => Discourse.Category.findBySlug(c));
+              .map(c => Discourse.Category.findBySlug(...c.split('/')));
             categories.filter(c => c !== undefined);
 
             lists.push(
