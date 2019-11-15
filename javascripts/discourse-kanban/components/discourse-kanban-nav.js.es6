@@ -14,7 +14,7 @@ export default Ember.Component.extend({
 
     @computed("filterMode", "kanbanHelper.active")
     active(filterMode, active) {
-      return `/${filterMode}` == this.href && active;
+      return filterMode.split("/").pop() === 'latest' && active;
     },
 
     click(event) {
