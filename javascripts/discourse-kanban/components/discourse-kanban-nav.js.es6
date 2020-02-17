@@ -7,18 +7,22 @@ export default Ember.Component.extend({
     classNameBindings: "active",
     kanbanHelper: Ember.inject.service(),
 
-    @computed("category")
-    href(category) {
-      return this.kanbanHelper.hrefForCategory(category);
+    @computed("category", "kanbanHelper.discoveryTag")
+    href(category, tag) {
+        if (category) {
+            return this.kanbanHelper.hrefForCategory(category);
+        } else if (tag) {
+            return this.kanbanHelper.hrefForTag(tag);
+        } else console.log("error computing href for component");
     },
 
-    @computed("filterMode", "kanbanHelper.active")
-    active(filterMode, active) {
-      return filterMode.split("/").pop() === 'latest' && active;
+    @computed("filterMode", "kanbanHelper.active", "kanbanHelper.discoveryTag")
+    active(filterMode, active, tag) {
+    return filterMode.split("/").pop() == ('latest' && active) || (tag && active);
     },
 
     click(event) {
-      event.preventDefault();
-      DiscourseURL.routeTo(`${this.href}?board=default`);
+        event.preventDefault();
+        DiscourseURL.routeTo(`${this.href}?board=default`);
     }
-  })
+});

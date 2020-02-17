@@ -1,16 +1,16 @@
-import {default as computed, on} from "ember-addons/ember-computed-decorators";
+import {default as computed, on, observes} from "ember-addons/ember-computed-decorators";
 import { popupAjaxError } from "discourse/lib/ajax-error";
 import Topic from "discourse/models/topic";
 import showModal from "discourse/lib/show-modal";
 
 export default Ember.Component.extend({
     tagName: "div",
-    classNames: "discourse-kanban-list",
+    classNames: ["discourse-kanban-list"],
     classNameBindings: ["acceptDrag"],
     kanbanHelper: Ember.inject.service(),
 
-    @computed("definition.title")
-    renderedTitle(title) {
+    @computed("definition.title", "definition")
+    renderedTitle(title, definition) {
       return title;
     },
 
@@ -25,6 +25,8 @@ export default Ember.Component.extend({
       const defaultParams = {};
       if (this.kanbanHelper.discoveryCategory) {
         defaultParams.category = this.kanbanHelper.discoveryCategory.id;
+      } else if (this.kanbanHelper.discoveryTag) {
+        defaultParams.tag = this.kanbanHelper.discoveryTag.id;
       }
 
       const params = Object.assign(
@@ -34,12 +36,26 @@ export default Ember.Component.extend({
         this.definition.params
       );
 
+      const storeOptions = { filter: "latest", params: params }
+
+      if (this.kanbanHelper.discoveryTag) {
+        storeOptions.filter = `tags/${params.tag}`
+      }
+
       this.store
-        .findFiltered("topicList", { filter: "latest", params: params })
+        .findFiltered("topicList", storeOptions)
         .then(list => {
+          const listTag = this.definition.params.tags;
+          // unsure how to run findFiltered() against multiple tags
+          // (required for tag-based boards that are also showing tag-based columns)
+          // so doing an extra step here to filter out topics that don't belong in the list
+          if (this.kanbanHelper.discoveryTag && listTag) {
+            list.topics = list.topics.filter(topic => topic.tags.includes(listTag))
+          }
+
           this.set("list", list);
           this.set("loading", false);
-        });
+        })
     },
 
     @on("didInsertElement")

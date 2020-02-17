@@ -4,7 +4,8 @@
             {{d-button icon=(if fullscreen "discourse-compress" "discourse-expand") action=(action "toggleFullscreen")}}
             {{d-button icon="filter" action=(action "openSettings")}}
         </div>
-        {{#each kanbanHelper.listDefinitions as |definition|}}
+        {{!-- {{#each kanbanHelper.listDefinitions as |definition|}} --}}
+        {{#each definitions as |definition|}}
             {{discourse-kanban-list definition=definition dragData=dragData setDragData=(action 'setDragData')}}
         {{/each}}
         <div class="kanban-spacer"></div>

@@ -15,9 +15,13 @@ export default Ember.Controller.extend(ModalFunctionality, {
 
     actions: {
       apply() {
-        var href = this.kanbanHelper.hrefForCategory(
-          this.kanbanHelper.discoveryCategory
-        );
+        let href;
+        if (this.kanbanHelper.discoveryCategory) {
+          href = this.kanbanHelper.hrefForCategory(this.kanbanHelper.discoveryCategory);
+        }
+        if (this.kanbanHelper.discoveryTag) {
+          href = this.kanbanHelper.hrefForTag(this.kanbanHelper.discoveryTag);
+        }
         href += "?board=";
         if (this.isTags) {
           href += "tags";
