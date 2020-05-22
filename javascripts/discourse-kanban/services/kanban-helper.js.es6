@@ -1,4 +1,5 @@
 import {default as computed, observes} from "ember-addons/ember-computed-decorators";
+import Category from "discourse/models/category";
 
 export default Ember.Service.extend({
     router: Ember.inject.service(),
@@ -6,7 +7,7 @@ export default Ember.Service.extend({
     hrefForCategory(category) {
       let destinationURL = "/latest";
       if (category) {
-        const slug = Discourse.Category.slugFor(category);
+        const slug = Category.slugFor(category);
         destinationURL = `/c/${slug}/l/latest`;
       }
       return destinationURL;
@@ -101,7 +102,7 @@ export default Ember.Service.extend({
           if (param) {
             var categories = param
               .split(",")
-              .map(c => Discourse.Category.findBySlug(...c.split('/').reverse()));
+              .map(c => Category.findBySlug(...c.split('/').reverse()));
             categories.filter(c => c !== undefined);
 
             lists.push(
