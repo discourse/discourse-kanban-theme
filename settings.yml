@@ -21,6 +21,10 @@ show_tags:
   default: false
   description:
     en: Show tags on topic cards?
+num_columns:
+  default: 3
+  description:
+    en: Number of columns to display on screen. More are available by scrolling
 extra_icons:
   default: "user-minus"
   description:

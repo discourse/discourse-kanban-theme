@@ -88,7 +88,7 @@
 			height: 10px;
 		}
 
-		width: calc((#{$large-width} - (4*4px))/3 );
+		width: calc((#{$large-width} - ( 8px * (#{$num-columns} - 1) )) / #{$num-columns});
 		flex-shrink: 0;
 		margin: 0 4px;
 		
