@@ -3,7 +3,7 @@ import ModalFunctionality from "discourse/mixins/modal-functionality";
 
 export default Ember.Controller.extend(ModalFunctionality, {
     kanbanHelper: Ember.inject.service(),
-    modes: ["tags", "categories", "assigned"],
+    modes: [{ id: "tags" }, { id: "categories" }, { id: "assigned" }],
     tags: [],
     usernames: [],
     categories: [],
