@@ -1,4 +1,4 @@
-import computed from "ember-addons/ember-computed-decorators";
+import { default as computed } from "discourse-common/utils/decorators";
 import renderTag from "discourse/lib/render-tag";
 import DiscourseURL from "discourse/lib/url";
 

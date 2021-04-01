@@ -1,5 +1,6 @@
-import {default as computed, observes} from "ember-addons/ember-computed-decorators";
+import { default as computed, observes } from "discourse-common/utils/decorators";
 import Category from "discourse/models/category";
+import Site from "discourse/models/site";
 
 export default Ember.Service.extend({
     router: Ember.inject.service(),
@@ -137,7 +138,7 @@ export default Ember.Service.extend({
               );
             }
           } else {
-            const categories = Discourse.Site.currentProp(
+            const categories = Site.currentProp(
               "categoriesList"
             ).filter(c => !c.parent_category_id);
 
