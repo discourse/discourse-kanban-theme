@@ -1,4 +1,4 @@
-import {default as computed, on} from "ember-addons/ember-computed-decorators";
+import { default as computed, on } from "discourse-common/utils/decorators";
 import { popupAjaxError } from "discourse/lib/ajax-error";
 import Topic from "discourse/models/topic";
 import showModal from "discourse/lib/show-modal";

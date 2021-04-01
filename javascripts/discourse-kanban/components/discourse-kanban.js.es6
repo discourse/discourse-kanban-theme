@@ -1,4 +1,4 @@
-import computed from "ember-addons/ember-computed-decorators";
+import { default as computed } from "discourse-common/utils/decorators";
 import showModal from "discourse/lib/show-modal";
 
 export default Ember.Component.extend({
