@@ -1,6 +1,7 @@
 import { withPluginApi } from "discourse/lib/plugin-api";
 import { default as computed, on, observes } from "discourse-common/utils/decorators";
 import { displayConnector, boardDefaultView, isDefaultView } from '../lib/kanban-utilities'; 
+const PLUGIN_ID = 'kanban-board';
 
 export default {
   name: "my-initializer",
@@ -9,6 +10,8 @@ export default {
         api.addDiscoveryQueryParam("board", { replace: true, refreshModel: true });
   
         api.modifyClass("controller:discovery/topics", {
+          pluginId: PLUGIN_ID,
+          
             kanbanHelper: Ember.inject.service(),
         
             @on("init")
@@ -25,6 +28,8 @@ export default {
         });
         
         api.modifyClass("component:navigation-item", {
+          pluginId: PLUGIN_ID,
+          
             kanbanHelper: Ember.inject.service(),
             @computed("content.filterMode", "filterMode", "kanbanHelper.active")
             active(contentFilterMode, filterMode, active) {
@@ -48,6 +53,8 @@ export default {
          'categoryWithID'
         ].forEach(function(route){
           api.modifyClass(`route:discovery.${route}`, {
+            pluginId: PLUGIN_ID,
+            
             afterModel(model, transition) {
               if (routeToBoard(transition, model.category.slug)) {
                 return this.replaceWith(`${model.category.get('url')}/l/latest?board=default`);
