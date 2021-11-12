@@ -1,7 +1,8 @@
 import { withPluginApi } from "discourse/lib/plugin-api";
 import { default as computed, on, observes } from "discourse-common/utils/decorators";
 import { displayConnector, boardDefaultView, isDefaultView } from '../lib/kanban-utilities'; 
-const PLUGIN_ID = 'kanban-board';
+
+const PLUGIN_ID = "kanban-board";
 
 export default {
   name: "my-initializer",
