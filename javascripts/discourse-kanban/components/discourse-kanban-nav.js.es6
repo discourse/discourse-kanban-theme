@@ -2,23 +2,23 @@ import { default as computed } from "discourse-common/utils/decorators";
 import DiscourseURL from "discourse/lib/url";
 
 export default Ember.Component.extend({
-    tagName: "a",
-    attributeBindings: "href",
-    classNameBindings: "active",
-    kanbanHelper: Ember.inject.service(),
+  tagName: "a",
+  attributeBindings: "href",
+  classNameBindings: "active",
+  kanbanHelper: Ember.inject.service(),
 
-    @computed("category")
-    href(category) {
-      return this.kanbanHelper.hrefForCategory(category);
-    },
+  @computed("category")
+  href(category) {
+    return this.kanbanHelper.hrefForCategory(category);
+  },
 
-    @computed("filterMode", "kanbanHelper.active")
-    active(filterMode, active) {
-      return filterMode.split("/").pop() === 'latest' && active;
-    },
+  @computed("filterMode", "kanbanHelper.active")
+  active(filterMode, active) {
+    return filterMode.split("/").pop() === "latest" && active;
+  },
 
-    click(event) {
-      event.preventDefault();
-      DiscourseURL.routeTo(`${this.href}?board=default`);
-    }
-  })
+  click(event) {
+    event.preventDefault();
+    DiscourseURL.routeTo(`${this.href}?board=default`);
+  },
+});

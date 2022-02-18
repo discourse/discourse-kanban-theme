@@ -2,28 +2,28 @@ import { default as computed } from "discourse-common/utils/decorators";
 import showModal from "discourse/lib/show-modal";
 
 export default Ember.Component.extend({
-    tagName: "div",
-    classNames: "discourse-kanban",
-    classNameBindings: "fullscreen",
-    kanbanHelper: Ember.inject.service(),
+  tagName: "div",
+  classNames: "discourse-kanban",
+  classNameBindings: "fullscreen",
+  kanbanHelper: Ember.inject.service(),
 
-    @computed("kanbanHelper.active")
-    shouldDisplay(active) {
-      return active;
+  @computed("kanbanHelper.active")
+  shouldDisplay(active) {
+    return active;
+  },
+
+  actions: {
+    setDragData(data) {
+      this.set("dragData", data);
     },
 
-    actions: {
-      setDragData(data) {
-        this.set("dragData", data);
-      },
+    toggleFullscreen() {
+      this.toggleProperty("fullscreen");
+      this.kanbanHelper.setFullscreen(this.fullscreen);
+    },
 
-      toggleFullscreen() {
-        this.toggleProperty("fullscreen");
-        this.kanbanHelper.setFullscreen(this.fullscreen);
-      },
-
-      openSettings() {
-        showModal("kanban-options");
-      }
-    }
-  })
+    openSettings() {
+      showModal("kanban-options");
+    },
+  },
+});
