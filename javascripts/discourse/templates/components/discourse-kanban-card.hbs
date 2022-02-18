@@ -1,31 +1,31 @@
 <div class="card-row">
-    {{topic-status topic=topic}}
-    <span class="topic-title">{{topic.title}}</span>
-    {{format-date topic.bumpedAt format="tiny" noTitle="true"}}
+  {{topic-status topic=topic}}
+  <span class="topic-title">{{topic.title}}</span>
+  {{format-date topic.bumpedAt format="tiny" noTitle="true"}}
 </div>
 
 {{#if showTags}}
-    <div class="card-row">
+  <div class="card-row">
     <div class="tags">
-        {{#each tags as |tag|}}
-        {{{tag}}}
-        {{/each}}
+      {{#each tags as |tag|}}
+        {{html-safe tag}}
+      {{/each}}
     </div>
-    </div>
+  </div>
 {{/if}}
 
 <div class="card-row">
-    <div class="posters">
+  <div class="posters">
     {{#each topic.posters as |poster|}}
-        <a href="{{poster.user.path}}" data-user-card="{{poster.user.username}}" class="{{poster.extraClasses}}">{{avatar poster avatarTemplatePath="user.avatar_template" usernamePath="user.username" namePath="user.name" imageSize="tiny"}}</a>
+      <a href={{poster.user.path}} data-user-card={{poster.user.username}} class={{poster.extraClasses}}>{{avatar poster avatarTemplatePath="user.avatar_template" usernamePath="user.username" namePath="user.name" imageSize="tiny"}}</a>
     {{/each}}
-    </div>
+  </div>
 
-    {{#if topic.assigned_to_user.username}}
-    <a class='assigned-to' href={{topic.assignedToUserPath}}>
-        {{d-icon 'user-plus'}}{{topic.assigned_to_user.username}}
+  {{#if topic.assigned_to_user.username}}
+    <a class="assigned-to" href={{topic.assignedToUserPath}}>
+      {{d-icon "user-plus"}}{{topic.assigned_to_user.username}}
     </a>
-    {{/if}}
+  {{/if}}
 </div>
 
 {{plugin-outlet name="kanban-card-bottom" args=(hash topic=topic)}}
