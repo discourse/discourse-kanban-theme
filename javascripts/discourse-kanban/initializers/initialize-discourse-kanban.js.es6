@@ -9,6 +9,7 @@ import {
   displayConnector,
   isDefaultView,
 } from "../lib/kanban-utilities";
+import { next } from "@ember/runloop";
 
 const PLUGIN_ID = "kanban-board";
 
@@ -65,11 +66,30 @@ export default {
           api.modifyClass(`route:discovery.${route}`, {
             pluginId: PLUGIN_ID,
 
-            afterModel(model, transition) {
+            redirect(model, transition) {
               if (routeToBoard(transition, model.category.slug)) {
-                return this.replaceWith(
-                  `${model.category.get("url")}/l/latest?board=default`
-                );
+                // This redirect breaks the `new-topic` system, so we have to re-implement here
+                let newTopicParams;
+                if (window.location.pathname.includes("/new-topic")) {
+                  const params = new URLSearchParams(window.location.search);
+                  newTopicParams = [
+                    params.title,
+                    params.body,
+                    model.category.id,
+                    params.tags,
+                  ];
+                }
+                return this.transitionTo(
+                  "discovery.latestCategory",
+                  model.category.id,
+                  { queryParams: { board: "default" } }
+                ).finally(() => {
+                  if (newTopicParams) {
+                    next(() =>
+                      this.send("createNewTopicViaParams", ...newTopicParams)
+                    );
+                  }
+                });
               } else {
                 return this._super(...arguments);
               }
