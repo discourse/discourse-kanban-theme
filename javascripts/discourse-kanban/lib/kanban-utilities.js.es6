@@ -19,8 +19,7 @@ const boardDefaultView = (categorySlug) => {
 };
 
 const isDefaultView = (transition) => {
-  let path = transition.intent.url || window.location.pathname;
-  return path.indexOf("/l/") === -1;
+  return transition.to.name === "discovery.category";
 };
 
 export { displayConnector, boardDefaultView, isDefaultView };
