@@ -11,9 +11,18 @@
 
   <div class="controls">
     {{#if isTags}}
-      {{tag-chooser tags=tags allowCreate=false filterPlaceholder=(theme-prefix "modal.tags_placeholder") everyTag=true}}
+      {{tag-chooser
+        tags=tags
+        allowCreate=false
+        filterPlaceholder=(theme-prefix "modal.tags_placeholder")
+        everyTag=true
+      }}
     {{else if isCategories}}
-      {{multi-select content=site.categories values=categories filterPlaceholder=(theme-prefix "modal.categories_placeholder")}}
+      {{multi-select
+        content=site.categories
+        value=categories
+        filterPlaceholder=(theme-prefix "modal.categories_placeholder")
+      }}
     {{else if isAssigned}}
       {{email-group-user-chooser
         value=usernames
@@ -28,7 +37,9 @@
 {{/d-modal-body}}
 
 <div class="modal-footer">
-  {{d-button class="btn-primary"
+  {{d-button
+    class="btn-primary"
     action=(action "apply")
-    label=(theme-prefix "modal.apply")}}
+    label=(theme-prefix "modal.apply")
+  }}
 </div>
