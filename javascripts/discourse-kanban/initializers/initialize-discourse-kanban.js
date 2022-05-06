@@ -65,42 +65,40 @@ export default {
         );
       };
 
-      ["category", "parentCategory", "categoryNone", "categoryWithID"].forEach(
-        function (route) {
-          api.modifyClass(`route:discovery.${route}`, {
-            pluginId: PLUGIN_ID,
+      ["category", "categoryNone"].forEach(function (route) {
+        api.modifyClass(`route:discovery.${route}`, {
+          pluginId: PLUGIN_ID,
 
-            redirect(model, transition) {
-              if (routeToBoard(transition, model.category.slug)) {
-                // This redirect breaks the `new-topic` system, so we have to re-implement here
-                let newTopicParams;
-                if (window.location.pathname.includes("/new-topic")) {
-                  const params = new URLSearchParams(window.location.search);
-                  newTopicParams = [
-                    params.title,
-                    params.body,
-                    model.category.id,
-                    params.tags,
-                  ];
-                }
-                return this.transitionTo(
-                  "discovery.latestCategory",
+          redirect(model, transition) {
+            if (routeToBoard(transition, model.category.slug)) {
+              // This redirect breaks the `new-topic` system, so we have to re-implement here
+              let newTopicParams;
+              if (window.location.pathname.includes("/new-topic")) {
+                const params = new URLSearchParams(window.location.search);
+                newTopicParams = [
+                  params.title,
+                  params.body,
                   model.category.id,
-                  { queryParams: { board: "default" } }
-                ).finally(() => {
-                  if (newTopicParams) {
-                    next(() =>
-                      this.send("createNewTopicViaParams", ...newTopicParams)
-                    );
-                  }
-                });
-              } else {
-                return this._super(...arguments);
+                  params.tags,
+                ];
               }
-            },
-          });
-        }
-      );
+              return this.transitionTo(
+                "discovery.latestCategory",
+                model.category.id,
+                { queryParams: { board: "default" } }
+              ).finally(() => {
+                if (newTopicParams) {
+                  next(() =>
+                    this.send("createNewTopicViaParams", ...newTopicParams)
+                  );
+                }
+              });
+            } else {
+              return this._super(...arguments);
+            }
+          },
+        });
+      });
     });
   },
 };
