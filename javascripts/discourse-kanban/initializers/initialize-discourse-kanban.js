@@ -1,6 +1,6 @@
+import { inject as service } from "@ember/service";
 import { withPluginApi } from "discourse/lib/plugin-api";
-import {
-  default as computed,
+import discourseComputed, {
   observes,
   on,
 } from "discourse-common/utils/decorators";
@@ -25,7 +25,7 @@ export default {
       api.modifyClass("controller:discovery/topics", {
         pluginId: PLUGIN_ID,
 
-        kanbanHelper: Ember.inject.service(),
+        kanbanHelper: service(),
 
         @on("init")
         @observes("model")
@@ -43,8 +43,12 @@ export default {
       api.modifyClass("component:navigation-item", {
         pluginId: PLUGIN_ID,
 
-        kanbanHelper: Ember.inject.service(),
-        @computed("content.filterMode", "filterMode", "kanbanHelper.active")
+        kanbanHelper: service(),
+        @discourseComputed(
+          "content.filterMode",
+          "filterMode",
+          "kanbanHelper.active"
+        )
         active(contentFilterMode, filterMode, active) {
           if (active) {
             return false;

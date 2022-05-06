@@ -1,8 +1,9 @@
-import { default as computed } from "discourse-common/utils/decorators";
+import Component from "@ember/component";
+import discourseComputed from "discourse-common/utils/decorators";
 import renderTag from "discourse/lib/render-tag";
 import DiscourseURL from "discourse/lib/url";
 
-export default Ember.Component.extend({
+export default Component.extend({
   classNameBindings: [":topic-card", "dragging", "topic.unseen:topic-unseen"],
   attributeBindings: ["draggable"],
   draggable: true,
@@ -21,12 +22,12 @@ export default Ember.Component.extend({
     DiscourseURL.routeTo(this.topic.lastUnreadUrl);
   },
 
-  @computed("tags")
+  @discourseComputed("tags")
   showTags(tags) {
     return settings.show_tags && tags.length;
   },
 
-  @computed("topic.tags", "definition.params.tags")
+  @discourseComputed("topic.tags", "definition.params.tags")
   tags(topicTags, definitionTag) {
     return topicTags
       .filter((t) => t !== definitionTag)

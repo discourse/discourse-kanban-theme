@@ -1,16 +1,19 @@
-import { default as computed, on } from "discourse-common/utils/decorators";
+import Component from "@ember/component";
+import { inject as service } from "@ember/service";
+import discourseComputed, { on } from "discourse-common/utils/decorators";
 import { popupAjaxError } from "discourse/lib/ajax-error";
 import Topic from "discourse/models/topic";
 import showModal from "discourse/lib/show-modal";
 import I18n from "I18n";
+import bootbox from "bootbox";
 
-export default Ember.Component.extend({
+export default Component.extend({
   tagName: "div",
   classNames: "discourse-kanban-list",
   classNameBindings: ["acceptDrag"],
-  kanbanHelper: Ember.inject.service(),
+  kanbanHelper: service(),
 
-  @computed("definition.title")
+  @discourseComputed("definition.title")
   renderedTitle(title) {
     return title;
   },
