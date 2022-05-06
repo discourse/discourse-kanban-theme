@@ -1,17 +1,20 @@
+import Controller from "@ember/controller";
+import { inject as service } from "@ember/service";
 import DiscourseURL from "discourse/lib/url";
 import ModalFunctionality from "discourse/mixins/modal-functionality";
+import { equal } from "@ember/object/computed";
 
-export default Ember.Controller.extend(ModalFunctionality, {
-  kanbanHelper: Ember.inject.service(),
+export default Controller.extend(ModalFunctionality, {
+  kanbanHelper: service(),
   modes: [{ id: "tags" }, { id: "categories" }, { id: "assigned" }],
   tags: [],
   usernames: [],
   categories: [],
   mode: "tags",
 
-  isTags: Ember.computed.equal("mode", "tags"),
-  isCategories: Ember.computed.equal("mode", "categories"),
-  isAssigned: Ember.computed.equal("mode", "assigned"),
+  isTags: equal("mode", "tags"),
+  isCategories: equal("mode", "categories"),
+  isAssigned: equal("mode", "assigned"),
 
   actions: {
     apply() {

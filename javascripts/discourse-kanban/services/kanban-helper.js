@@ -1,12 +1,10 @@
-import {
-  default as computed,
-  observes,
-} from "discourse-common/utils/decorators";
+import Service, { inject as service } from "@ember/service";
+import discourseComputed, { observes } from "discourse-common/utils/decorators";
 import Category from "discourse/models/category";
 import Site from "discourse/models/site";
 
-export default Ember.Service.extend({
-  router: Ember.inject.service(),
+export default Service.extend({
+  router: service(),
 
   hrefForCategory(category) {
     let destinationURL = "/latest";
@@ -28,7 +26,7 @@ export default Ember.Service.extend({
     this.set("discoveryCategory", category);
   },
 
-  @computed("discoveryParams.board", "router.currentRouteName")
+  @discourseComputed("discoveryParams.board", "router.currentRouteName")
   active(board, routeName) {
     return board !== undefined && routeName.startsWith("discovery.latest");
   },
@@ -51,12 +49,12 @@ export default Ember.Service.extend({
     }
   },
 
-  @computed("discoveryParams.board", "discoveryTopTags")
+  @discourseComputed("discoveryParams.board", "discoveryTopTags")
   currentDescriptor(board) {
     return board;
   },
 
-  @computed("currentDescriptor", "category")
+  @discourseComputed("currentDescriptor", "category")
   listDefinitions(descriptor) {
     const definition = this.findDefinition(descriptor);
     if (definition) {
@@ -64,7 +62,7 @@ export default Ember.Service.extend({
     }
   },
 
-  @computed()
+  @discourseComputed()
   definitionBuilders() {
     return {
       tags: (param) => {

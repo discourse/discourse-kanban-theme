@@ -1,13 +1,15 @@
-import { default as computed } from "discourse-common/utils/decorators";
+import Component from "@ember/component";
+import { inject as service } from "@ember/service";
+import discourseComputed from "discourse-common/utils/decorators";
 import showModal from "discourse/lib/show-modal";
 
-export default Ember.Component.extend({
+export default Component.extend({
   tagName: "div",
   classNames: "discourse-kanban",
   classNameBindings: "fullscreen",
-  kanbanHelper: Ember.inject.service(),
+  kanbanHelper: service(),
 
-  @computed("kanbanHelper.active")
+  @discourseComputed("kanbanHelper.active")
   shouldDisplay(active) {
     return active;
   },
