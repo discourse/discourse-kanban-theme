@@ -197,7 +197,7 @@ export default Component.extend({
       if (requireConfirmation && confirmationMessage) {
         this.dialog.yesNoConfirm({
           message: confirmationMessage,
-          didConfirm: doUpdate
+          didConfirm: doUpdate,
         });
       } else {
         doUpdate();
