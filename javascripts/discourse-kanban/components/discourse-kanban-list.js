@@ -5,13 +5,13 @@ import { popupAjaxError } from "discourse/lib/ajax-error";
 import Topic from "discourse/models/topic";
 import showModal from "discourse/lib/show-modal";
 import I18n from "I18n";
-import bootbox from "bootbox";
 
 export default Component.extend({
   tagName: "div",
   classNames: "discourse-kanban-list",
   classNameBindings: ["acceptDrag"],
   kanbanHelper: service(),
+  dialog: service(),
 
   @discourseComputed("definition.title")
   renderedTitle(title) {
@@ -195,16 +195,10 @@ export default Component.extend({
       }
 
       if (requireConfirmation && confirmationMessage) {
-        bootbox.confirm(
-          confirmationMessage,
-          I18n.t("no_value"),
-          I18n.t("yes_value"),
-          (confirmed) => {
-            if (confirmed) {
-              doUpdate();
-            }
-          }
-        );
+        this.dialog.yesNoConfirm({
+          message: confirmationMessage,
+          didConfirm: doUpdate
+        });
       } else {
         doUpdate();
       }
