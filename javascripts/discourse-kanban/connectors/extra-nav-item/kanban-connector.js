@@ -1,7 +1,9 @@
-import { displayConnector } from "../../lib/kanban-utilities";
+import { displayConnector, getCurrentCategoryUrl } from "../../lib/kanban-utilities";
 
 export default {
   shouldRender(args, component) {
-    return displayConnector(component.get("category.slug"));
+    const slug_fixed = component.get("category.slug") || getCurrentCategoryUrl();
+    console.log(`${slug_fixed}`)
+    return displayConnector(slug_fixed);
   },
 };
