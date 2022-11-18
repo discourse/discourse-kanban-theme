@@ -72,7 +72,7 @@
 
     width: MAX(
       calc((100% - 8px - (8px * (#{$num-columns} - 1))) / #{$num-columns}),
-      calc((#{$large-width} - 500px - (8px * (#{$num-columns} - 1))) / #{$num-columns})
+      calc((#{$large-width} - 400px - (8px * (#{$num-columns} - 1))) / #{$num-columns})
     );
     flex-shrink: 0;
     margin: 0 4px;
