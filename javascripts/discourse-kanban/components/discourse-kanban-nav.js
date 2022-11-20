@@ -21,21 +21,23 @@ export default Component.extend({
   },
 
   click(event) {
-    const get_mode = () => {
-      const nowat = getCurrentCategoryUrl();
-      const mode_set = settings["default_modes"].split("|")
+    // Bypass wrong slug acquisition method
+    const getDefaultMode = () => {
+      const categorySlug = getCurrentCategoryFromUrl();
+      const defaultModesSet = settings["default_modes"].split("|")
       let returns = "default";
-      for (const mode_to_apply of mode_set) {
-        const sets_of_cate = mode_to_apply.split(":");
-        if (nowat === sets_of_cate[0]) {
-          returns = sets_of_cate[1];
-          break;
+
+      for (const defaultModeSettings of defaultModesSet) {
+        const FIRST_COLON_INDEX = defaultModeSettings.indexOf(':');
+        const defaultModeCategorySlug = defaultModeSettings.substring(0, FIRST_COLON_INDEX);
+        if (categorySlug == defaultModeCategorySlug) {
+          returns = defaultModeSettings.substring(FIRST_COLON_INDEX + 1);
         }
       }
       return returns;
     }
     
     event.preventDefault();
-    DiscourseURL.routeTo(`${this.href}?board=${get_mode()}`);
+    DiscourseURL.routeTo(`${this.href}?board=${getDefaultMode()}`);
   },
 });
