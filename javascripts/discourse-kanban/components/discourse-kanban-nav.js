@@ -2,7 +2,7 @@ import Component from "@ember/component";
 import { inject as service } from "@ember/service";
 import discourseComputed from "discourse-common/utils/decorators";
 import DiscourseURL from "discourse/lib/url";
-import { getCurrentCategoryUrl } from "../lib/kanban-utilities";
+import { getCurrentCategoryFromUrl } from "../lib/kanban-utilities";
 
 export default Component.extend({
   tagName: "a",
