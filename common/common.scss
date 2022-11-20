@@ -36,17 +36,8 @@
     right: 0px;
     width: 10px;
     height: 100%;
-    background: linear-gradient(to right, transparent, var(--secondary, $secondary));
-  }
-  &:before {
-    z-index: 100;
-    content: "";
-    position: absolute;
-    left: 39px;
-    width: 10px;
-    height: 98%;
-    background: linear-gradient(
-      to left,
+    background: linear-gradient (
+      to right, 
       transparent,
       var(--secondary, $secondary)
     );
