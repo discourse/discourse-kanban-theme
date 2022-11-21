@@ -24,19 +24,18 @@ export default Component.extend({
     // Bypass wrong slug acquisition method
     const getDefaultMode = () => {
       const categorySlug = getCurrentCategoryFromUrl();
-      const defaultModesSet = settings["default_modes"].split("|")
+      const defaultModesSet = settings["default_modes"].split("|");
       let returns = "default";
 
       for (const defaultModeSettings of defaultModesSet) {
         const FIRST_COLON_INDEX = defaultModeSettings.indexOf(':');
         const defaultModeCategorySlug = defaultModeSettings.substring(0, FIRST_COLON_INDEX);
-        if (categorySlug == defaultModeCategorySlug) {
+        if (categorySlug === defaultModeCategorySlug) {
           returns = defaultModeSettings.substring(FIRST_COLON_INDEX + 1);
         }
       }
       return returns;
-    }
-    
+    };
     event.preventDefault();
     DiscourseURL.routeTo(`${this.href}?board=${getDefaultMode()}`);
   },
