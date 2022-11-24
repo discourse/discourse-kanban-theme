@@ -1,6 +1,7 @@
 .discourse-kanban {
   position: relative;
   display: flex;
+
   &.fullscreen {
     position: fixed;
     top: 0;
@@ -25,22 +26,22 @@
 .discourse-kanban-container {
   width: 100%;
   height: 70vh;
-  margin-left:40px;
+  margin-left: 40px;
   display: flex;
   overflow-x: scroll;
   padding: 10px 0 5px 0;
+
   &:after {
     content: "";
     position: absolute;
     right: 0px;
     width: 10px;
     height: 100%;
-    background: linear-gradient (
-      to right, 
-      transparent,
-      var(--secondary, $secondary)
-    );
+    background: linear-gradient (to right,
+        transparent,
+        var(--secondary, $secondary));
   }
+
   .kanban-spacer {
     display: flex;
     flex-direction: column;
@@ -61,6 +62,7 @@
     position: relative;
     overflow: hidden;
     background: var(--primary-low, $primary-low);
+
     &.accept-drag {
       background: var(--primary-medium, $primary-medium);
     }
@@ -71,21 +73,17 @@
       bottom: 0px;
       width: 100%;
       height: 10px;
-      background: linear-gradient(
-        to bottom,
-        transparent,
-        var(--primary-low, $primary-low)
-      );
+      background: linear-gradient(to bottom,
+          transparent,
+          var(--primary-low, $primary-low));
     }
 
     .list-bottom {
       height: 10px;
     }
 
-    width: MAX(
-      calc((100% - 8px - (8px * (#{$num-columns} - 1))) / #{$num-columns}),
-      calc((#{$large-width} - 400px - (8px * (#{$num-columns} - 1))) / #{$num-columns})
-      );
+    width: MAX(calc((100% - 8px - (8px * (#{$num-columns} - 1))) / #{$num-columns}),
+      calc((#{$large-width} - 400px - (8px * (#{$num-columns} - 1))) / #{$num-columns}));
     flex-shrink: 0;
     margin: 0 4px;
     padding: 10px 0px 0px 0px;
@@ -109,9 +107,11 @@
       display: block;
       color: var(--primary-medium, $primary-medium);
       cursor: pointer;
+
       &.topic-unseen {
         color: var(--primary-medium, $primary-medium);
       }
+
       margin: 10px 0;
 
       background: var(--secondary, $secondary);
@@ -157,6 +157,7 @@
     }
   }
 }
+
 .modal .kanban-modal {
   width: 400px;
 
