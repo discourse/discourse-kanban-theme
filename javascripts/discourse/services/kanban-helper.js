@@ -3,8 +3,8 @@ import discourseComputed, { observes } from "discourse-common/utils/decorators";
 import Category from "discourse/models/category";
 import Site from "discourse/models/site";
 
-export default Service.extend({
-  router: service(),
+export default class extends Service {
+  @service router;
 
   hrefForCategory(category) {
     let destinationURL = "/latest";
@@ -13,23 +13,23 @@ export default Service.extend({
       destinationURL = `/c/${slug}/l/latest`;
     }
     return destinationURL;
-  },
+  }
 
   updateCurrentDiscoveryModel(model) {
     if (model) {
       this.set("discoveryParams", model.params);
       this.set("discoveryTopTags", model.get("topic_list.top_tags"));
     }
-  },
+  }
 
   updateCurrentCategory(category) {
     this.set("discoveryCategory", category);
-  },
+  }
 
   @discourseComputed("discoveryParams.board", "router.currentRouteName")
   active(board, routeName) {
     return board !== undefined && routeName.startsWith("discovery.latest");
-  },
+  }
 
   @observes("active")
   updateClasses() {
@@ -39,7 +39,7 @@ export default Service.extend({
       document.body.classList.remove("kanban-active");
       document.body.classList.remove("kanban-fullscreen");
     }
-  },
+  }
 
   setFullscreen(fullscreen) {
     if (fullscreen) {
@@ -47,12 +47,12 @@ export default Service.extend({
     } else {
       document.body.classList.remove("kanban-fullscreen");
     }
-  },
+  }
 
   @discourseComputed("discoveryParams.board", "discoveryTopTags")
   currentDescriptor(board) {
     return board;
-  },
+  }
 
   @discourseComputed("currentDescriptor", "category")
   listDefinitions(descriptor) {
@@ -60,7 +60,7 @@ export default Service.extend({
     if (definition) {
       return definition.lists;
     }
-  },
+  }
 
   @discourseComputed()
   definitionBuilders() {
@@ -204,7 +204,7 @@ export default Service.extend({
         return { lists };
       },
     };
-  },
+  }
 
   findDefinition(descriptor) {
     if (typeof descriptor !== "string") {
@@ -243,5 +243,5 @@ export default Service.extend({
       return this.definitionBuilders[type](param);
     } else {
     }
-  },
-});
+  }
+}

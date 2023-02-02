@@ -1,7 +1,7 @@
 import { displayConnector } from "../../lib/kanban-utilities";
 
 export default {
-  shouldRender(args) {
-    return displayConnector(args.category?.get("slug"));
+  shouldRender(outletArgs) {
+    return displayConnector(outletArgs.category?.slug);
   },
 };

@@ -2,30 +2,32 @@ import Component from "@ember/component";
 import { inject as service } from "@ember/service";
 import discourseComputed from "discourse-common/utils/decorators";
 import showModal from "discourse/lib/show-modal";
+import { action } from "@ember/object";
 
-export default Component.extend({
-  tagName: "div",
-  classNames: "discourse-kanban",
-  classNameBindings: "fullscreen",
-  kanbanHelper: service(),
+export default class Kanban extends Component {
+  tagName = "div";
+  classNames = ["discourse-kanban"];
+  classNameBindings = ["fullscreen"];
+  @service kanbanHelper;
 
   @discourseComputed("kanbanHelper.active")
   shouldDisplay(active) {
     return active;
-  },
+  }
 
-  actions: {
-    setDragData(data) {
-      this.set("dragData", data);
-    },
+  @action
+  setDragData(data) {
+    this.set("dragData", data);
+  }
 
-    toggleFullscreen() {
-      this.toggleProperty("fullscreen");
-      this.kanbanHelper.setFullscreen(this.fullscreen);
-    },
+  @action
+  toggleFullscreen() {
+    this.toggleProperty("fullscreen");
+    this.kanbanHelper.setFullscreen(this.fullscreen);
+  }
 
-    openSettings() {
-      showModal("kanban-options");
-    },
-  },
-});
+  @action
+  openSettings() {
+    showModal("kanban-options");
+  }
+}
