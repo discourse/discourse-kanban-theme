@@ -1,7 +1,9 @@
 import Service, { inject as service } from "@ember/service";
-import discourseComputed, { observes } from "discourse-common/utils/decorators";
+import { observes } from "discourse-common/utils/decorators";
 import Category from "discourse/models/category";
 import Site from "discourse/models/site";
+import { dependentKeyCompat } from "@ember/object/compat";
+import { get } from "@ember/object";
 
 export default class extends Service {
   @service router;
@@ -15,24 +17,38 @@ export default class extends Service {
     return destinationURL;
   }
 
-  updateCurrentDiscoveryModel(model) {
-    if (model) {
-      this.set("discoveryParams", model.params);
-      this.set("discoveryTopTags", model.get("topic_list.top_tags"));
+  discoveryRouteAttribute(path) {
+    const currentRoute = this.router.currentRoute;
+    if (
+      currentRoute.name.startsWith("discovery.latest") &&
+      currentRoute.attributes
+    ) {
+      return get(currentRoute.attributes, path);
     }
   }
 
-  updateCurrentCategory(category) {
-    this.set("discoveryCategory", category);
+  get discoveryParams() {
+    return (
+      this.discoveryRouteAttribute("params") ||
+      this.discoveryRouteAttribute("modelParams")
+    );
   }
 
-  @discourseComputed("discoveryParams.board", "router.currentRouteName")
-  active(board, routeName) {
-    return board !== undefined && routeName.startsWith("discovery.latest");
+  get discoveryTopTags() {
+    return this.discoveryRouteAttribute("topic_list.top_tags");
+  }
+
+  get discoveryCategory() {
+    return this.discoveryRouteAttribute("category");
+  }
+
+  @dependentKeyCompat
+  get active() {
+    return !!this.currentDescriptor;
   }
 
   @observes("active")
-  updateClasses() {
+  updateBodyClasses() {
     if (this.active) {
       document.body.classList.add("kanban-active");
     } else {
@@ -49,21 +65,18 @@ export default class extends Service {
     }
   }
 
-  @discourseComputed("discoveryParams.board", "discoveryTopTags")
-  currentDescriptor(board) {
-    return board;
+  get currentDescriptor() {
+    return this.discoveryParams && get(this.discoveryParams, "board");
   }
 
-  @discourseComputed("currentDescriptor", "category")
-  listDefinitions(descriptor) {
-    const definition = this.findDefinition(descriptor);
+  get listDefinitions() {
+    const definition = this.findDefinition(this.currentDescriptor);
     if (definition) {
       return definition.lists;
     }
   }
 
-  @discourseComputed()
-  definitionBuilders() {
+  get definitionBuilders() {
     return {
       tags: (param) => {
         const lists = [];
@@ -241,7 +254,6 @@ export default class extends Service {
 
     if (this.definitionBuilders[type]) {
       return this.definitionBuilders[type](param);
-    } else {
     }
   }
 }

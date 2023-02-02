@@ -1,9 +1,6 @@
 import { inject as service } from "@ember/service";
 import { withPluginApi } from "discourse/lib/plugin-api";
-import discourseComputed, {
-  observes,
-  on,
-} from "discourse-common/utils/decorators";
+import discourseComputed from "discourse-common/utils/decorators";
 import {
   boardDefaultView,
   displayConnector,
@@ -20,24 +17,6 @@ export default {
       api.addDiscoveryQueryParam("board", {
         replace: true,
         refreshModel: true,
-      });
-
-      api.modifyClass("controller:discovery/topics", {
-        pluginId: PLUGIN_ID,
-
-        kanbanHelper: service(),
-
-        @on("init")
-        @observes("model")
-        modelChange() {
-          this.kanbanHelper.updateCurrentDiscoveryModel(this.model);
-        },
-
-        @on("init")
-        @observes("category")
-        changeCategory() {
-          this.kanbanHelper.updateCurrentCategory(this.category);
-        },
       });
 
       api.modifyClass("component:navigation-item", {
