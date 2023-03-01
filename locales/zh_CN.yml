@@ -1,0 +1,15 @@
+zh_CN:
+  no_topics: 暂无话题
+  confirm_change_tags: 确认要对话题 '%{title}' 把 '#%{remove}' 替换为 '#%{add}' 吗?
+  confirm_close: 确认要关闭话题 '%{title}' 吗?
+  confirm_open: 确认要重新打开话题 '%{title}' 吗?
+  confirm_change_category: 确认要移动话题 '%{title}' 吗?
+  menu_label: "看板"
+  modal:
+    title: "看板选项"
+    tags_placeholder: 要展示的标签...
+    categories_placeholder: 要展示的类别...
+    usernames_placeholder: 要展示的用户...
+    apply: 应用
+  theme_metadata:
+    description: 该主题组件允许你在一个看板中列出和组织话题。屏幕上方将会出现新的按钮“看板”。

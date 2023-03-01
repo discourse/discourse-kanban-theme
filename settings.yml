@@ -3,29 +3,36 @@ display_categories:
   default: ""
   description:
     en: A list of categories where the "Board" button should appear. If left blank, it will be shown everywhere. Use @ to denote the top level view.
+    zh_CN: “看板”按钮会出现的类别列表。填写类别缩略名，而不是类别名。如果留空，它将全局出现。使用@作为顶级视图的代号。
 default_modes:
   type: list
   default: ""
   description:
     en: "Override the default board mode for each category. Use the syntax `category:mode:params`. For example, `support:assigned:david,sam,joffrey`. Use @ to denote the top level view. Use @untagged to display an untagged column."
+    zh_CN: "对这些类别，修改“看板”按钮的默认呈现方式。格式为：`类别:模式:参数`，特别地，类别参数需要用数字指代，例如：`support:assigned:david,sam,joffrey`。使用@作为顶级视图的代号。使用@untagged作为无标签列的代号。"
 default_view:
   type: list
   default: ""
   description:
     en: A list of categories where the "Board" is the default view. Does not yet support the top level default view.
+    zh_CN: "看板作为默认视图的类别列表。不支持顶级视图。"
 require_confirmation:
   default: true
   description:
     en: Display a confirmation modal before making changes to a topic's tags/category?
+    zh_CN: "在对话题的标签/类别做出更改时，显示确认对话框"
 show_tags:
   default: false
   description:
     en: Show tags on topic cards?
+    zh_CN: "在看板卡片上显示话题的标签。"
 num_columns:
   default: 3
   description:
     en: Number of columns to display on screen. More are available by scrolling
+    zh_CN: "屏幕上能容纳多少列看板。（更多的列可以通过滑动看到）。"
 extra_icons:
   default: "user-minus"
   description:
     en: Extra icons to load for the theme component. There is no need to change this setting.
+    zh_CN: "主题组件加载的额外图标。没有必要修改这个设置。"
