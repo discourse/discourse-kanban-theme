@@ -1,10 +1,11 @@
 import Component from "@ember/component";
 import { inject as service } from "@ember/service";
-import discourseComputed, { on } from "discourse-common/utils/decorators";
+import discourseComputed, { bind, on } from "discourse-common/utils/decorators";
 import { popupAjaxError } from "discourse/lib/ajax-error";
 import Topic from "discourse/models/topic";
 import showModal from "discourse/lib/show-modal";
 import I18n from "I18n";
+import { next } from "@ember/runloop";
 
 export default Component.extend({
   tagName: "div",
@@ -48,8 +49,16 @@ export default Component.extend({
       });
   },
 
-  @on("didInsertElement")
+  didInsertElement() {
+    this._super();
+    next(this._setupIntersectionObserver);
+  },
+
+  @bind
   _setupIntersectionObserver() {
+    if (!this.element || this.isDestroying || this.isDestroyed) {
+      return;
+    }
     this.set(
       "io",
       new IntersectionObserver((entries) => {
@@ -64,7 +73,7 @@ export default Component.extend({
 
   @on("willDestroyElement")
   _removeIntersectionObserver() {
-    this.io.disconnect();
+    this.io?.disconnect();
   },
 
   dragLeave(event) {
