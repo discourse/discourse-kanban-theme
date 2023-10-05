@@ -1,19 +1,19 @@
-{{#if shouldDisplay}}
+{{#if this.shouldDisplay}}
   <div class="discourse-kanban-container">
     <div class="kanban-spacer">
-      {{d-button
-        icon=(if fullscreen "discourse-compress" "discourse-expand")
-        action=(action "toggleFullscreen")
-      }}
-      {{d-button icon="filter" action=(action "openSettings")}}
+      <DButton
+        @icon={{if this.fullscreen "discourse-compress" "discourse-expand"}}
+        @action={{action "toggleFullscreen"}}
+      />
+      <DButton @icon="filter" @action={{action "openSettings"}} />
     </div>
 
-    {{#each kanbanHelper.listDefinitions as |definition|}}
-      {{discourse-kanban-list
-        definition=definition
-        dragData=dragData
-        setDragDataUpstream=(action "setDragData")
-      }}
+    {{#each this.kanbanHelper.listDefinitions as |definition|}}
+      <DiscourseKanbanList
+        @definition={{this.definition}}
+        @dragData={{this.dragData}}
+        @setDragDataUpstream={{action "setDragData"}}
+      />
     {{/each}}
 
     <div class="kanban-spacer"></div>

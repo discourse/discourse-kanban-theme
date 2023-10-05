@@ -1,24 +1,24 @@
 <div class="list-title">
-  {{#if definition.icon}}{{d-icon definition.icon}}{{/if}}
-  {{renderedTitle}}
+  {{#if this.definition.icon}}{{d-icon this.definition.icon}}{{/if}}
+  {{this.renderedTitle}}
 </div>
 
 <div class="topics">
-  {{#conditional-loading-spinner condition=loading}}
-    {{#each list.topics as |topic|}}
-      {{discourse-kanban-card
-        topic=topic
-        setDragData=(action "setDragData")
-        definition=definition
-      }}
+  <ConditionalLoadingSpinner @condition={{this.loading}}>
+    {{#each this.list.topics as |topic|}}
+      <DiscourseKanbanCard
+        @topic={{this.topic}}
+        @setDragData={{action "setDragData"}}
+        @definition={{this.definition}}
+      />
     {{else}}
       <div class="no_topics">
         {{theme-i18n "no_topics"}}
       </div>
     {{/each}}
 
-    {{conditional-loading-spinner condition=loadingMore}}
-  {{/conditional-loading-spinner}}
+    <ConditionalLoadingSpinner @condition={{this.loadingMode}} />
+  </ConditionalLoadingSpinner>
 
   <div class="list-bottom"></div>
 </div>
