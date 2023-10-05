@@ -70,7 +70,7 @@ export default class extends Service {
   }
 
   get listDefinitions() {
-    const definition = this.findDefinition(this.currentDescriptor);
+    const definition = this.findDefinition();
     if (definition) {
       return definition.lists;
     }
@@ -219,7 +219,9 @@ export default class extends Service {
     };
   }
 
-  findDefinition(descriptor) {
+  get resolvedDescriptorParts() {
+    const descriptor = this.currentDescriptor;
+
     if (typeof descriptor !== "string") {
       return;
     }
@@ -249,8 +251,11 @@ export default class extends Service {
     }
 
     const parts = descriptor.split(":");
-    const type = parts[0];
-    const param = parts[1];
+    return parts;
+  }
+
+  findDefinition() {
+    const [type, param] = this.resolvedDescriptorParts;
 
     if (this.definitionBuilders[type]) {
       return this.definitionBuilders[type](param);

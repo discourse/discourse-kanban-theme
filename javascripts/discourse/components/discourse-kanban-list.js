@@ -1,19 +1,19 @@
 import Component from "@ember/component";
 import { inject as service } from "@ember/service";
-import discourseComputed, { bind, on } from "discourse-common/utils/decorators";
+import discourseComputed from "discourse-common/utils/decorators";
 import { popupAjaxError } from "discourse/lib/ajax-error";
 import Topic from "discourse/models/topic";
-import showModal from "discourse/lib/show-modal";
 import I18n from "I18n";
-import { next } from "@ember/runloop";
 import { action } from "@ember/object";
 
 export default class KanbanList extends Component {
+  @service kanbanHelper;
+  @service dialog;
+  @service modal;
+
   tagName = "div";
   classNames = ["discourse-kanban-list"];
   classNameBindings = ["acceptDrag"];
-  @service kanbanHelper;
-  @service dialog;
 
   @discourseComputed("definition.title")
   renderedTitle(title) {
@@ -140,16 +140,17 @@ export default class KanbanList extends Component {
         newUsername = undefined;
       }
       doUpdate = () => {
-        return showModal("assign-user", {
-          model: {
-            topic,
-            username: newUsername,
-            onSuccess: () => {
-              this.refreshTopics();
-              oldRefresh();
-            },
-          },
-        });
+        // TODO FIXUP
+        // return showModal("assign-user", {
+        //   model: {
+        //     topic,
+        //     username: newUsername,
+        //     onSuccess: () => {
+        //       this.refreshTopics();
+        //       oldRefresh();
+        //     },
+        //   },
+        // });
       };
       requireConfirmation = false;
     } else if (

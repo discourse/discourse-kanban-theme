@@ -4,10 +4,11 @@ import discourseComputed from "discourse-common/utils/decorators";
 import DiscourseURL from "discourse/lib/url";
 
 export default class KanbanNav extends Component {
+  @service kanbanHelper;
+
   tagName = "a";
   attributeBindings = ["href"];
   classNameBindings = ["active"];
-  @service kanbanHelper;
 
   @discourseComputed("category")
   href(category) {

@@ -1,14 +1,16 @@
 import Component from "@ember/component";
 import { inject as service } from "@ember/service";
 import discourseComputed from "discourse-common/utils/decorators";
-import showModal from "discourse/lib/show-modal";
 import { action } from "@ember/object";
+import KanbanOptionsModal from "./modal/discourse-kanban-options";
 
 export default class Kanban extends Component {
+  @service kanbanHelper;
+  @service modal;
+
   tagName = "div";
   classNames = ["discourse-kanban"];
   classNameBindings = ["fullscreen"];
-  @service kanbanHelper;
 
   @discourseComputed("kanbanHelper.active")
   shouldDisplay(active) {
@@ -28,6 +30,6 @@ export default class Kanban extends Component {
 
   @action
   openSettings() {
-    showModal("kanban-options");
+    this.modal.show(KanbanOptionsModal);
   }
 }
