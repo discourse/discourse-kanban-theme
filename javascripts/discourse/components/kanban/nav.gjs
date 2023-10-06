@@ -1,8 +1,5 @@
 import Component from "@glimmer/component";
 import { inject as service } from "@ember/service";
-import discourseComputed from "discourse-common/utils/decorators";
-import DiscourseURL from "discourse/lib/url";
-
 import i18n from "discourse-common/helpers/i18n";
 
 export default class KanbanNav extends Component {

@@ -1,7 +1,6 @@
 import Component from "@glimmer/component";
 import { inject as service } from "@ember/service";
 import DiscourseURL from "discourse/lib/url";
-import ModalFunctionality from "discourse/mixins/modal-functionality";
 import { equal } from "@ember/object/computed";
 import { action } from "@ember/object";
 import DModal from "discourse/components/d-modal";
@@ -10,7 +9,7 @@ import TagChooser from "select-kit/components/tag-chooser";
 import MultiSelect from "select-kit/components/multi-select";
 import EmailGroupUserChooser from "select-kit/components/email-group-user-chooser";
 import i18n from "discourse-common/helpers/i18n";
-import { hash, mut, fn } from "@ember/helper";
+import { fn, hash } from "@ember/helper";
 import DButton from "discourse/components/d-button";
 import { tracked } from "@glimmer/tracking";
 
@@ -75,11 +74,15 @@ export default class KanbanOptionsController extends Component {
   @service kanbanHelper;
   @service site;
 
-  modes = [{ id: "tags" }, { id: "categories" }, { id: "assigned" }];
   @tracked tags = [];
-  @tracked usernames = [];
-  @tracked categories = [];
-  @tracked mode = "tags";
+@tracked usernames = [];
+@tracked categories = [];
+@tracked mode = "tags";
+modes = [{ id: "tags" }, { id: "categories" }, { id: "assigned" }];
+
+
+
+
 
   @equal("mode", "tags") isTags;
   @equal("mode", "categories") isCategories;

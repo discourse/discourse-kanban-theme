@@ -3,7 +3,6 @@ import { inject as service } from "@ember/service";
 import { action } from "@ember/object";
 import KanbanOptionsModal from "./modal/options";
 import { tracked } from "@glimmer/tracking";
-
 import DButton from "discourse/components/d-button";
 import DiscourseKanbanList from "./list";
 import CopyLinkButton from "./copy-link-button";

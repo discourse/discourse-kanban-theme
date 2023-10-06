@@ -1,11 +1,9 @@
 import Component from "@glimmer/component";
 import { inject as service } from "@ember/service";
-import discourseComputed from "discourse-common/utils/decorators";
 import { popupAjaxError } from "discourse/lib/ajax-error";
 import Topic from "discourse/models/topic";
 import I18n from "I18n";
 import { action } from "@ember/object";
-
 import icon from "discourse-common/helpers/d-icon";
 import ConditionalLoadingSpinner from "discourse/components/conditional-loading-spinner";
 import DiscourseKanbanCard from "./card";

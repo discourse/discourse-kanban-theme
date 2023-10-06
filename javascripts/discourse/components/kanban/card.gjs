@@ -1,9 +1,6 @@
 import Component from "@glimmer/component";
 import renderTag from "discourse/lib/render-tag";
-import DiscourseURL from "discourse/lib/url";
-
 import TopicStatus from "discourse/components/topic-status";
-import formatDate from "discourse/helpers/format-date";
 import { renderAvatar } from "discourse/helpers/user-avatar";
 import { htmlSafe } from "@ember/template";
 import icon from "discourse-common/helpers/d-icon";
@@ -79,10 +76,11 @@ export default class KanbanCard extends Component {
     </a>
   </template>
 
-  // TODO - FIX THIS ONCE CORE EXPORTS IT PROPERLY
+  @tracked dragging;
+// TODO - FIX THIS ONCE CORE EXPORTS IT PROPERLY
   formatDate = getOwner(this).resolveRegistration("helper:format-date");
 
-  @tracked dragging;
+
 
   @action
   dragStart(event) {
