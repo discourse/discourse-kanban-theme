@@ -7,6 +7,8 @@ import {
   isDefaultView,
 } from "../lib/kanban-utilities";
 import { next } from "@ember/runloop";
+import DiscourseKanban from "../components/kanban/wrapper";
+import DiscourseKanbanNav from "../components/kanban/nav";
 
 const PLUGIN_ID = "kanban-board";
 
@@ -14,6 +16,9 @@ export default {
   name: "my-initializer",
   initialize() {
     withPluginApi("0.8.7", (api) => {
+      api.renderInOutlet("discovery-list-container-top", DiscourseKanban);
+      api.renderInOutlet("extra-nav-item", DiscourseKanbanNav);
+
       api.addDiscoveryQueryParam("board", {
         replace: true,
         refreshModel: true,

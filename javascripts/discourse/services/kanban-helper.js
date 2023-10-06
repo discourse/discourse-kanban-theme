@@ -1,36 +1,45 @@
 import Service, { inject as service } from "@ember/service";
-import { observes } from "discourse-common/utils/decorators";
 import Category from "discourse/models/category";
-import Site from "discourse/models/site";
-import { dependentKeyCompat } from "@ember/object/compat";
 import { get } from "@ember/object";
+import buildTagLists from "../lib/kanban-list-builders/tags";
+import buildCategoryLists from "../lib/kanban-list-builders/categories";
+import buildAssignedLists from "../lib/kanban-list-builders/assigned";
 
 export default class extends Service {
   @service router;
 
-  hrefForCategory(category) {
-    let destinationURL = "/latest";
-    if (category) {
-      const slug = Category.slugFor(category);
-      destinationURL = `/c/${slug}/l/latest`;
+  getBoardUrl({ category, tag, descriptor = "default" }) {
+    const categorySlug = category ? Category.slugFor(category) : null;
+    let url;
+    if (category && tag) {
+      url = `/tags/c/${categorySlug}/${tag.id}?board=${descriptor}`;
+    } else if (tag) {
+      url = `/tags/${tag.id}?board=${descriptor}`;
+    } else if (category) {
+      url = `/c/${categorySlug}/l/latest?board=${descriptor}`;
+    } else {
+      url = `/latest?board=${descriptor}`;
     }
-    return destinationURL;
+    return url;
   }
 
   discoveryRouteAttribute(path) {
-    const currentRoute = this.router.currentRoute;
+    const { name, attributes } = this.router.currentRoute;
     if (
-      currentRoute.name.startsWith("discovery.latest") &&
-      currentRoute.attributes
+      (name.startsWith("discovery.latest") ||
+        name.startsWith("tags.show") ||
+        name === "tag.show") &&
+      attributes
     ) {
-      return get(currentRoute.attributes, path);
+      return get(attributes, path);
     }
   }
 
   get discoveryParams() {
     return (
       this.discoveryRouteAttribute("params") ||
-      this.discoveryRouteAttribute("modelParams")
+      this.discoveryRouteAttribute("modelParams") ||
+      this.discoveryRouteAttribute("list.listParams") // tag.show
     );
   }
 
@@ -42,27 +51,12 @@ export default class extends Service {
     return this.discoveryRouteAttribute("category");
   }
 
-  @dependentKeyCompat
+  get discoveryTag() {
+    return this.discoveryRouteAttribute("tag");
+  }
+
   get active() {
     return !!this.currentDescriptor;
-  }
-
-  @observes("active")
-  updateBodyClasses() {
-    if (this.active) {
-      document.body.classList.add("kanban-active");
-    } else {
-      document.body.classList.remove("kanban-active");
-      document.body.classList.remove("kanban-fullscreen");
-    }
-  }
-
-  setFullscreen(fullscreen) {
-    if (fullscreen) {
-      document.body.classList.add("kanban-fullscreen");
-    } else {
-      document.body.classList.remove("kanban-fullscreen");
-    }
   }
 
   get currentDescriptor() {
@@ -71,156 +65,19 @@ export default class extends Service {
 
   get listDefinitions() {
     const definition = this.findDefinition();
-    if (definition) {
-      return definition.lists;
-    }
+    return definition?.lists;
   }
 
   get definitionBuilders() {
     return {
-      tags: (param) => {
-        const lists = [];
-
-        let tags = [];
-        if (param) {
-          tags.push(...param.split(","));
-        } else if (this.discoveryTopTags) {
-          tags.push(...this.discoveryTopTags);
-        }
-
-        lists.push(
-          ...tags.map((tag) => {
-            if (tag === "@untagged") {
-              return {
-                title: "Untagged",
-                params: {
-                  no_tags: true,
-                },
-              };
-            } else {
-              return {
-                title: `#${tag}`,
-                params: {
-                  tags: tag,
-                },
-              };
-            }
-          })
-        );
-
-        return { lists };
-      },
-
-      categories: (param) => {
-        const lists = [];
-
-        if (param) {
-          let categories = param
-            .split(",")
-            .map((c) => Category.findBySlug(...c.split("/").reverse()));
-          categories.filter((c) => c !== undefined);
-
-          lists.push(
-            ...categories.map((category) => {
-              return {
-                title: `${category.name}`,
-                params: {
-                  category: category.id,
-                },
-              };
-            })
-          );
-        } else if (this.discoveryCategory) {
-          lists.push({
-            title: `${this.discoveryCategory.name}`,
-            params: {
-              category: this.discoveryCategory.id,
-              no_subcategories: true,
-            },
-          });
-
-          if (this.discoveryCategory.subcategories) {
-            lists.push(
-              ...this.discoveryCategory.subcategories.map((category) => {
-                return {
-                  title: `${this.discoveryCategory.name} / ${category.name}`,
-                  params: {
-                    category: category.id,
-                  },
-                };
-              })
-            );
-          }
-        } else {
-          const categories = Site.currentProp("categoriesList").filter(
-            (c) => !c.parent_category_id
-          );
-
-          lists.push(
-            ...categories.map((category) => {
-              return {
-                title: `${category.name}`,
-                params: {
-                  category: category.id,
-                },
-              };
-            })
-          );
-        }
-
-        return { lists };
-      },
-
-      assigned: (param) => {
-        const lists = [];
-
-        lists.push({
-          title: "Unassigned",
-          icon: "user-minus",
-          params: {
-            assigned: "nobody",
-            status: "open",
-          },
-        });
-
-        if (param) {
-          lists.push(
-            ...param.split(",").map((u) => {
-              return {
-                title: u,
-                icon: "user-plus",
-                params: {
-                  assigned: u,
-                  status: "open",
-                },
-              };
-            })
-          );
-        } else {
-          lists.push({
-            title: "Assigned",
-            icon: "user-plus",
-            params: {
-              assigned: "*",
-              status: "open",
-            },
-          });
-        }
-        lists.push({
-          title: "Closed",
-          icon: "lock",
-          params: {
-            status: "closed",
-          },
-        });
-
-        return { lists };
-      },
+      tags: (param) => buildTagLists({ kanbanHelper: this, param }),
+      categories: (param) => buildCategoryLists({ kanbanHelper: this, param }),
+      assigned: (param) => buildAssignedLists({ kanbanHelper: this, param }),
     };
   }
 
   get resolvedDescriptorParts() {
-    const descriptor = this.currentDescriptor;
+    let descriptor = this.currentDescriptor;
 
     if (typeof descriptor !== "string") {
       return;
@@ -252,6 +109,10 @@ export default class extends Service {
 
     const parts = descriptor.split(":");
     return parts;
+  }
+
+  get mode() {
+    return this.resolvedDescriptorParts[0];
   }
 
   findDefinition() {

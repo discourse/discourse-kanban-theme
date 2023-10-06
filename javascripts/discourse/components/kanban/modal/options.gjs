@@ -16,9 +16,14 @@ import { tracked } from "@glimmer/tracking";
 
 export default class KanbanOptionsController extends Component {
   <template>
-    <DModal class="kanban-modal" @title={{i18n (themePrefix "modal.title")}}>
+    <DModal
+      class="kanban-modal"
+      @title={{i18n (themePrefix "modal.title")}}
+      @closeModal={{@closeModal}}
+    >
       <:body>
-        <div class="controls">
+        <div class="control-group">
+          <label>{{i18n (themePrefix "modal.mode")}}</label>
           <ComboBox
             @content={{this.modes}}
             @value={{this.mode}}
@@ -28,7 +33,8 @@ export default class KanbanOptionsController extends Component {
           />
         </div>
 
-        <div class="controls">
+        <div class="control-group">
+          <label>{{i18n (themePrefix "modal.lists")}}</label>
           {{#if this.isTags}}
             <TagChooser
               @tags={{this.tags}}
@@ -87,7 +93,7 @@ export default class KanbanOptionsController extends Component {
     if (this.mode === "tags") {
       this.tags = params?.split(",") || [];
     } else if (this.mode === "categories") {
-      this.categories = params?.split(",") || [];
+      this.categories = params?.split(",").map((v) => parseInt(v, 10)) || [];
     } else if (this.mode === "assigned") {
       this.usernames = params?.split(",") || [];
     }
@@ -95,26 +101,29 @@ export default class KanbanOptionsController extends Component {
 
   @action
   apply() {
-    let href = this.kanbanHelper.hrefForCategory(
-      this.kanbanHelper.discoveryCategory
-    );
-    href += "?board=";
+    let descriptor = "";
     if (this.isTags) {
-      href += "tags";
+      descriptor += "tags";
       if (this.tags.length > 0) {
-        href += `:${this.tags.join(",")}`;
+        descriptor += `:${this.tags.join(",")}`;
       }
     } else if (this.isCategories) {
-      href += "categories";
+      descriptor += "categories";
       if (this.categories.length > 0) {
-        href += `:${this.categories.join(",")}`;
+        descriptor += `:${this.categories.join(",")}`;
       }
     } else if (this.isAssigned) {
-      href += "assigned";
+      descriptor += "assigned";
       if (this.usernames.length > 0) {
-        href += `:${this.usernames}`;
+        descriptor += `:${this.usernames}`;
       }
     }
+
+    let href = this.kanbanHelper.getBoardUrl({
+      category: this.kanbanHelper.discoveryCategory,
+      tag: this.kanbanHelper.discoveryTag,
+      descriptor,
+    });
 
     this.args.closeModal();
     DiscourseURL.routeTo(href, { replaceURL: true });
