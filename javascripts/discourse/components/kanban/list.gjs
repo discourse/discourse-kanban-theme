@@ -32,6 +32,7 @@ function addedElements(before, after) {
 
 export default class KanbanList extends Component {
   <template>
+    {{! template-lint-disable modifier-name-case }}
     <div
       class={{concatClass
         "discourse-kanban-list"

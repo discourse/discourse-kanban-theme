@@ -21,7 +21,7 @@ export default class KanbanCard extends Component {
         (if this.dragging "dragging")
       }}
       draggable="true"
-      href={{this.args.topic.lastUnreadUrl}}
+      href={{@topic.lastUnreadUrl}}
       {{on "dragstart" this.dragStart}}
       {{on "dragend" this.dragEnd}}
     >
@@ -44,6 +44,7 @@ export default class KanbanCard extends Component {
       <div class="card-row">
         <div class="posters">
           {{#each @topic.posters as |poster|}}
+            {{! template-lint-disable no-nested-interactive }}
             <a
               href={{poster.user.path}}
               data-user-card={{poster.user.username}}
@@ -63,6 +64,7 @@ export default class KanbanCard extends Component {
         </div>
 
         {{#if @topic.assigned_to_user.username}}
+          {{! template-lint-disable no-nested-interactive }}
           <a class="assigned-to" href={{@topic.assignedToUserPath}}>
             {{icon "user-plus"}}{{@topic.assigned_to_user.username}}
           </a>
