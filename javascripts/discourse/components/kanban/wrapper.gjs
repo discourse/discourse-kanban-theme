@@ -25,7 +25,11 @@ export default class Kanban extends Component {
               @action={{this.toggleFullscreen}}
               @title={{themePrefix "fullscreen"}}
             />
-            <DButton @icon="filter" @action={{this.openSettings}} @title={{themePrefix "configure"}} />
+            <DButton
+              @icon="filter"
+              @action={{this.openSettings}}
+              @title={{themePrefix "configure"}}
+            />
             <CopyLinkButton />
           </div>
 
@@ -37,10 +41,15 @@ export default class Kanban extends Component {
             />
           {{else}}
             <div class="discourse-kanban-list kanban-empty-state">
-              
+
               {{i18n (themePrefix "no_lists")}}
-              <DButton @icon="filter" class="btn-primary" @action={{this.openSettings}} @label={{themePrefix "configure"}} />
-              
+              <DButton
+                @icon="filter"
+                class="btn-primary"
+                @action={{this.openSettings}}
+                @label={{themePrefix "configure"}}
+              />
+
             </div>
           {{/each}}
 

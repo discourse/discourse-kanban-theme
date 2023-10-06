@@ -18,7 +18,7 @@ export default class KanbanNav extends Component {
 
   get href() {
     const { category, tag } = this.args.outletArgs;
-    return this.kanbanHelper.getBoardUrl({category, tag});
+    return this.kanbanHelper.getBoardUrl({ category, tag });
   }
 
   get active() {

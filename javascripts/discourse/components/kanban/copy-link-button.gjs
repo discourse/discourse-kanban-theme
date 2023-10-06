@@ -1,8 +1,8 @@
 import Component from "@glimmer/component";
 import DButton from "discourse/components/d-button";
-import {action} from "@ember/object";
+import { action } from "@ember/object";
 import discourseDebounce from "discourse-common/lib/debounce";
-import {tracked} from "@glimmer/tracking";
+import { tracked } from "@glimmer/tracking";
 
 export default class CopyLinkButton extends Component {
   <template>
