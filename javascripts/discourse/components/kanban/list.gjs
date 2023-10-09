@@ -147,7 +147,9 @@ export default class KanbanList extends Component {
   @action
   dragOver(event) {
     event.preventDefault();
-    this.acceptDrag = true;
+    if (this.args.definition !== this.args.dragData.oldDefinition) {
+      this.acceptDrag = true;
+    }
   }
 
   @action
@@ -173,6 +175,11 @@ export default class KanbanList extends Component {
 
   @action
   dropped() {
+    if (this.args.definition !== this.args.dragData.oldDefinition) {
+      // From same list
+      return;
+    }
+
     const { topic, oldDefinition, oldRefresh } = this.args.dragData;
     const thisDefinition = this.args.definition;
 
