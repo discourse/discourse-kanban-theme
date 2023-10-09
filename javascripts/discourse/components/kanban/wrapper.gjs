@@ -7,6 +7,7 @@ import DiscourseKanbanList from "./list";
 import bodyClass from "discourse/helpers/body-class";
 import i18n from "discourse-common/helpers/i18n";
 import concatClass from "discourse/helpers/concat-class";
+import KanbanOptionsModal from "./modal/options";
 
 export default class Kanban extends Component {
   <template>
@@ -55,6 +56,7 @@ export default class Kanban extends Component {
   </template>
 
   @service kanbanManager;
+  @service modal;
 
   @tracked dragData;
 
@@ -66,5 +68,11 @@ export default class Kanban extends Component {
   @action
   exitFullscreen() {
     this.kanbanManager.fullscreen = false;
+  }
+
+  @action
+  openSettings(menu) {
+    this.modal.show(KanbanOptionsModal);
+    menu.close();
   }
 }
