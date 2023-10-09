@@ -71,7 +71,7 @@ export default class KanbanOptionsController extends Component {
     </DModal>
   </template>
 
-  @service kanbanHelper;
+  @service kanbanManager;
   @service site;
 
   @tracked tags = [];
@@ -86,7 +86,7 @@ export default class KanbanOptionsController extends Component {
 
   constructor() {
     super(...arguments);
-    const [mode, params] = this.kanbanHelper.resolvedDescriptorParts;
+    const [mode, params] = this.kanbanManager.resolvedDescriptorParts;
 
     this.mode = mode;
     if (this.mode === "tags") {
@@ -118,9 +118,9 @@ export default class KanbanOptionsController extends Component {
       }
     }
 
-    let href = this.kanbanHelper.getBoardUrl({
-      category: this.kanbanHelper.discoveryCategory,
-      tag: this.kanbanHelper.discoveryTag,
+    let href = this.kanbanManager.getBoardUrl({
+      category: this.kanbanManager.discoveryCategory,
+      tag: this.kanbanManager.discoveryTag,
       descriptor,
     });
 

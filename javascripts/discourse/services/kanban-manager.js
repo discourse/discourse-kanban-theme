@@ -5,7 +5,7 @@ import buildTagLists from "../lib/kanban-list-builders/tags";
 import buildCategoryLists from "../lib/kanban-list-builders/categories";
 import buildAssignedLists from "../lib/kanban-list-builders/assigned";
 
-export default class extends Service {
+export default class KanbanManager extends Service {
   @service router;
 
   getBoardUrl({ category, tag, descriptor = "default" }) {
@@ -70,9 +70,9 @@ export default class extends Service {
 
   get definitionBuilders() {
     return {
-      tags: (param) => buildTagLists({ kanbanHelper: this, param }),
-      categories: (param) => buildCategoryLists({ kanbanHelper: this, param }),
-      assigned: (param) => buildAssignedLists({ kanbanHelper: this, param }),
+      tags: (param) => buildTagLists({ kanbanManager: this, param }),
+      categories: (param) => buildCategoryLists({ kanbanManager: this, param }),
+      assigned: (param) => buildAssignedLists({ kanbanManager: this, param }),
     };
   }
 

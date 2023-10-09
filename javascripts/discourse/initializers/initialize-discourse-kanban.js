@@ -27,11 +27,11 @@ export default {
       api.modifyClass("component:navigation-item", {
         pluginId: PLUGIN_ID,
 
-        kanbanHelper: service(),
+        kanbanManager: service(),
         @discourseComputed(
           "content.filterMode",
           "filterMode",
-          "kanbanHelper.active"
+          "kanbanManager.active"
         )
         active(contentFilterMode, filterMode, active) {
           if (active) {

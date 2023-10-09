@@ -83,7 +83,7 @@ export default class KanbanList extends Component {
     </div>
   </template>
 
-  @service kanbanHelper;
+  @service kanbanManager;
   @service dialog;
   @service modal;
   @service store;
@@ -112,7 +112,7 @@ export default class KanbanList extends Component {
     };
 
     const { discoveryTag, discoveryCategory, discoveryParams } =
-      this.kanbanHelper;
+      this.kanbanManager;
 
     if (discoveryCategory) {
       defaultParams.category = discoveryCategory.id;
@@ -181,7 +181,7 @@ export default class KanbanList extends Component {
     let requireConfirmation = settings.require_confirmation;
     let confirmationMessage = "";
 
-    if (this.kanbanHelper.mode === "tags") {
+    if (this.kanbanManager.mode === "tags") {
       const toAdd = addedElements(
         oldDefinition.params.tags,
         thisDefinition.params.tags

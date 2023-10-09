@@ -1,7 +1,7 @@
 import Category from "discourse/models/category";
 import Site from "discourse/models/site";
 
-export default function buildCategoryLists({ kanbanHelper, param }) {
+export default function buildCategoryLists({ kanbanManager, param }) {
   const lists = [];
 
   if (param) {
@@ -20,20 +20,20 @@ export default function buildCategoryLists({ kanbanHelper, param }) {
         };
       })
     );
-  } else if (kanbanHelper.discoveryCategory) {
+  } else if (kanbanManager.discoveryCategory) {
     lists.push({
-      title: `${kanbanHelper.discoveryCategory.name}`,
+      title: `${kanbanManager.discoveryCategory.name}`,
       params: {
-        category: kanbanHelper.discoveryCategory.id,
+        category: kanbanManager.discoveryCategory.id,
         no_subcategories: true,
       },
     });
 
-    if (kanbanHelper.discoveryCategory.subcategories) {
+    if (kanbanManager.discoveryCategory.subcategories) {
       lists.push(
-        ...kanbanHelper.discoveryCategory.subcategories.map((category) => {
+        ...kanbanManager.discoveryCategory.subcategories.map((category) => {
           return {
-            title: `${kanbanHelper.discoveryCategory.name} / ${category.name}`,
+            title: `${kanbanManager.discoveryCategory.name} / ${category.name}`,
             params: {
               category: category.id,
             },

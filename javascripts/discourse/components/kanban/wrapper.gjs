@@ -11,7 +11,7 @@ import i18n from "discourse-common/helpers/i18n";
 
 export default class Kanban extends Component {
   <template>
-    {{#if this.kanbanHelper.active}}
+    {{#if this.kanbanManager.active}}
       <div class="discourse-kanban {{if this.fullscreen 'fullscreen'}}">
         <div class="discourse-kanban-container">
           <div class="kanban-spacer">
@@ -32,7 +32,7 @@ export default class Kanban extends Component {
             <CopyLinkButton />
           </div>
 
-          {{#each this.kanbanHelper.listDefinitions as |definition|}}
+          {{#each this.kanbanManager.listDefinitions as |definition|}}
             <DiscourseKanbanList
               @definition={{definition}}
               @dragData={{this.dragData}}
@@ -62,7 +62,7 @@ export default class Kanban extends Component {
     {{/if}}
   </template>
 
-  @service kanbanHelper;
+  @service kanbanManager;
   @service modal;
 
   @tracked fullscreen = false;

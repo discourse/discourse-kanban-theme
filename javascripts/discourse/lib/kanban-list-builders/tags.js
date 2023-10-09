@@ -1,9 +1,9 @@
-export default function buildTagLists({ kanbanHelper, param }) {
+export default function buildTagLists({ kanbanManager, param }) {
   const tags = [];
   if (param) {
     tags.push(...param.split(","));
-  } else if (kanbanHelper.discoveryTopTags) {
-    tags.push(...kanbanHelper.discoveryTopTags);
+  } else if (kanbanManager.discoveryTopTags) {
+    tags.push(...kanbanManager.discoveryTopTags);
   }
 
   const lists = [];

@@ -11,15 +11,15 @@ export default class KanbanNav extends Component {
     </li>
   </template>
 
-  @service kanbanHelper;
+  @service kanbanManager;
 
   get href() {
     const { category, tag } = this.args.outletArgs;
-    return this.kanbanHelper.getBoardUrl({ category, tag });
+    return this.kanbanManager.getBoardUrl({ category, tag });
   }
 
   get active() {
     const { filterMode } = this.args.outletArgs;
-    return filterMode.split("/").pop() === "latest" && this.kanbanHelper.active;
+    return filterMode.split("/").pop() === "latest" && this.kanbanManager.active;
   }
 }
