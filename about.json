@@ -9,5 +9,7 @@
   "maximum_discourse_version": null,
   "assets": {},
   "color_schemes": {},
-  "learn_more": "https://meta.discourse.org/t/beginners-guide-to-using-discourse-themes/91966"
+  "modifiers": {
+    "svg_icons": ["user-minus"]
+  }
 }

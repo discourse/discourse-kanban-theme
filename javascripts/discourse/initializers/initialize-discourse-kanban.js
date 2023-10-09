@@ -1,15 +1,14 @@
 import { inject as service } from "@ember/service";
 import { withPluginApi } from "discourse/lib/plugin-api";
-import discourseComputed, {
-  observes,
-  on,
-} from "discourse-common/utils/decorators";
+import discourseComputed from "discourse-common/utils/decorators";
 import {
   boardDefaultView,
   displayConnector,
   isDefaultView,
 } from "../lib/kanban-utilities";
 import { next } from "@ember/runloop";
+import DiscourseKanban from "../components/kanban/wrapper";
+import DiscourseKanbanNav from "../components/kanban/nav";
 
 const PLUGIN_ID = "kanban-board";
 
@@ -17,37 +16,22 @@ export default {
   name: "my-initializer",
   initialize() {
     withPluginApi("0.8.7", (api) => {
+      api.renderInOutlet("discovery-list-container-top", DiscourseKanban);
+      api.renderInOutlet("extra-nav-item", DiscourseKanbanNav);
+
       api.addDiscoveryQueryParam("board", {
         replace: true,
         refreshModel: true,
       });
 
-      api.modifyClass("controller:discovery/topics", {
-        pluginId: PLUGIN_ID,
-
-        kanbanHelper: service(),
-
-        @on("init")
-        @observes("model")
-        modelChange() {
-          this.kanbanHelper.updateCurrentDiscoveryModel(this.model);
-        },
-
-        @on("init")
-        @observes("category")
-        changeCategory() {
-          this.kanbanHelper.updateCurrentCategory(this.category);
-        },
-      });
-
       api.modifyClass("component:navigation-item", {
         pluginId: PLUGIN_ID,
 
-        kanbanHelper: service(),
+        kanbanManager: service(),
         @discourseComputed(
           "content.filterMode",
           "filterMode",
-          "kanbanHelper.active"
+          "kanbanManager.active"
         )
         active(contentFilterMode, filterMode, active) {
           if (active) {
