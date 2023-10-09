@@ -4,9 +4,12 @@ import { get } from "@ember/object";
 import buildTagLists from "../lib/kanban-list-builders/tags";
 import buildCategoryLists from "../lib/kanban-list-builders/categories";
 import buildAssignedLists from "../lib/kanban-list-builders/assigned";
+import { tracked } from "@glimmer/tracking";
 
 export default class KanbanManager extends Service {
   @service router;
+
+  @tracked fullscreen;
 
   getBoardUrl({ category, tag, descriptor = "default" }) {
     const categorySlug = category ? Category.slugFor(category) : null;

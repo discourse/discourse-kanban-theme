@@ -1,38 +1,30 @@
 import Component from "@glimmer/component";
 import { inject as service } from "@ember/service";
 import { action } from "@ember/object";
-import KanbanOptionsModal from "./modal/options";
 import { tracked } from "@glimmer/tracking";
 import DButton from "discourse/components/d-button";
 import DiscourseKanbanList from "./list";
-import CopyLinkButton from "./copy-link-button";
 import bodyClass from "discourse/helpers/body-class";
 import i18n from "discourse-common/helpers/i18n";
 
 export default class Kanban extends Component {
   <template>
     {{#if this.kanbanManager.active}}
-      <div class="discourse-kanban {{if this.fullscreen 'fullscreen'}}">
-        <div class="discourse-kanban-container">
-          <div class="kanban-spacer">
+      <div
+        class="discourse-kanban
+          {{if this.kanbanManager.fullscreen 'fullscreen'}}"
+      >
+        {{#if this.kanbanManager.fullscreen}}
+          <div class="fullscreen-close-wrapper">
             <DButton
-              @icon={{if
-                this.fullscreen
-                "discourse-compress"
-                "discourse-expand"
-              }}
-              @action={{this.toggleFullscreen}}
+              class="fullscreen-close"
+              @icon="times"
+              @action={{this.exitFullscreen}}
               title={{themePrefix "fullscreen"}}
             />
-            <DButton
-              @icon="filter"
-              @action={{this.openSettings}}
-              title={{themePrefix "configure"}}
-              class="configure-kanban-button"
-            />
-            <CopyLinkButton />
           </div>
-
+        {{/if}}
+        <div class="discourse-kanban-container">
           {{#each this.kanbanManager.listDefinitions as |definition|}}
             <DiscourseKanbanList
               @definition={{definition}}
@@ -55,18 +47,12 @@ export default class Kanban extends Component {
         </div>
 
         {{bodyClass "kanban-active"}}
-
-        {{#if this.fullScreen}}
-          {{bodyClass "kanban-fullscreen"}}
-        {{/if}}
       </div>
     {{/if}}
   </template>
 
   @service kanbanManager;
-  @service modal;
 
-  @tracked fullscreen = false;
   @tracked dragData;
 
   @action
@@ -75,12 +61,7 @@ export default class Kanban extends Component {
   }
 
   @action
-  toggleFullscreen() {
-    this.fullscreen = !this.fullscreen;
-  }
-
-  @action
-  openSettings() {
-    this.modal.show(KanbanOptionsModal);
+  exitFullscreen() {
+    this.kanbanManager.fullscreen = false;
   }
 }

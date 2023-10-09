@@ -9,6 +9,7 @@ import {
 import { next } from "@ember/runloop";
 import DiscourseKanban from "../components/kanban/wrapper";
 import DiscourseKanbanNav from "../components/kanban/nav";
+import DiscourseKanbanControls from "../components/kanban/controls";
 
 const PLUGIN_ID = "kanban-board";
 
@@ -18,6 +19,7 @@ export default {
     withPluginApi("0.8.7", (api) => {
       api.renderInOutlet("discovery-list-container-top", DiscourseKanban);
       api.renderInOutlet("extra-nav-item", DiscourseKanbanNav);
+      api.renderInOutlet("before-create-topic-button", DiscourseKanbanControls);
 
       api.addDiscoveryQueryParam("board", {
         replace: true,

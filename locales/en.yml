@@ -7,8 +7,9 @@ en:
   menu_label: "Board"
   copy_link: "Copy link to clipboard"
   configure: "Configure kanban board"
-  fullscreen: "View fullscreen"
+  fullscreen: "Toggle fullscreen"
   no_lists: "No Kanban lists configured..."
+  controls: "Kanban Board Controls"
   modal:
     title: "Configure Kanban"
     tags_placeholder: Tags to display...

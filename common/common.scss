@@ -1,6 +1,53 @@
+html:has(body.kanban-active) {
+  overscroll-behavior: none;
+}
+
 .discourse-kanban {
   position: relative;
   display: flex;
+
+  --d-sidebar-gap: 2em;
+  @media screen and (max-width: 1000px) {
+    --d-sidebar-gap: 1em;
+  }
+
+  // Normal sidebar
+  body.has-sidebar-page:not(.full-width-enabled) & {
+    --main-outlet-wrapper-width: min(
+      calc(var(--d-sidebar-width) + var(--d-max-width)),
+      100vw
+    );
+    --page-margin-width: calc((100vw - var(--main-outlet-wrapper-width)) / 2);
+    width: calc(100% + var(--page-margin-width) + var(--d-sidebar-gap) + 10px);
+    left: calc(0px - var(--d-sidebar-gap));
+
+    .discourse-kanban-container {
+      padding-left: var(--d-sidebar-gap);
+    }
+  }
+
+  // Sidebar with full width
+  body.has-sidebar-page.full-width-enabled & {
+    --space-on-left: max(
+      calc((100vw - 100%) / 2),
+      calc(var(--d-sidebar-width) + var(--d-sidebar-gap))
+    );
+
+    left: calc(0px - var(--space-on-left) + var(--d-sidebar-width));
+
+    width: calc(100vw - var(--d-sidebar-width));
+
+    .discourse-kanban-container {
+      padding-left: var(--d-sidebar-gap);
+    }
+  }
+
+  // No sidebar
+  body:not(.has-sidebar-page) & {
+    width: 100vw;
+    left: 50%;
+    margin-left: -50vw;
+  }
 
   &.fullscreen {
     position: fixed;
@@ -9,7 +56,7 @@
     left: 0;
     right: 0;
     z-index: z("fullscreen");
-    background-color: var(--secondary, $secondary);
+    background-color: var(--secondary);
     width: 100%;
     padding: 0;
     margin: 0;
@@ -17,50 +64,33 @@
 
     .discourse-kanban-container {
       height: auto;
-      padding: 10px 0;
+      padding: 10px !important;
       max-height: 100%;
+    }
+
+    .fullscreen-close-wrapper {
+      padding: 10px 0 10px 10px;
+      display: flex;
     }
   }
 }
 
 .discourse-kanban-container {
+  box-sizing: border-box;
   width: 100%;
-  height: 70vh;
-  margin-left: 40px;
+  height: 100%;
   display: flex;
   overflow-x: scroll;
-  padding: 10px 0 5px 0;
-
-  &:after {
-    content: "";
-    position: absolute;
-    right: 0px;
-    width: 10px;
-    height: 100%;
-    background: linear-gradient
-      (to right, transparent, var(--secondary, $secondary));
-  }
-
-  .kanban-spacer {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    width: 40px;
-    flex-shrink: 0;
-    padding: 0;
-    margin: 0;
-    position: absolute;
-    left: -3px;
-
-    button {
-      margin-bottom: 4px;
-    }
-  }
+  overflow-y: hidden;
+  overscroll-behavior: contain;
+  padding: 10px;
+  gap: 0 10px;
 
   .discourse-kanban-list {
     position: relative;
     overflow: hidden;
-    background: var(--primary-low, $primary-low);
+    background: var(--primary-100);
+    border: 1px solid var(--primary-low);
 
     &.kanban-empty-state {
       padding: 10px;
@@ -70,36 +100,15 @@
     }
 
     &.accept-drag {
-      background: var(--primary-medium, $primary-medium);
+      background: var(--primary-300);
     }
 
-    &:after {
-      content: "";
-      position: absolute;
-      bottom: 0px;
-      width: 100%;
-      height: 10px;
-      background: linear-gradient(
-        to bottom,
-        transparent,
-        var(--primary-low, $primary-low)
-      );
-    }
+    width: 350px;
 
-    .list-bottom {
-      height: 10px;
-    }
-
-    width: MAX(
-      calc((100% - 8px - (8px * (#{$num-columns} - 1))) / #{$num-columns}),
-      calc(
-        (#{$large-width} - 400px - (8px * (#{$num-columns} - 1))) / #{$num-columns}
-      )
-    );
     flex-shrink: 0;
-    margin: 0 4px;
+
     padding: 10px 0px 0px 0px;
-    border-radius: 3px;
+
     display: flex;
     flex-direction: column;
 
@@ -117,21 +126,17 @@
 
     .topic-card {
       display: block;
-      color: var(--primary-medium, $primary-medium);
-
-      &.topic-unseen {
-        color: var(--primary-medium, $primary-medium);
-      }
+      color: var(--primary);
 
       margin: 10px 0;
 
-      background: var(--secondary, $secondary);
-      border-radius: 3px;
-      padding: 5px;
-      box-shadow: 0 1px 0 var(--primary-medium, $primary-medium);
+      background: var(--secondary);
+      padding: 10px;
+      box-shadow: var(--primary-low) 0px 3px 6px;
+      border: 1px solid var(--primary-low);
 
       &.dragging {
-        background-color: var(--tertiary-low, $tertiary-low);
+        background-color: var(--tertiary-low);
       }
 
       .card-row {
@@ -155,7 +160,7 @@
 
         .assigned-to {
           margin-top: auto;
-          color: var(--primary-medium, $primary-medium);
+          color: var(--primary-medium);
           font-size: $font-down-2;
         }
       }
@@ -184,5 +189,65 @@
   .select-kit,
   div.ac-wrap {
     width: 100%;
+  }
+}
+
+body.kanban-active {
+  overflow: hidden;
+
+  .topic-list,
+  .topic-list-bottom {
+    display: none;
+  }
+
+  #main-outlet {
+    height: calc(100dvh - var(--header-offset) - 1.5em);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .list-container {
+    flex-shrink: 1;
+    flex-grow: 1;
+    min-height: 0; // Override auto min-height from flexbox
+  }
+
+  .list-container .row:nth-child(2),
+  .full-width {
+    height: 100%;
+  }
+
+  #list-area {
+    height: 100%;
+    max-height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: visible;
+  }
+
+  .discourse-kanban {
+    flex-shrink: 1;
+    flex-grow: 1;
+    overflow: visible;
+    min-height: 0;
+  }
+}
+
+ul.kanban-controls {
+  padding: 0.5rem;
+  margin: 0;
+  list-style: none;
+
+  li .btn {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  li {
+    margin-bottom: 2px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
   }
 }

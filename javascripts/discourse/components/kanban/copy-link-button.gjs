@@ -3,14 +3,15 @@ import DButton from "discourse/components/d-button";
 import { action } from "@ember/object";
 import discourseDebounce from "discourse-common/lib/debounce";
 import { tracked } from "@glimmer/tracking";
+import concatClass from "discourse/helpers/concat-class";
 
 export default class KanbanCopyLinkButton extends Component {
   <template>
     <DButton
       @icon={{if this.copyConfirm "check" "copy"}}
-      class={{if this.copyConfirm "ok"}}
+      class={{concatClass 'btn-transparent'}}
       @action={{this.copy}}
-      title={{themePrefix "copy_link"}}
+      @label={{themePrefix "copy_link"}}
     />
   </template>
 
