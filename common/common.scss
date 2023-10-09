@@ -5,6 +5,7 @@ html:has(body.kanban-active) {
 .discourse-kanban {
   position: relative;
   display: flex;
+  justify-content: center;
 
   --d-sidebar-gap: 2em;
   @media screen and (max-width: 1000px) {
@@ -81,7 +82,6 @@ html:has(body.kanban-active) {
 
 .discourse-kanban-container {
   box-sizing: border-box;
-  width: 100%;
   height: 100%;
   display: flex;
   overflow-x: scroll;
