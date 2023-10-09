@@ -32,6 +32,14 @@ export default class KanbanCard extends Component {
         {{this.formatDate @topic.bumpedAt format="tiny" noTitle="true"}}
       </div>
 
+      {{#if this.showCategory}}
+        <div class="card-row">
+          <div class="category">
+            {{this.categoryBadge @topic.category}}
+          </div>
+        </div>
+      {{/if}}
+
       {{#if this.showTags}}
         <div class="card-row">
           <div class="tags">
@@ -43,26 +51,28 @@ export default class KanbanCard extends Component {
       {{/if}}
 
       <div class="card-row">
-        <div class="posters">
-          {{#each @topic.posters as |poster|}}
-            {{! template-lint-disable no-nested-interactive }}
-            <a
-              href={{poster.user.path}}
-              data-user-card={{poster.user.username}}
-              class={{poster.extraClasses}}
-            >
-              {{htmlSafe
-                (renderAvatar
-                  poster
-                  avatarTemplatePath="user.avatar_template"
-                  usernamePath="user.username"
-                  namePath="user.name"
-                  imageSize="tiny"
-                )
-              }}
-            </a>
-          {{/each}}
-        </div>
+        {{#if this.showPosters}}
+          <div class="posters">
+            {{#each @topic.posters as |poster|}}
+              {{! template-lint-disable no-nested-interactive }}
+              <a
+                href={{poster.user.path}}
+                data-user-card={{poster.user.username}}
+                class={{poster.extraClasses}}
+              >
+                {{htmlSafe
+                  (renderAvatar
+                    poster
+                    avatarTemplatePath="user.avatar_template"
+                    usernamePath="user.username"
+                    namePath="user.name"
+                    imageSize="tiny"
+                  )
+                }}
+              </a>
+            {{/each}}
+          </div>
+        {{/if}}
 
         {{#if @topic.assigned_to_user.username}}
           {{! template-lint-disable no-nested-interactive }}
@@ -83,6 +93,7 @@ export default class KanbanCard extends Component {
 
   // TODO - FIX THIS ONCE CORE EXPORTS IT PROPERLY
   formatDate = getOwner(this).resolveRegistration("helper:format-date");
+  categoryBadge = getOwner(this).resolveRegistration("helper:category-badge");
 
   @action
   dragStart(event) {
@@ -107,5 +118,13 @@ export default class KanbanCard extends Component {
     return this.args.topic.tags
       .filter((t) => t !== definitionTag)
       .map((t) => renderTag(t));
+  }
+
+  get showCategory() {
+    return !this.args.definition.params.category;
+  }
+
+  get showPosters() {
+    return false;
   }
 }
