@@ -75,14 +75,10 @@ export default class KanbanOptionsController extends Component {
   @service site;
 
   @tracked tags = [];
-@tracked usernames = [];
-@tracked categories = [];
-@tracked mode = "tags";
-modes = [{ id: "tags" }, { id: "categories" }, { id: "assigned" }];
-
-
-
-
+  @tracked usernames = [];
+  @tracked categories = [];
+  @tracked mode = "tags";
+  modes = [{ id: "tags" }, { id: "categories" }, { id: "assigned" }];
 
   @equal("mode", "tags") isTags;
   @equal("mode", "categories") isCategories;

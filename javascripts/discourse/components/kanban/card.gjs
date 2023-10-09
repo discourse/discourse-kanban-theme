@@ -79,10 +79,9 @@ export default class KanbanCard extends Component {
   </template>
 
   @tracked dragging;
-// TODO - FIX THIS ONCE CORE EXPORTS IT PROPERLY
+
+  // TODO - FIX THIS ONCE CORE EXPORTS IT PROPERLY
   formatDate = getOwner(this).resolveRegistration("helper:format-date");
-
-
 
   @action
   dragStart(event) {
