@@ -64,8 +64,7 @@ export default class KanbanManager extends Service {
   }
 
   get listDefinitions() {
-    const definition = this.findDefinition();
-    return definition?.lists;
+    return this.findDefinition()?.lists;
   }
 
   get definitionBuilders() {
@@ -107,8 +106,7 @@ export default class KanbanManager extends Service {
       }
     }
 
-    const parts = descriptor.split(":");
-    return parts;
+    return descriptor.split(":");
   }
 
   get mode() {

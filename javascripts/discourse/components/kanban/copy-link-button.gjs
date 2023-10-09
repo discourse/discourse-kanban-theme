@@ -4,7 +4,7 @@ import { action } from "@ember/object";
 import discourseDebounce from "discourse-common/lib/debounce";
 import { tracked } from "@glimmer/tracking";
 
-export default class CopyLinkButton extends Component {
+export default class KanbanCopyLinkButton extends Component {
   <template>
     <DButton
       @icon={{if this.copyConfirm "check" "copy"}}

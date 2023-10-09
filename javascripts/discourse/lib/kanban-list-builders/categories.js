@@ -13,7 +13,7 @@ export default function buildCategoryLists({ kanbanManager, param }) {
     lists.push(
       ...categories.map((category) => {
         return {
-          title: `${category.name}`,
+          title: category.name,
           params: {
             category: category.id,
           },
@@ -22,7 +22,7 @@ export default function buildCategoryLists({ kanbanManager, param }) {
     );
   } else if (kanbanManager.discoveryCategory) {
     lists.push({
-      title: `${kanbanManager.discoveryCategory.name}`,
+      title: kanbanManager.discoveryCategory.name,
       params: {
         category: kanbanManager.discoveryCategory.id,
         no_subcategories: true,
@@ -49,7 +49,7 @@ export default function buildCategoryLists({ kanbanManager, param }) {
     lists.push(
       ...categories.map((category) => {
         return {
-          title: `${category.name}`,
+          title: category.name,
           params: {
             category: category.id,
           },
