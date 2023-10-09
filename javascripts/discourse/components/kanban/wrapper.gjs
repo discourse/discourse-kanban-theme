@@ -22,12 +22,13 @@ export default class Kanban extends Component {
                 "discourse-expand"
               }}
               @action={{this.toggleFullscreen}}
-              @title={{themePrefix "fullscreen"}}
+              title={{themePrefix "fullscreen"}}
             />
             <DButton
               @icon="filter"
               @action={{this.openSettings}}
-              @title={{themePrefix "configure"}}
+              title={{themePrefix "configure"}}
+              class="configure-kanban-button"
             />
             <CopyLinkButton />
           </div>

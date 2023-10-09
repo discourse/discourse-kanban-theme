@@ -29,6 +29,7 @@ export default class KanbanOptionsController extends Component {
             @onChange={{fn (mut this.mode)}}
             @valueProperty="id"
             @nameProperty="id"
+            @class="kanban-mode-chooser"
           />
         </div>
 
@@ -40,6 +41,7 @@ export default class KanbanOptionsController extends Component {
               @allowCreate={{false}}
               @filterPlaceholder={{i18n (themePrefix "modal.tags_placeholder")}}
               @everyTag={{true}}
+              @class="kanban-tag-chooser"
             />
           {{else if this.isCategories}}
             <MultiSelect

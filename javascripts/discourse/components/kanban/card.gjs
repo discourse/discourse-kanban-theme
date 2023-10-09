@@ -22,6 +22,7 @@ export default class KanbanCard extends Component {
       }}
       draggable="true"
       href={{@topic.lastUnreadUrl}}
+      data-topic-id={{@topic.id}}
       {{on "dragstart" this.dragStart}}
       {{on "dragend" this.dragEnd}}
     >

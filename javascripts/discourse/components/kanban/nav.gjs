@@ -1,11 +1,15 @@
 import Component from "@glimmer/component";
 import { inject as service } from "@ember/service";
 import i18n from "discourse-common/helpers/i18n";
+import concatClass from "discourse/helpers/concat-class";
 
 export default class KanbanNav extends Component {
   <template>
     <li>
-      <a href={{this.href}} class={{if this.active "active"}}>
+      <a
+        href={{this.href}}
+        class={{concatClass "kanban-nav" (if this.active "active")}}
+      >
         {{i18n (themePrefix "menu_label")}}
       </a>
     </li>
@@ -20,6 +24,8 @@ export default class KanbanNav extends Component {
 
   get active() {
     const { filterMode } = this.args.outletArgs;
-    return filterMode.split("/").pop() === "latest" && this.kanbanManager.active;
+    return (
+      filterMode.split("/").pop() === "latest" && this.kanbanManager.active
+    );
   }
 }
