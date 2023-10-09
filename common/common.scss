@@ -145,7 +145,7 @@ html:has(body.kanban-active) {
 
       .card-row {
         display: flex;
-        align-content: flex-start;
+        align-items: baseline;
 
         * {
           flex-grow: 0;
@@ -162,10 +162,24 @@ html:has(body.kanban-active) {
           font-size: $font-down-2;
         }
 
+        .tags {
+          font-size: var(--font-down-1);
+        }
+
+        .category {
+          flex-grow: 1;
+        }
+
         .assigned-to {
           margin-top: auto;
-          color: var(--primary-medium);
-          font-size: $font-down-2;
+          margin-bottom: auto;
+
+          font-size: var(--font-down-1);
+          vertical-align: baseline;
+
+          a {
+            color: var(--primary-medium);
+          }
         }
       }
     }

@@ -11,6 +11,7 @@ import concatClass from "discourse/helpers/concat-class";
 import { tracked } from "@glimmer/tracking";
 import { action } from "@ember/object";
 import { on } from "@ember/modifier";
+import { inject as service } from "@ember/service";
 
 export default class KanbanCard extends Component {
   <template>
@@ -32,26 +33,35 @@ export default class KanbanCard extends Component {
         {{this.formatDate @topic.bumpedAt format="tiny" noTitle="true"}}
       </div>
 
-      {{#if this.showCategory}}
-        <div class="card-row">
-          <div class="category">
-            {{this.categoryBadge @topic.category}}
-          </div>
-        </div>
-      {{/if}}
-
-      {{#if this.showTags}}
-        <div class="card-row">
+      <div class="card-row">
+        {{#if this.showTags}}
           <div class="tags">
             {{#each this.tags as |tag|}}
               {{htmlSafe tag}}
             {{/each}}
           </div>
-        </div>
-      {{/if}}
+        {{/if}}
+      </div>
 
       <div class="card-row">
-        {{#if this.showPosters}}
+        {{#if this.showCategory}}
+          <div class="category">
+            {{this.categoryBadge @topic.category}}
+          </div>
+        {{/if}}
+
+        {{#if @topic.assigned_to_user.username}}
+          {{! template-lint-disable no-nested-interactive }}
+          <div class="assigned-to">
+            <a href={{@topic.assignedToUserPath}}>
+              {{icon "user-plus"}}{{@topic.assigned_to_user.username}}
+            </a>
+          </div>
+        {{/if}}
+      </div>
+
+      {{#if this.showPosters}}
+        <div class="card-row">
           <div class="posters">
             {{#each @topic.posters as |poster|}}
               {{! template-lint-disable no-nested-interactive }}
@@ -72,15 +82,9 @@ export default class KanbanCard extends Component {
               </a>
             {{/each}}
           </div>
-        {{/if}}
 
-        {{#if @topic.assigned_to_user.username}}
-          {{! template-lint-disable no-nested-interactive }}
-          <a class="assigned-to" href={{@topic.assignedToUserPath}}>
-            {{icon "user-plus"}}{{@topic.assigned_to_user.username}}
-          </a>
-        {{/if}}
-      </div>
+        </div>
+      {{/if}}
 
       <PluginOutlet
         @name="kanban-card-bottom"
@@ -88,6 +92,8 @@ export default class KanbanCard extends Component {
       />
     </a>
   </template>
+
+  @service kanbanManager;
 
   @tracked dragging;
 
@@ -114,14 +120,19 @@ export default class KanbanCard extends Component {
   }
 
   get tags() {
-    const definitionTag = this.args.definition.params.tags;
+    const definitionTags = this.args.definition.params.tags || [];
+    const discoveryTag = this.kanbanManager.discoveryTag?.id;
+    const listTags = [...definitionTags, discoveryTag];
+
     return this.args.topic.tags
-      .filter((t) => t !== definitionTag)
+      .reject((t) => listTags?.includes(t))
       .map((t) => renderTag(t));
   }
 
   get showCategory() {
-    return !this.args.definition.params.category;
+    const definitionCategory = this.args.definition.params.category;
+    const discoveryCategory = this.kanbanManager.discoveryCategory;
+    return !(definitionCategory || discoveryCategory);
   }
 
   get showPosters() {
