@@ -8,16 +8,16 @@ export default class CopyLinkButton extends Component {
   <template>
     <DButton
       @icon={{if this.copyConfirm "check" "copy"}}
-      @class={{if this.copyConfirm "ok"}}
+      class={{if this.copyConfirm "ok"}}
       @action={{this.copy}}
-      @title={{themePrefix "copy_link"}}
+      title={{themePrefix "copy_link"}}
     />
   </template>
 
   @tracked copyConfirm = false;
 
   @action
-  async copy() {
+  copy() {
     const text = document.location;
     navigator.clipboard.writeText(text);
     this.copyConfirm = true;

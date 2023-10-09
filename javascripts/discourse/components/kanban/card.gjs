@@ -88,14 +88,12 @@ export default class KanbanCard extends Component {
     this.dragging = true;
     this.args.setDragData({ topic: this.args.topic });
     event.dataTransfer.dropEffect = "move";
-    // event.preventDefault();
     event.stopPropagation();
   }
 
   @action
   dragEnd(event) {
     this.dragging = false;
-    // event.preventDefault();
     event.stopPropagation();
   }
 

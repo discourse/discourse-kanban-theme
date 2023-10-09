@@ -8,11 +8,10 @@ import icon from "discourse-common/helpers/d-icon";
 import ConditionalLoadingSpinner from "discourse/components/conditional-loading-spinner";
 import DiscourseKanbanCard from "./card";
 import i18n from "discourse-common/helpers/i18n";
-import didInsert from "@ember/render-modifiers/modifiers/did-insert";
-import willDestroy from "@ember/render-modifiers/modifiers/will-destroy";
 import { on } from "@ember/modifier";
 import { tracked } from "@glimmer/tracking";
 import concatClass from "discourse/helpers/concat-class";
+import { modifier } from "ember-modifier";
 
 function removedElements(before, after) {
   if (!before) {
@@ -29,6 +28,21 @@ function removedElements(before, after) {
 function addedElements(before, after) {
   return removedElements(after, before);
 }
+
+const onIntersection = modifier((element, [callback]) => {
+  const io = new IntersectionObserver((entries) => {
+    if (entries[0].intersectionRatio <= 0) {
+      return;
+    }
+    callback();
+  });
+
+  io.observe(element);
+
+  return () => {
+    io.disconnect();
+  };
+});
 
 export default class KanbanList extends Component {
   <template>
@@ -64,11 +78,7 @@ export default class KanbanList extends Component {
           <ConditionalLoadingSpinner @condition={{this.loadingMode}} />
         </ConditionalLoadingSpinner>
 
-        <div
-          class="list-bottom"
-          {{didInsert this.setupIntersectionObserver}}
-          {{willDestroy this.teardownIntersectionObserver}}
-        ></div>
+        <div class="list-bottom" {{onIntersection this.loadMore}}></div>
       </div>
     </div>
   </template>
@@ -93,7 +103,7 @@ export default class KanbanList extends Component {
     this.refreshTopics();
   }
 
-  refreshTopics() {
+  async refreshTopics() {
     if (!this.loading && !this.list) {
       return;
     }
@@ -108,41 +118,25 @@ export default class KanbanList extends Component {
       defaultParams.category = discoveryCategory.id;
     }
 
-    const params = Object.assign(
-      {},
-      defaultParams,
-      discoveryParams,
-      this.args.definition.params
-    );
+    const params = {
+      ...defaultParams,
+      ...discoveryParams,
+      ...this.args.definition.params,
+    };
 
     if (discoveryTag) {
       params.tags = [...(params.tags || [])];
       params.tags.push(discoveryTag.id);
     }
 
-    this.store
-      .findFiltered("topicList", { filter: "latest", params })
-      .then((list) => {
-        this.list = list;
-        this.loading = false;
+    try {
+      this.list = await this.store.findFiltered("topicList", {
+        filter: "latest",
+        params,
       });
-  }
-
-  @action
-  setupIntersectionObserver(element) {
-    this.io = new IntersectionObserver((entries) => {
-      if (entries[0].intersectionRatio <= 0) {
-        return;
-      }
-      this.loadMore();
-    });
-
-    this.io.observe(element);
-  }
-
-  @action
-  teardownIntersectionObserver() {
-    this.io?.disconnect();
+    } finally {
+      this.loading = false;
+    }
   }
 
   @action
