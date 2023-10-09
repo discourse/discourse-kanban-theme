@@ -6,13 +6,16 @@ import DButton from "discourse/components/d-button";
 import DiscourseKanbanList from "./list";
 import bodyClass from "discourse/helpers/body-class";
 import i18n from "discourse-common/helpers/i18n";
+import concatClass from "discourse/helpers/concat-class";
 
 export default class Kanban extends Component {
   <template>
     {{#if this.kanbanManager.active}}
       <div
-        class="discourse-kanban
-          {{if this.kanbanManager.fullscreen 'fullscreen'}}"
+        class={{concatClass
+          "discourse-kanban"
+          (if this.kanbanManager.fullscreen "fullscreen" "inline")
+        }}
       >
         {{#if this.kanbanManager.fullscreen}}
           <div class="fullscreen-close-wrapper">

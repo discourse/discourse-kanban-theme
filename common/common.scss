@@ -11,42 +11,46 @@ html:has(body.kanban-active) {
     --d-sidebar-gap: 1em;
   }
 
-  // Normal sidebar
-  body.has-sidebar-page:not(.full-width-enabled) & {
-    --main-outlet-wrapper-width: min(
-      calc(var(--d-sidebar-width) + var(--d-max-width)),
-      100vw
-    );
-    --page-margin-width: calc((100vw - var(--main-outlet-wrapper-width)) / 2);
-    width: calc(100% + var(--page-margin-width) + var(--d-sidebar-gap) + 10px);
-    left: calc(0px - var(--d-sidebar-gap));
+  &.inline {
+    // Normal sidebar
+    body.has-sidebar-page:not(.full-width-enabled) & {
+      --main-outlet-wrapper-width: min(
+        calc(var(--d-sidebar-width) + var(--d-max-width)),
+        100vw
+      );
+      --page-margin-width: calc((100vw - var(--main-outlet-wrapper-width)) / 2);
+      width: calc(
+        100% + var(--page-margin-width) + var(--d-sidebar-gap) + 10px
+      );
+      left: calc(0px - var(--d-sidebar-gap));
 
-    .discourse-kanban-container {
-      padding-left: var(--d-sidebar-gap);
+      .discourse-kanban-container {
+        padding-left: var(--d-sidebar-gap);
+      }
     }
-  }
 
-  // Sidebar with full width
-  body.has-sidebar-page.full-width-enabled & {
-    --space-on-left: max(
-      calc((100vw - 100%) / 2),
-      calc(var(--d-sidebar-width) + var(--d-sidebar-gap))
-    );
+    // Sidebar with full width
+    body.has-sidebar-page.full-width-enabled & {
+      --space-on-left: max(
+        calc((100vw - 100%) / 2),
+        calc(var(--d-sidebar-width) + var(--d-sidebar-gap))
+      );
 
-    left: calc(0px - var(--space-on-left) + var(--d-sidebar-width));
+      left: calc(0px - var(--space-on-left) + var(--d-sidebar-width));
 
-    width: calc(100vw - var(--d-sidebar-width));
+      width: calc(100vw - var(--d-sidebar-width));
 
-    .discourse-kanban-container {
-      padding-left: var(--d-sidebar-gap);
+      .discourse-kanban-container {
+        padding-left: var(--d-sidebar-gap);
+      }
     }
-  }
 
-  // No sidebar
-  body:not(.has-sidebar-page) & {
-    width: 100vw;
-    left: 50%;
-    margin-left: -50vw;
+    // No sidebar
+    body:not(.has-sidebar-page) & {
+      width: 100vw;
+      left: 50%;
+      margin-left: -50vw;
+    }
   }
 
   &.fullscreen {
