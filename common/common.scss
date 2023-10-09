@@ -248,6 +248,9 @@ body.tags-page.kanban-active.kanban-legacy-topic-list {
   .list-container {
     display: none;
   }
+  .discourse-kanban {
+    flex-grow: unset;
+  }
 }
 
 ul.kanban-controls {
