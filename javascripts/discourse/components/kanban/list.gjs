@@ -31,10 +31,9 @@ function addedElements(before, after) {
 
 const onIntersection = modifier((element, [callback]) => {
   const io = new IntersectionObserver((entries) => {
-    if (entries[0].intersectionRatio <= 0) {
-      return;
+    if (entries[0].isIntersecting) {
+      callback();
     }
-    callback();
   });
 
   io.observe(element);
