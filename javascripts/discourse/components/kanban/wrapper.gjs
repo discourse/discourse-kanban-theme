@@ -8,6 +8,7 @@ import bodyClass from "discourse/helpers/body-class";
 import i18n from "discourse-common/helpers/i18n";
 import concatClass from "discourse/helpers/concat-class";
 import KanbanOptionsModal from "./modal/options";
+import { getOwner } from "@ember/application";
 
 export default class Kanban extends Component {
   <template>
@@ -51,6 +52,10 @@ export default class Kanban extends Component {
         </div>
 
         {{bodyClass "kanban-active"}}
+
+        {{#if this.isLegacyTopicList}}
+          {{bodyClass "kanban-legacy-topic-list"}}
+        {{/if}}
       </div>
     {{/if}}
   </template>
@@ -59,6 +64,10 @@ export default class Kanban extends Component {
   @service modal;
 
   @tracked dragData;
+
+  get isLegacyTopicList() {
+    return !!getOwner(this).resolveRegistration("controller:discovery/topics") ;
+  }
 
   @action
   setDragData(data) {
