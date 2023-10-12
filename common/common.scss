@@ -62,13 +62,6 @@
     overflow: hidden;
     background: var(--primary-low, $primary-low);
 
-    &.kanban-empty-state {
-      padding: 10px;
-      text-align: center;
-      justify-content: center;
-      gap: 20px;
-    }
-
     &.accept-drag {
       background: var(--primary-medium, $primary-medium);
     }
@@ -118,6 +111,7 @@
     .topic-card {
       display: block;
       color: var(--primary-medium, $primary-medium);
+      cursor: pointer;
 
       &.topic-unseen {
         color: var(--primary-medium, $primary-medium);
