@@ -5,7 +5,6 @@ html:has(body.kanban-active) {
 .discourse-kanban {
   position: relative;
   display: flex;
-  justify-content: center;
 
   --d-sidebar-gap: 2em;
   @media screen and (max-width: 1000px) {
@@ -49,8 +48,8 @@ html:has(body.kanban-active) {
     // No sidebar
     body:not(.has-sidebar-page) & {
       width: 100vw;
-      left: 50%;
-      margin-left: -50vw;
+      left: calc(-50vw + 50%);
+      justify-content: center;
     }
   }
 
@@ -66,6 +65,7 @@ html:has(body.kanban-active) {
     padding: 0;
     margin: 0;
     display: flex;
+    justify-content: center;
 
     .discourse-kanban-container {
       height: auto;
