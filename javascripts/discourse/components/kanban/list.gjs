@@ -175,7 +175,7 @@ export default class KanbanList extends Component {
 
   @action
   dropped() {
-    if (this.args.definition !== this.args.dragData.oldDefinition) {
+    if (this.args.definition === this.args.dragData.oldDefinition) {
       // From same list
       return;
     }
