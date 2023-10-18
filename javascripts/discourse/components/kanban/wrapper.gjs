@@ -66,7 +66,12 @@ export default class Kanban extends Component {
   @tracked dragData;
 
   get isLegacyTopicList() {
-    return !!getOwner(this).resolveRegistration("controller:discovery/topics") ;
+    try {
+      require("discourse/controllers/discovery/topics");
+      return true;
+    } catch {
+      return false;
+    }
   }
 
   @action
