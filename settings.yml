@@ -25,3 +25,9 @@ num_columns:
   default: 3
   description:
     en: Number of columns to display on screen. More are available by scrolling
+card_style:
+  default: simple
+  type: enum
+  choices:
+    - simple
+    - detailed

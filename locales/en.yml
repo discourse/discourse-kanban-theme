@@ -10,6 +10,7 @@ en:
   fullscreen: "Toggle fullscreen"
   no_lists: "No Kanban lists configured..."
   controls: "Kanban Board Controls"
+  last_post_by: "Last post by"
   modal:
     title: "Configure Kanban"
     tags_placeholder: Tags to display...

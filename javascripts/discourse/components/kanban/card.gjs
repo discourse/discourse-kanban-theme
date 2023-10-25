@@ -75,27 +75,28 @@ export default class KanbanCard extends Component {
         </div>
       </div>
 
-      {{#if this.showPosters}}
+      {{#if this.showLastPoster}}
         <div class="card-row">
-          <div class="posters">
-            {{#each @topic.posters as |poster|}}
+          <div class="last-post-by">
               {{! template-lint-disable no-nested-interactive }}
               <a
-                href={{poster.user.path}}
-                data-user-card={{poster.user.username}}
-                class={{poster.extraClasses}}
+                href={{this.lastPoster.user.path}}
+                data-user-card={{this.lastPoster.user.username}}
+                class={{this.lastPoster.extraClasses}}
               >
+
+                {{i18n (themePrefix "last_post_by")}} {{this.lastPoster.user.username}}
                 {{htmlSafe
                   (renderAvatar
-                    poster
+                    this.lastPoster
                     avatarTemplatePath="user.avatar_template"
                     usernamePath="user.username"
                     namePath="user.name"
                     imageSize="tiny"
                   )
                 }}
+
               </a>
-            {{/each}}
           </div>
 
         </div>
@@ -134,6 +135,10 @@ export default class KanbanCard extends Component {
     return settings.show_tags && this.tags.length;
   }
 
+  get cardStyle() {
+    return settings.card_style;
+  }
+
   get tags() {
     const definitionTags = this.args.definition.params.tags || [];
     const discoveryTag = this.kanbanManager.discoveryTag?.id;
@@ -150,7 +155,11 @@ export default class KanbanCard extends Component {
     return !(definitionCategory || discoveryCategory);
   }
 
-  get showPosters() {
-    return false;
+  get showLastPoster() {
+    return this.cardStyle === "detailed";
+  }
+
+  get lastPoster() {
+    return this.args.topic.posters.find((poster) => poster.extras?.includes("latest"));
   }
 }

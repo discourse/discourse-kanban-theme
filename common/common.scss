@@ -151,7 +151,7 @@ html:has(body.kanban-active) {
           flex-grow: 0;
         }
 
-        .posters,
+        .last-post-by,
         .topic-title {
           flex-grow: 1;
           word-wrap: break-word;
@@ -164,6 +164,16 @@ html:has(body.kanban-active) {
 
         .topic-assignments {
           text-align: right;
+        }
+
+        .last-post-by {
+          margin-top: 0.5em;
+          text-align: right;
+
+          a {
+            font-size: $font-down-2;
+            color: var(--primary-medium);
+          }
         }
 
         .tags {
