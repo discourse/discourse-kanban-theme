@@ -1,4 +1,6 @@
 import Component from "@glimmer/component";
+import i18n from "discourse-common/helpers/i18n";
+import eq from "truth-helpers/helpers/eq";
 import renderTag from "discourse/lib/render-tag";
 import TopicStatus from "discourse/components/topic-status";
 import { renderAvatar } from "discourse/helpers/user-avatar";
@@ -50,14 +52,27 @@ export default class KanbanCard extends Component {
           </div>
         {{/if}}
 
-        {{#if @topic.assigned_to_user.username}}
-          {{! template-lint-disable no-nested-interactive }}
-          <div class="assigned-to">
-            <a href={{@topic.assignedToUserPath}}>
-              {{icon "user-plus"}}{{@topic.assigned_to_user.username}}
-            </a>
-          </div>
-        {{/if}}
+        <div class="topic-assignments">
+          {{#if @topic.assigned_to_user.username}}
+            {{! template-lint-disable no-nested-interactive }}
+            <div class="assigned-to">
+              <a href={{@topic.assignedToUserPath}}>
+                {{icon "user-plus"}}{{@topic.assigned_to_user.username}}
+              </a>
+            </div>
+          {{/if}}
+
+          {{#if @topic.indirectly_assigned_to}}
+              {{#each-in @topic.indirectly_assigned_to as |target_id assignment|}}
+                {{! template-lint-disable no-nested-interactive }}
+                <div class="assigned-to">
+                  <a href="/t/{{@topic.id}}/{{assignment.post_number}}">
+                    {{icon "user-plus"}}{{assignment.assigned_to.username}}
+                  </a>
+                </div>
+              {{/each-in}}
+          {{/if}}
+        </div>
       </div>
 
       {{#if this.showPosters}}
