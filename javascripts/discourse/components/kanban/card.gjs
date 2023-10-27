@@ -85,7 +85,6 @@ export default class KanbanCard extends Component {
 
         <div class="topic-assignments-with-avatars">
           {{#if @topic.assigned_to_user.username}}
-            {{icon "user-plus"}}
             {{htmlSafe
               (renderAvatar
                 @topic.assigned_to_user
@@ -98,9 +97,6 @@ export default class KanbanCard extends Component {
           {{/if}}
 
           {{#if @topic.indirectly_assigned_to}}
-            {{#if (not @topic.assigned_to_user)}}
-              {{icon "user-plus"}}
-            {{/if}}
             {{#each-in @topic.indirectly_assigned_to as |target_id assignment|}}
               {{htmlSafe
                 (renderAvatar
