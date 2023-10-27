@@ -151,6 +151,17 @@ html:has(body.kanban-active) {
           flex-grow: 0;
         }
 
+        &__user-details-row {
+          min-height: 24px;
+          align-items: center;
+        }
+
+        &__topic-details {
+          .relative-date {
+            font-size: $font-down-2;
+          }
+        }
+
         .last-post-by,
         .topic-title {
           flex-grow: 1;
@@ -158,22 +169,27 @@ html:has(body.kanban-active) {
           overflow: hidden;
         }
 
-        .relative-date {
-          font-size: $font-down-2;
-        }
-
         .topic-assignments {
           text-align: right;
         }
 
-        .last-post-by {
-          margin-top: 0.5em;
+        .topic-assignments-with-avatars {
           text-align: right;
+          display: flex;
+          flex-direction: row;
+          align-items: center;
 
-          a {
+          .d-icon {
+            margin-right: 0.25em;
             font-size: $font-down-2;
             color: var(--primary-medium);
           }
+        }
+
+        .last-post-by {
+          text-align: left;
+          font-size: $font-down-2;
+          color: var(--primary-medium);
         }
 
         .tags {

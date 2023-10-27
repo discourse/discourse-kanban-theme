@@ -14,6 +14,7 @@ import { tracked } from "@glimmer/tracking";
 import { action } from "@ember/object";
 import { on } from "@ember/modifier";
 import { inject as service } from "@ember/service";
+import not from "truth-helpers/helpers/not";
 
 export default class KanbanCard extends Component {
   <template>
@@ -29,10 +30,9 @@ export default class KanbanCard extends Component {
       {{on "dragstart" this.dragStart}}
       {{on "dragend" this.dragEnd}}
     >
-      <div class="card-row">
+      <div class="card-row card-row__topic-details">
         <TopicStatus @topic={{@topic}} />
-        <span class="topic-title">{{@topic.title}}</span>
-        {{this.formatDate @topic.bumpedAt format="tiny" noTitle="true"}}
+        <span class="topic-title">{{@topic.title}}</span> {{#if (not this.showDetailed)}}{{this.formatDate @topic.bumpedAt format="tiny" noTitle="true"}}{{/if}}
       </div>
 
       <div class="card-row">
@@ -52,54 +52,69 @@ export default class KanbanCard extends Component {
           </div>
         {{/if}}
 
-        <div class="topic-assignments">
+        {{#if (not this.showDetailed)}}
+          <div class="topic-assignments">
+            {{#if @topic.assigned_to_user.username}}
+              {{! template-lint-disable no-nested-interactive }}
+              <div class="assigned-to">
+                <a href={{@topic.assignedToUserPath}}>
+                  {{icon "user-plus"}}{{@topic.assigned_to_user.username}}
+                </a>
+              </div>
+            {{/if}}
+
+            {{#if @topic.indirectly_assigned_to}}
+                {{#each-in @topic.indirectly_assigned_to as |target_id assignment|}}
+                  {{! template-lint-disable no-nested-interactive }}
+                  <div class="assigned-to">
+                    <a href="/t/{{@topic.id}}/{{assignment.post_number}}">
+                      {{icon "user-plus"}}{{assignment.assigned_to.username}}
+                    </a>
+                  </div>
+                {{/each-in}}
+            {{/if}}
+          </div>
+        {{/if}}
+      </div>
+
+      {{#if this.showDetailed}}
+      <div class="card-row card-row__user-details-row">
+        <div class="last-post-by">
+          {{this.formatDate @topic.bumpedAt format="tiny" noTitle="true"}} ({{this.lastPoster.user.username}})
+        </div>
+
+        <div class="topic-assignments-with-avatars">
           {{#if @topic.assigned_to_user.username}}
-            {{! template-lint-disable no-nested-interactive }}
-            <div class="assigned-to">
-              <a href={{@topic.assignedToUserPath}}>
-                {{icon "user-plus"}}{{@topic.assigned_to_user.username}}
-              </a>
-            </div>
+            {{icon "user-plus"}}
+            {{htmlSafe
+              (renderAvatar
+                @topic.assigned_to_user
+                avatarTemplatePath="avatar_template"
+                usernamePath="username"
+                namePath="name"
+                imageSize="tiny"
+              )
+            }}
           {{/if}}
 
           {{#if @topic.indirectly_assigned_to}}
-              {{#each-in @topic.indirectly_assigned_to as |target_id assignment|}}
-                {{! template-lint-disable no-nested-interactive }}
-                <div class="assigned-to">
-                  <a href="/t/{{@topic.id}}/{{assignment.post_number}}">
-                    {{icon "user-plus"}}{{assignment.assigned_to.username}}
-                  </a>
-                </div>
-              {{/each-in}}
+            {{#if (not @topic.assigned_to_user)}}
+              {{icon "user-plus"}}
+            {{/if}}
+            {{#each-in @topic.indirectly_assigned_to as |target_id assignment|}}
+              {{htmlSafe
+                (renderAvatar
+                  assignment.assigned_to
+                  avatarTemplatePath="avatar_template"
+                  usernamePath="username"
+                  namePath="name"
+                  imageSize="tiny"
+                )
+              }}
+            {{/each-in}}
           {{/if}}
         </div>
       </div>
-
-      {{#if this.showLastPoster}}
-        <div class="card-row">
-          <div class="last-post-by">
-              {{! template-lint-disable no-nested-interactive }}
-              <a
-                href={{this.lastPoster.user.path}}
-                data-user-card={{this.lastPoster.user.username}}
-                class={{this.lastPoster.extraClasses}}
-              >
-
-                {{i18n (themePrefix "last_post_by")}} {{this.lastPoster.user.username}}
-                {{htmlSafe
-                  (renderAvatar
-                    this.lastPoster
-                    avatarTemplatePath="user.avatar_template"
-                    usernamePath="user.username"
-                    namePath="user.name"
-                    imageSize="tiny"
-                  )
-                }}
-
-              </a>
-          </div>
-
-        </div>
       {{/if}}
 
       <PluginOutlet
@@ -155,7 +170,7 @@ export default class KanbanCard extends Component {
     return !(definitionCategory || discoveryCategory);
   }
 
-  get showLastPoster() {
+  get showDetailed() {
     return this.cardStyle === "detailed";
   }
 
