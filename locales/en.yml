@@ -5,11 +5,17 @@ en:
   confirm_open: Reopen topic '%{title}'?
   confirm_change_category: Move topic '%{title}'?
   menu_label: "Board"
+  copy_link: "Copy link to clipboard"
+  configure: "Configure kanban board"
+  fullscreen: "View fullscreen"
+  no_lists: "No Kanban lists configured..."
   modal:
-    title: "Kanban Board Options"
+    title: "Configure Kanban"
     tags_placeholder: Tags to display...
     categories_placeholder: Categories to display...
     usernames_placeholder: Users to display...
     apply: Apply
+    mode: Board Mode
+    lists: Lists
   theme_metadata:
     description: This theme component allows you to view and organise topics using a kanban board interface. A new tab "board" will be added to the top of the screen.
