@@ -204,22 +204,6 @@ body.kanban-active {
   }
 }
 
-body.tags-page.kanban-active.kanban-legacy-topic-list {
-  // Hacks for legacy tag-show page which has different HTML
-  #main-outlet > span:nth-of-type(2) {
-    flex-shrink: 1;
-    flex-grow: 1;
-    min-height: 0;
-    display: flex;
-  }
-  .list-container {
-    display: none;
-  }
-  .discourse-kanban {
-    flex-grow: unset;
-  }
-}
-
 ul.kanban-controls {
   padding: 0.5rem;
   margin: 0;

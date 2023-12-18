@@ -15,15 +15,6 @@ export default class Kanban extends Component {
 
   @tracked dragData;
 
-  get isLegacyTopicList() {
-    try {
-      require("discourse/controllers/discovery/topics");
-      return true;
-    } catch {
-      return false;
-    }
-  }
-
   @action
   setDragData(data) {
     this.dragData = data;
@@ -80,10 +71,6 @@ export default class Kanban extends Component {
         </div>
 
         {{bodyClass "kanban-active"}}
-
-        {{#if this.isLegacyTopicList}}
-          {{bodyClass "kanban-legacy-topic-list"}}
-        {{/if}}
       </div>
     {{/if}}
   </template>
