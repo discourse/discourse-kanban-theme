@@ -1,6 +1,5 @@
 import Component from "@glimmer/component";
 import { tracked } from "@glimmer/tracking";
-import { getOwner } from "@ember/application";
 import { hash } from "@ember/helper";
 import { on } from "@ember/modifier";
 import { action } from "@ember/object";
@@ -8,7 +7,9 @@ import { inject as service } from "@ember/service";
 import { htmlSafe } from "@ember/template";
 import PluginOutlet from "discourse/components/plugin-outlet";
 import TopicStatus from "discourse/components/topic-status";
+import categoryBadge from "discourse/helpers/category-badge";
 import concatClass from "discourse/helpers/concat-class";
+import formatDate from "discourse/helpers/format-date";
 import { renderAvatar } from "discourse/helpers/user-avatar";
 import renderTag from "discourse/lib/render-tag";
 import icon from "discourse-common/helpers/d-icon";
@@ -17,10 +18,6 @@ export default class KanbanCard extends Component {
   @service kanbanManager;
 
   @tracked dragging;
-
-  // TODO - FIX THIS ONCE CORE EXPORTS IT PROPERLY
-  formatDate = getOwner(this).resolveRegistration("helper:format-date");
-  categoryBadge = getOwner(this).resolveRegistration("helper:category-badge");
 
   @action
   dragStart(event) {
@@ -86,7 +83,7 @@ export default class KanbanCard extends Component {
         <TopicStatus @topic={{@topic}} />
         <span class="topic-title">{{@topic.title}}</span>
         {{#unless this.showDetailed}}
-          {{this.formatDate @topic.bumpedAt format="tiny" noTitle="true"}}
+          {{formatDate @topic.bumpedAt format="tiny" noTitle="true"}}
         {{/unless}}
       </div>
 
@@ -103,7 +100,7 @@ export default class KanbanCard extends Component {
       <div class="card-row">
         {{#if this.showCategory}}
           <div class="category">
-            {{this.categoryBadge @topic.category}}
+            {{categoryBadge @topic.category}}
           </div>
         {{/if}}
 
@@ -138,7 +135,7 @@ export default class KanbanCard extends Component {
       {{#if this.showDetailed}}
         <div class="card-row card-row__user-details-row">
           <div class="last-post-by">
-            {{this.formatDate @topic.bumpedAt format="tiny" noTitle="true"}}
+            {{formatDate @topic.bumpedAt format="tiny" noTitle="true"}}
             ({{this.lastPoster.user.username}})
           </div>
 

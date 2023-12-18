@@ -14,6 +14,15 @@ import i18n from "discourse-common/helpers/i18n";
 import I18n from "I18n";
 import DiscourseKanbanCard from "./card";
 
+export const onWindowReize = modifier((element, [callback]) => {
+  const wrappedCallback = () => callback(element);
+  window.addEventListener("resize", wrappedCallback);
+
+  return () => {
+    window.removeEventListener("resize", wrappedCallback);
+  };
+});
+
 function removedElements(before, after) {
   if (!before) {
     return [];
@@ -41,15 +50,6 @@ const onIntersection = modifier((element, [callback]) => {
 
   return () => {
     io.disconnect();
-  };
-});
-
-const onWindowReize = modifier((element, [callback]) => {
-  const wrappedCallback = () => callback(element);
-  window.addEventListener("resize", wrappedCallback);
-
-  return () => {
-    window.removeEventListener("resize", wrappedCallback);
   };
 });
 
@@ -280,26 +280,6 @@ export default class KanbanList extends Component {
     this.args.setDragDataUpstream(data);
   }
 
-  @action
-  calcHeight(element) {
-    const mainOutlet = element.closest("#main-outlet");
-    const mainOutletHeight = mainOutlet.getBoundingClientRect().height;
-    const mainOutletPadding = 40;
-    const listControlsHeight = mainOutlet
-      .querySelector(".list-controls")
-      .getBoundingClientRect().height;
-    const listTitleHeight = mainOutlet
-      .querySelector(".list-title")
-      .getBoundingClientRect().height;
-    const height =
-      mainOutletHeight -
-      listControlsHeight -
-      listTitleHeight -
-      mainOutletPadding;
-
-    element.style.height = `${height}px`;
-  }
-
   <template>
     {{! template-lint-disable modifier-name-case }}
     <div
@@ -319,8 +299,8 @@ export default class KanbanList extends Component {
       <ConditionalLoadingSpinner @condition={{this.loading}}>
         <div
           class="topics"
-          {{onWindowReize this.calcHeight}}
-          {{didInsert this.calcHeight}}
+          {{onWindowReize this.kanbanManager.calcListsHeights}}
+          {{didInsert this.kanbanManager.calcListsHeights}}
         >
           {{#each this.list.topics as |topic|}}
             <DiscourseKanbanCard

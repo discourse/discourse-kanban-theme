@@ -1,5 +1,5 @@
 import { tracked } from "@glimmer/tracking";
-import { get } from "@ember/object";
+import { action, get } from "@ember/object";
 import Service, { inject as service } from "@ember/service";
 import Category from "discourse/models/category";
 import buildAssignedLists from "../lib/kanban-list-builders/assigned";
@@ -114,6 +114,35 @@ export default class KanbanManager extends Service {
 
   get mode() {
     return this.resolvedDescriptorParts[0];
+  }
+
+  @action
+  calcListsHeights() {
+    const mainOutlet = document.querySelector("#main-outlet");
+    const mainOutletHeight = mainOutlet.getBoundingClientRect().height;
+    const mainOutletPadding = 40;
+    const listControlsHeight = mainOutlet
+      .querySelector(".list-controls")
+      .getBoundingClientRect().height;
+    const listTitleHeight = mainOutlet
+      .querySelector(".list-title")
+      .getBoundingClientRect().height;
+    let height;
+    if (this.fullscreen) {
+      // the 10px is for the padding on the top of the list
+      height = mainOutletHeight + 10;
+    } else {
+      height =
+        mainOutletHeight -
+        listControlsHeight -
+        listTitleHeight -
+        mainOutletPadding;
+    }
+
+    const lists = document.querySelectorAll(".discourse-kanban-list .topics");
+    lists.forEach((element) => {
+      element.style.height = `${height}px`;
+    });
   }
 
   findDefinition() {

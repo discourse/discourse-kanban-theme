@@ -23,6 +23,7 @@ export default class Kanban extends Component {
   @action
   exitFullscreen() {
     this.kanbanManager.fullscreen = false;
+    this.kanbanManager.calcListsHeights();
   }
 
   @action
