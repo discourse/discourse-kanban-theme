@@ -36,6 +36,7 @@ RSpec.describe "Testing A Theme or Theme Component", system: true do
     expect(page).to have_css(".discourse-kanban-list", count: 1)
     expect(page).to have_css(".discourse-kanban-list .topic-card", count: 4)
 
+    find(".kanban-controls").click
     find(".configure-kanban-button").click
 
     mode_chooser = PageObjects::Components::SelectKit.new(".kanban-mode-chooser")
