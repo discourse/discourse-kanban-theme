@@ -12,7 +12,6 @@ import concatClass from "discourse/helpers/concat-class";
 import { renderAvatar } from "discourse/helpers/user-avatar";
 import renderTag from "discourse/lib/render-tag";
 import icon from "discourse-common/helpers/d-icon";
-import not from "truth-helpers/helpers/not";
 
 export default class KanbanCard extends Component {
   @service kanbanManager;
