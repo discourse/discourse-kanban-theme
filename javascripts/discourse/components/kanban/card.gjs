@@ -32,7 +32,12 @@ export default class KanbanCard extends Component {
     >
       <div class="card-row card-row__topic-details">
         <TopicStatus @topic={{@topic}} />
-        <span class="topic-title">{{@topic.title}}</span> {{#if (not this.showDetailed)}}{{this.formatDate @topic.bumpedAt format="tiny" noTitle="true"}}{{/if}}
+        <span class="topic-title">{{@topic.title}}</span>
+        {{#if (not this.showDetailed)}}{{this.formatDate
+            @topic.bumpedAt
+            format="tiny"
+            noTitle="true"
+          }}{{/if}}
       </div>
 
       <div class="card-row">
@@ -64,53 +69,60 @@ export default class KanbanCard extends Component {
             {{/if}}
 
             {{#if @topic.indirectly_assigned_to}}
-                {{#each-in @topic.indirectly_assigned_to as |target_id assignment|}}
-                  {{! template-lint-disable no-nested-interactive }}
-                  <div class="assigned-to">
-                    <a href="/t/{{@topic.id}}/{{assignment.post_number}}">
-                      {{icon "user-plus"}}{{assignment.assigned_to.username}}
-                    </a>
-                  </div>
-                {{/each-in}}
+              {{#each-in
+                @topic.indirectly_assigned_to
+                as |target_id assignment|
+              }}
+                {{! template-lint-disable no-nested-interactive }}
+                <div class="assigned-to">
+                  <a href="/t/{{@topic.id}}/{{assignment.post_number}}">
+                    {{icon "user-plus"}}{{assignment.assigned_to.username}}
+                  </a>
+                </div>
+              {{/each-in}}
             {{/if}}
           </div>
         {{/if}}
       </div>
 
       {{#if this.showDetailed}}
-      <div class="card-row card-row__user-details-row">
-        <div class="last-post-by">
-          {{this.formatDate @topic.bumpedAt format="tiny" noTitle="true"}} ({{this.lastPoster.user.username}})
-        </div>
+        <div class="card-row card-row__user-details-row">
+          <div class="last-post-by">
+            {{this.formatDate @topic.bumpedAt format="tiny" noTitle="true"}}
+            ({{this.lastPoster.user.username}})
+          </div>
 
-        <div class="topic-assignments-with-avatars">
-          {{#if @topic.assigned_to_user.username}}
-            {{htmlSafe
-              (renderAvatar
-                @topic.assigned_to_user
-                avatarTemplatePath="avatar_template"
-                usernamePath="username"
-                namePath="name"
-                imageSize="tiny"
-              )
-            }}
-          {{/if}}
-
-          {{#if @topic.indirectly_assigned_to}}
-            {{#each-in @topic.indirectly_assigned_to as |target_id assignment|}}
+          <div class="topic-assignments-with-avatars">
+            {{#if @topic.assigned_to_user.username}}
               {{htmlSafe
                 (renderAvatar
-                  assignment.assigned_to
+                  @topic.assigned_to_user
                   avatarTemplatePath="avatar_template"
                   usernamePath="username"
                   namePath="name"
                   imageSize="tiny"
                 )
               }}
-            {{/each-in}}
-          {{/if}}
+            {{/if}}
+
+            {{#if @topic.indirectly_assigned_to}}
+              {{#each-in
+                @topic.indirectly_assigned_to
+                as |target_id assignment|
+              }}
+                {{htmlSafe
+                  (renderAvatar
+                    assignment.assigned_to
+                    avatarTemplatePath="avatar_template"
+                    usernamePath="username"
+                    namePath="name"
+                    imageSize="tiny"
+                  )
+                }}
+              {{/each-in}}
+            {{/if}}
+          </div>
         </div>
-      </div>
       {{/if}}
 
       <PluginOutlet
@@ -171,6 +183,8 @@ export default class KanbanCard extends Component {
   }
 
   get lastPoster() {
-    return this.args.topic.posters.find((poster) => poster.extras?.includes("latest"));
+    return this.args.topic.posters.find((poster) =>
+      poster.extras?.includes("latest")
+    );
   }
 }

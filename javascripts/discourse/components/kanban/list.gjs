@@ -12,6 +12,8 @@ import { on } from "@ember/modifier";
 import { tracked } from "@glimmer/tracking";
 import concatClass from "discourse/helpers/concat-class";
 import { modifier } from "ember-modifier";
+import didInsert from "@ember/render-modifiers/modifiers/did-insert";
+import willDestroy from "@ember/render-modifiers/modifiers/will-destroy";
 
 function removedElements(before, after) {
   if (!before) {
@@ -43,45 +45,16 @@ const onIntersection = modifier((element, [callback]) => {
   };
 });
 
+const onWindowReize = modifier((element, [callback]) => {
+  const wrappedCallback = () => callback(element);
+  window.addEventListener("resize", wrappedCallback);
+
+  return () => {
+    window.removeEventListener("resize", wrappedCallback);
+  };
+});
+
 export default class KanbanList extends Component {
-  <template>
-    {{! template-lint-disable modifier-name-case }}
-    <div
-      class={{concatClass
-        "discourse-kanban-list"
-        (if this.acceptDrag "accept-drag")
-      }}
-      {{on "dragover" this.dragOver}}
-      {{on "dragleave" this.dragLeave}}
-      {{on "drop" this.drop}}
-    >
-      <div class="list-title">
-        {{#if @definition.icon}}{{icon @definition.icon}}{{/if}}
-        {{this.renderedTitle}}
-      </div>
-
-      <div class="topics">
-        <ConditionalLoadingSpinner @condition={{this.loading}}>
-          {{#each this.list.topics as |topic|}}
-            <DiscourseKanbanCard
-              @topic={{topic}}
-              @setDragData={{this.setDragData}}
-              @definition={{@definition}}
-            />
-          {{else}}
-            <div class="no_topics">
-              {{i18n (themePrefix "no_topics")}}
-            </div>
-          {{/each}}
-
-          <ConditionalLoadingSpinner @condition={{this.loadingMode}} />
-        </ConditionalLoadingSpinner>
-
-        <div class="list-bottom" {{onIntersection this.loadMore}}></div>
-      </div>
-    </div>
-  </template>
-
   @service kanbanManager;
   @service dialog;
   @service modal;
@@ -91,6 +64,11 @@ export default class KanbanList extends Component {
   @tracked loading = false;
   @tracked loadingMore = false;
   @tracked list;
+
+  constructor() {
+    super(...arguments);
+    this.loadTopics();
+  }
 
   get renderedTitle() {
     return this.args.definition.title;
@@ -170,11 +148,10 @@ export default class KanbanList extends Component {
 
     this.loadingMore = true;
     await this.list.loadMore();
-    this.loadingMode = false;
   }
 
   @action
-  dropped() {
+  async dropped() {
     if (this.args.definition === this.args.dragData.oldDefinition) {
       // From same list
       return;
@@ -196,7 +173,7 @@ export default class KanbanList extends Component {
         oldDefinition.params.tags,
         thisDefinition.params.tags
       );
-      doUpdate = () => {
+      doUpdate = async () => {
         const existingTags = topic.tags;
         let newTags = existingTags.reject((t) =>
           toRemove
@@ -204,12 +181,13 @@ export default class KanbanList extends Component {
             .includes(t.toLowerCase())
         );
         newTags.push(...toAdd);
-        return Topic.update(topic, { tags: newTags, noBump: true })
-          .then(() => {
-            this.refreshTopics();
-            oldRefresh();
-          })
-          .catch(popupAjaxError);
+        try {
+          await Topic.update(topic, { tags: newTags, noBump: true });
+          this.refreshTopics();
+          oldRefresh();
+        } catch (error) {
+          popupAjaxError(error);
+        }
       };
       confirmationMessage = I18n.t(themePrefix("confirm_change_tags"), {
         remove: toRemove,
@@ -224,7 +202,7 @@ export default class KanbanList extends Component {
       if (newUsername === "*" || newUsername === "nobody") {
         newUsername = undefined;
       }
-      doUpdate = () => {
+      doUpdate = async () => {
         const AssignModal =
           require("discourse/plugins/discourse-assign/discourse/components/modal/assign-user").default;
         this.modal.show(AssignModal, {
@@ -232,7 +210,7 @@ export default class KanbanList extends Component {
             target: topic,
             username: newUsername,
             targetType: "Topic",
-            onSuccess: () => {
+            onSuccess: async () => {
               this.refreshTopics();
               oldRefresh();
             },
@@ -244,11 +222,10 @@ export default class KanbanList extends Component {
       thisDefinition.params.status === "closed" &&
       oldDefinition.params.status === "open"
     ) {
-      doUpdate = () => {
-        topic.saveStatus("closed", true).then(() => {
-          this.refreshTopics();
-          oldRefresh();
-        });
+      doUpdate = async () => {
+        await topic.saveStatus("closed", true);
+        this.refreshTopics();
+        oldRefresh();
       };
       confirmationMessage = I18n.t(themePrefix("confirm_close"), {
         title: topic.title,
@@ -257,11 +234,10 @@ export default class KanbanList extends Component {
       thisDefinition.params.status === "open" &&
       oldDefinition.params.status === "closed"
     ) {
-      doUpdate = () => {
-        topic.saveStatus("closed", false).then(() => {
-          this.refreshTopics();
-          oldRefresh();
-        });
+      doUpdate = async () => {
+        await topic.saveStatus("closed", false);
+        this.refreshTopics();
+        oldRefresh();
       };
       confirmationMessage = I18n.t(themePrefix("confirm_open"), {
         title: topic.title,
@@ -271,16 +247,17 @@ export default class KanbanList extends Component {
       oldDefinition.params.category &&
       thisDefinition.params.category !== oldDefinition.params.category
     ) {
-      doUpdate = () => {
-        Topic.update(topic, {
-          category_id: thisDefinition.params.category,
-          noBump: true,
-        })
-          .then(() => {
-            this.refreshTopics();
-            oldRefresh();
-          })
-          .catch(popupAjaxError);
+      doUpdate = async () => {
+        try {
+          await Topic.update(topic, {
+            category_id: thisDefinition.params.category,
+            noBump: true,
+          });
+          this.refreshTopics();
+          oldRefresh();
+        } catch (error) {
+          popupAjaxError(error);
+        }
       };
       confirmationMessage = I18n.t(themePrefix("confirm_change_category"), {
         title: topic.title,
@@ -293,7 +270,7 @@ export default class KanbanList extends Component {
         didConfirm: doUpdate,
       });
     } else {
-      doUpdate();
+      await doUpdate();
     }
   }
 
@@ -303,4 +280,63 @@ export default class KanbanList extends Component {
     data.oldRefresh = () => this.refreshTopics();
     this.args.setDragDataUpstream(data);
   }
+
+  @action
+  calcHeight(element) {
+    const mainOutlet = element.closest("#main-outlet");
+    const mainOutletHeight = mainOutlet.getBoundingClientRect().height;
+    const mainOutletPadding = 40;
+    const listControlsHeight = mainOutlet
+      .querySelector(".list-controls")
+      .getBoundingClientRect().height;
+    const listTitleHeight = mainOutlet
+      .querySelector(".list-title")
+      .getBoundingClientRect().height;
+    const topicsHeight = document
+      .querySelector(".topics")
+      .getBoundingClientRect().height;
+    const height =
+      mainOutletHeight -
+      listControlsHeight -
+      listTitleHeight -
+      mainOutletPadding;
+
+    element.style.height = `${height}px`;
+  }
+
+  <template>
+    {{! template-lint-disable modifier-name-case }}
+    <div
+      class={{concatClass
+        "discourse-kanban-list"
+        (if this.acceptDrag "accept-drag")
+      }}
+      {{on "dragover" this.dragOver}}
+      {{on "dragleave" this.dragLeave}}
+      {{on "drop" this.drop}}
+    >
+      <div class="list-title">
+        {{#if @definition.icon}}{{icon @definition.icon}}{{/if}}
+        {{this.renderedTitle}}
+      </div>
+
+      <ConditionalLoadingSpinner @condition={{this.loading}}>
+        <div class="topics" {{onWindowReize this.calcHeight}}>
+          {{#each this.list.topics as |topic|}}
+            <DiscourseKanbanCard
+              @topic={{topic}}
+              @setDragData={{this.setDragData}}
+              @definition={{@definition}}
+            />
+          {{else}}
+            <div class="no_topics">
+              {{i18n (themePrefix "no_topics")}}
+            </div>
+          {{/each}}
+
+          <div class="list-bottom" {{onIntersection this.loadMore}}></div>
+        </div>
+      </ConditionalLoadingSpinner>
+    </div>
+  </template>
 }

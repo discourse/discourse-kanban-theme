@@ -11,6 +11,35 @@ import KanbanOptionsModal from "./modal/options";
 import { getOwner } from "@ember/application";
 
 export default class Kanban extends Component {
+  @service kanbanManager;
+  @service modal;
+
+  @tracked dragData;
+
+  get isLegacyTopicList() {
+    try {
+      require("discourse/controllers/discovery/topics");
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  @action
+  setDragData(data) {
+    this.dragData = data;
+  }
+
+  @action
+  exitFullscreen() {
+    this.kanbanManager.fullscreen = false;
+  }
+
+  @action
+  openSettings() {
+    this.modal.show(KanbanOptionsModal);
+  }
+
   <template>
     {{#if this.kanbanManager.active}}
       <div
@@ -59,34 +88,4 @@ export default class Kanban extends Component {
       </div>
     {{/if}}
   </template>
-
-  @service kanbanManager;
-  @service modal;
-
-  @tracked dragData;
-
-  get isLegacyTopicList() {
-    try {
-      require("discourse/controllers/discovery/topics");
-      return true;
-    } catch {
-      return false;
-    }
-  }
-
-  @action
-  setDragData(data) {
-    this.dragData = data;
-  }
-
-  @action
-  exitFullscreen() {
-    this.kanbanManager.fullscreen = false;
-  }
-
-  @action
-  openSettings(menu) {
-    this.modal.show(KanbanOptionsModal);
-    menu.close();
-  }
 }

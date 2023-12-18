@@ -17,7 +17,6 @@ export default {
   name: "my-initializer",
   initialize() {
     withPluginApi("0.8.7", (api) => {
-      api.renderInOutlet("discovery-list-container-top", DiscourseKanban);
       api.renderInOutlet("extra-nav-item", DiscourseKanbanNav);
       api.renderInOutlet("before-create-topic-button", DiscourseKanbanControls);
 
@@ -54,6 +53,7 @@ export default {
       ["category", "categoryNone"].forEach(function (route) {
         api.modifyClass(`route:discovery.${route}`, {
           pluginId: PLUGIN_ID,
+          router: service(),
 
           redirect(model, transition) {
             if (routeToBoard(transition, model.category.slug)) {
@@ -68,17 +68,18 @@ export default {
                   params.tags,
                 ];
               }
-              return this.transitionTo(
-                "discovery.latestCategory",
-                model.category.id,
-                { queryParams: { board: "default" } }
-              ).finally(() => {
-                if (newTopicParams) {
-                  next(() =>
-                    this.send("createNewTopicViaParams", ...newTopicParams)
-                  );
-                }
-              });
+
+              return this.router
+                .transitionTo("discovery.latestCategory", model.category.id, {
+                  queryParams: { board: "default" },
+                })
+                .finally(() => {
+                  if (newTopicParams) {
+                    next(() =>
+                      this.send("createNewTopicViaParams", ...newTopicParams)
+                    );
+                  }
+                });
             } else {
               return this._super(...arguments);
             }
