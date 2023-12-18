@@ -1,15 +1,14 @@
+import { next } from "@ember/runloop";
 import { inject as service } from "@ember/service";
 import { withPluginApi } from "discourse/lib/plugin-api";
 import discourseComputed from "discourse-common/utils/decorators";
+import DiscourseKanbanControls from "../components/kanban/controls";
+import DiscourseKanbanNav from "../components/kanban/nav";
 import {
   boardDefaultView,
   displayConnector,
   isDefaultView,
 } from "../lib/kanban-utilities";
-import { next } from "@ember/runloop";
-import DiscourseKanban from "../components/kanban/wrapper";
-import DiscourseKanbanNav from "../components/kanban/nav";
-import DiscourseKanbanControls from "../components/kanban/controls";
 
 const PLUGIN_ID = "kanban-board";
 

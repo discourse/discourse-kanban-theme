@@ -1,19 +1,18 @@
 import Component from "@glimmer/component";
+import { tracked } from "@glimmer/tracking";
+import { on } from "@ember/modifier";
+import { action } from "@ember/object";
+import didInsert from "@ember/render-modifiers/modifiers/did-insert";
 import { inject as service } from "@ember/service";
+import { modifier } from "ember-modifier";
+import ConditionalLoadingSpinner from "discourse/components/conditional-loading-spinner";
+import concatClass from "discourse/helpers/concat-class";
 import { popupAjaxError } from "discourse/lib/ajax-error";
 import Topic from "discourse/models/topic";
-import I18n from "I18n";
-import { action } from "@ember/object";
 import icon from "discourse-common/helpers/d-icon";
-import ConditionalLoadingSpinner from "discourse/components/conditional-loading-spinner";
-import DiscourseKanbanCard from "./card";
 import i18n from "discourse-common/helpers/i18n";
-import { on } from "@ember/modifier";
-import { tracked } from "@glimmer/tracking";
-import concatClass from "discourse/helpers/concat-class";
-import { modifier } from "ember-modifier";
-import didInsert from "@ember/render-modifiers/modifiers/did-insert";
-import willDestroy from "@ember/render-modifiers/modifiers/will-destroy";
+import I18n from "I18n";
+import DiscourseKanbanCard from "./card";
 
 function removedElements(before, after) {
   if (!before) {
@@ -292,9 +291,6 @@ export default class KanbanList extends Component {
     const listTitleHeight = mainOutlet
       .querySelector(".list-title")
       .getBoundingClientRect().height;
-    const topicsHeight = document
-      .querySelector(".topics")
-      .getBoundingClientRect().height;
     const height =
       mainOutletHeight -
       listControlsHeight -
@@ -321,7 +317,11 @@ export default class KanbanList extends Component {
       </div>
 
       <ConditionalLoadingSpinner @condition={{this.loading}}>
-        <div class="topics" {{onWindowReize this.calcHeight}}>
+        <div
+          class="topics"
+          {{onWindowReize this.calcHeight}}
+          {{didInsert this.calcHeight}}
+        >
           {{#each this.list.topics as |topic|}}
             <DiscourseKanbanCard
               @topic={{topic}}

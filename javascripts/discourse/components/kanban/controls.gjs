@@ -1,15 +1,29 @@
-import DButton from "discourse/components/d-button";
-import CopyLinkButton from "./copy-link-button";
-import DMenu from "float-kit/components/d-menu";
 import Component from "@glimmer/component";
-import KanbanOptionsModal from "./modal/options";
-import { inject as service } from "@ember/service";
-import { action } from "@ember/object";
-import bodyClass from "discourse/helpers/body-class";
 import { fn } from "@ember/helper";
+import { action } from "@ember/object";
+import { inject as service } from "@ember/service";
+import DButton from "discourse/components/d-button";
+import bodyClass from "discourse/helpers/body-class";
 import i18n from "discourse-common/helpers/i18n";
+import DMenu from "float-kit/components/d-menu";
+import CopyLinkButton from "./copy-link-button";
+import KanbanOptionsModal from "./modal/options";
 
 export default class KanbanControls extends Component {
+  @service modal;
+  @service kanbanManager;
+
+  @action
+  toggleFullscreen() {
+    this.kanbanManager.fullscreen = !this.kanbanManager.fullscreen;
+  }
+
+  @action
+  openSettings(menu) {
+    this.modal.show(KanbanOptionsModal);
+    menu.close();
+  }
+
   <template>
     {{#if this.kanbanManager.active}}
       <DMenu
@@ -50,18 +64,4 @@ export default class KanbanControls extends Component {
       {{/if}}
     {{/if}}
   </template>
-
-  @service modal;
-  @service kanbanManager;
-
-  @action
-  toggleFullscreen() {
-    this.kanbanManager.fullscreen = !this.kanbanManager.fullscreen;
-  }
-
-  @action
-  openSettings(menu) {
-    this.modal.show(KanbanOptionsModal);
-    menu.close();
-  }
 }

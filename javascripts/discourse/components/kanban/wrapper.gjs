@@ -1,14 +1,13 @@
 import Component from "@glimmer/component";
-import { inject as service } from "@ember/service";
-import { action } from "@ember/object";
 import { tracked } from "@glimmer/tracking";
+import { action } from "@ember/object";
+import { inject as service } from "@ember/service";
 import DButton from "discourse/components/d-button";
-import DiscourseKanbanList from "./list";
 import bodyClass from "discourse/helpers/body-class";
-import i18n from "discourse-common/helpers/i18n";
 import concatClass from "discourse/helpers/concat-class";
+import i18n from "discourse-common/helpers/i18n";
+import DiscourseKanbanList from "./list";
 import KanbanOptionsModal from "./modal/options";
-import { getOwner } from "@ember/application";
 
 export default class Kanban extends Component {
   @service kanbanManager;

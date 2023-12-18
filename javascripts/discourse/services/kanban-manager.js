@@ -1,10 +1,10 @@
+import { tracked } from "@glimmer/tracking";
+import { get } from "@ember/object";
 import Service, { inject as service } from "@ember/service";
 import Category from "discourse/models/category";
-import { get } from "@ember/object";
-import buildTagLists from "../lib/kanban-list-builders/tags";
-import buildCategoryLists from "../lib/kanban-list-builders/categories";
 import buildAssignedLists from "../lib/kanban-list-builders/assigned";
-import { tracked } from "@glimmer/tracking";
+import buildCategoryLists from "../lib/kanban-list-builders/categories";
+import buildTagLists from "../lib/kanban-list-builders/tags";
 
 export default class KanbanManager extends Service {
   @service router;

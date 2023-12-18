@@ -1,6 +1,6 @@
-import DiscourseKanban from "../../components/kanban/wrapper";
 import Component from "@glimmer/component";
 import { inject as service } from "@ember/service";
+import DiscourseKanban from "../../components/kanban/wrapper";
 
 export default class KanbanBoard extends Component {
   @service kanbanManager;
