@@ -121,9 +121,16 @@ export default class KanbanManager extends Service {
     const mainOutlet = document.querySelector("#main-outlet");
     const mainOutletHeight = mainOutlet.getBoundingClientRect().height;
     const mainOutletPadding = 40;
-    const listControlsHeight = mainOutlet
-      .querySelector(".list-controls")
-      .getBoundingClientRect().height;
+
+    // Get all previous siblings of the list container and add their heights
+    let currentElement =
+      mainOutlet.querySelector(".list-container").previousElementSibling;
+    let previousSiblingsHeight = 0;
+    while (currentElement !== null) {
+      previousSiblingsHeight += currentElement.getBoundingClientRect().height;
+      currentElement = currentElement.previousElementSibling;
+    }
+
     const listTitleHeight = mainOutlet
       .querySelector(".list-title")
       .getBoundingClientRect().height;
@@ -134,7 +141,7 @@ export default class KanbanManager extends Service {
     } else {
       height =
         mainOutletHeight -
-        listControlsHeight -
+        previousSiblingsHeight -
         listTitleHeight -
         mainOutletPadding;
     }
