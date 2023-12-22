@@ -8,6 +8,7 @@ import buildTagLists from "../lib/kanban-list-builders/tags";
 
 export default class KanbanManager extends Service {
   @service router;
+  @service discovery;
 
   @tracked fullscreen;
 
@@ -47,15 +48,15 @@ export default class KanbanManager extends Service {
   }
 
   get discoveryTopTags() {
-    return this.discoveryRouteAttribute("list.topic_list.top_tags");
+    return this.discovery.currentTopicList?.get("topic_list.top_tags");
   }
 
   get discoveryCategory() {
-    return this.discoveryRouteAttribute("category");
+    return this.discovery.category;
   }
 
   get discoveryTag() {
-    return this.discoveryRouteAttribute("tag");
+    return this.discovery.tag;
   }
 
   get active() {
@@ -63,7 +64,10 @@ export default class KanbanManager extends Service {
   }
 
   get currentDescriptor() {
-    return this.discoveryParams && get(this.discoveryParams, "board");
+    return (
+      this.discovery.onDiscoveryRoute &&
+      this.router.currentRoute?.queryParams?.board
+    );
   }
 
   get listDefinitions() {

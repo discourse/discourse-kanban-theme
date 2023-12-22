@@ -2,6 +2,7 @@ import Component from "@glimmer/component";
 import { inject as service } from "@ember/service";
 import concatClass from "discourse/helpers/concat-class";
 import i18n from "discourse-common/helpers/i18n";
+import { displayConnector } from "../../lib/kanban-utilities";
 
 export default class KanbanNav extends Component {
   @service kanbanManager;
@@ -19,13 +20,15 @@ export default class KanbanNav extends Component {
   }
 
   <template>
-    <li>
-      <a
-        href={{this.href}}
-        class={{concatClass "kanban-nav" (if this.active "active")}}
-      >
-        {{i18n (themePrefix "menu_label")}}
-      </a>
-    </li>
+    {{#if (displayConnector this.kanbanManager.discoveryCategory.slug)}}
+      <li>
+        <a
+          href={{this.href}}
+          class={{concatClass "kanban-nav" (if this.active "active")}}
+        >
+          {{i18n (themePrefix "menu_label")}}
+        </a>
+      </li>
+    {{/if}}
   </template>
 }
