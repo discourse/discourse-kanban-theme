@@ -1,14 +1,23 @@
 html:has(body.kanban-active) {
   overscroll-behavior: none;
+
+  #list-area {
+    margin-bottom: 0;
+  }
 }
 
 .discourse-kanban {
   position: relative;
-  height: 100%;
-  --d-sidebar-gap: 2em;
-  @media screen and (max-width: 1000px) {
-    --d-sidebar-gap: 1em;
-  }
+
+  // The amount of space available without causing the page to scroll:
+  --desired-height: calc(100vh - var(--kanban-offset-top));
+
+  // Use the desired height, unless it is smaller than 500px
+  height: max(var(--desired-height), 500px);
+
+  padding-bottom: 10px;
+  overflow-x: scroll;
+  box-sizing: border-box;
 
   &.kanban-fullscreen {
     position: fixed;
@@ -19,10 +28,10 @@ html:has(body.kanban-active) {
     z-index: z("fullscreen");
     background-color: var(--secondary);
     width: 100%;
+    height: 100%;
     padding: 0;
     margin: 0;
     display: flex;
-    justify-content: center;
 
     .discourse-kanban-container {
       height: auto;
@@ -59,12 +68,13 @@ html:has(body.kanban-active) {
 .discourse-kanban-container {
   height: 100%;
   display: flex;
-  overflow-y: scroll;
   gap: 0 10px;
 
   .discourse-kanban-list {
     background: var(--primary-100);
     border: 1px solid var(--primary-low);
+    display: flex;
+    flex-direction: column;
 
     &.kanban-empty-state {
       padding: 2em 1em;
@@ -91,6 +101,7 @@ html:has(body.kanban-active) {
     .topics {
       overflow-y: scroll;
       padding: 0 8px;
+      height: 100%;
     }
 
     .topic-card {
@@ -203,21 +214,6 @@ html:has(body.kanban-active) {
   .select-kit,
   div.ac-wrap {
     width: 100%;
-  }
-}
-
-body.kanban-active {
-  #main-outlet {
-    height: calc(100dvh - var(--header-offset) - 2.5em);
-  }
-
-  .list-container .row:nth-child(2),
-  .full-width {
-    height: 100%;
-  }
-
-  #list-area {
-    height: 100%;
   }
 }
 

@@ -2,10 +2,8 @@ import Component from "@glimmer/component";
 import { tracked } from "@glimmer/tracking";
 import { on } from "@ember/modifier";
 import { action } from "@ember/object";
-import didInsert from "@ember/render-modifiers/modifiers/did-insert";
 import { inject as service } from "@ember/service";
 import { modifier } from "ember-modifier";
-import ConditionalLoadingSpinner from "discourse/components/conditional-loading-spinner";
 import concatClass from "discourse/helpers/concat-class";
 import { popupAjaxError } from "discourse/lib/ajax-error";
 import Topic from "discourse/models/topic";
@@ -13,15 +11,6 @@ import icon from "discourse-common/helpers/d-icon";
 import i18n from "discourse-common/helpers/i18n";
 import I18n from "I18n";
 import DiscourseKanbanCard from "./card";
-
-export const onWindowReize = modifier((element, [callback]) => {
-  const wrappedCallback = () => callback(element);
-  window.addEventListener("resize", wrappedCallback);
-
-  return () => {
-    window.removeEventListener("resize", wrappedCallback);
-  };
-});
 
 function removedElements(before, after) {
   if (!before) {
@@ -296,12 +285,10 @@ export default class KanbanList extends Component {
         {{this.renderedTitle}}
       </div>
 
-      <ConditionalLoadingSpinner @condition={{this.loading}}>
-        <div
-          class="topics"
-          {{onWindowReize this.kanbanManager.calcListsHeights}}
-          {{didInsert this.kanbanManager.calcListsHeights}}
-        >
+      {{#if this.loading}}
+        <div class="spinner"></div>
+      {{else}}
+        <div class="topics">
           {{#each this.list.topics as |topic|}}
             <DiscourseKanbanCard
               @topic={{topic}}
@@ -316,7 +303,7 @@ export default class KanbanList extends Component {
 
           <div class="list-bottom" {{onIntersection this.loadMore}}></div>
         </div>
-      </ConditionalLoadingSpinner>
+      {{/if}}
     </div>
   </template>
 }

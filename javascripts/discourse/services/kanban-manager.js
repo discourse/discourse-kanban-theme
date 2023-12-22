@@ -1,5 +1,5 @@
 import { tracked } from "@glimmer/tracking";
-import { action, get } from "@ember/object";
+import { get } from "@ember/object";
 import Service, { inject as service } from "@ember/service";
 import Category from "discourse/models/category";
 import buildAssignedLists from "../lib/kanban-list-builders/assigned";
@@ -118,42 +118,6 @@ export default class KanbanManager extends Service {
 
   get mode() {
     return this.resolvedDescriptorParts[0];
-  }
-
-  @action
-  calcListsHeights() {
-    const mainOutlet = document.querySelector("#main-outlet");
-    const mainOutletHeight = mainOutlet.getBoundingClientRect().height;
-    const mainOutletPadding = 40;
-
-    // Get all previous siblings of the list container and add their heights
-    let currentElement =
-      mainOutlet.querySelector(".list-container").previousElementSibling;
-    let previousSiblingsHeight = 0;
-    while (currentElement !== null) {
-      previousSiblingsHeight += currentElement.getBoundingClientRect().height;
-      currentElement = currentElement.previousElementSibling;
-    }
-
-    const listTitleHeight = mainOutlet
-      .querySelector(".list-title")
-      .getBoundingClientRect().height;
-    let height;
-    if (this.fullscreen) {
-      // the 10px is for the padding on the top of the list
-      height = mainOutletHeight + 10;
-    } else {
-      height =
-        mainOutletHeight -
-        previousSiblingsHeight -
-        listTitleHeight -
-        mainOutletPadding;
-    }
-
-    const lists = document.querySelectorAll(".discourse-kanban-list .topics");
-    lists.forEach((element) => {
-      element.style.height = `${height}px`;
-    });
   }
 
   findDefinition() {
