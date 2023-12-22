@@ -36,7 +36,7 @@ export default class Kanban extends Component {
       <div
         class={{concatClass
           "discourse-kanban"
-          (if this.kanbanManager.fullscreen "fullscreen" "inline")
+          (if this.kanbanManager.fullscreen "kanban-fullscreen" "kanban-inline")
         }}
       >
         {{#if this.kanbanManager.fullscreen}}
@@ -67,8 +67,6 @@ export default class Kanban extends Component {
               />
             </div>
           {{/each}}
-
-          <div class="kanban-spacer"></div>
         </div>
 
         {{bodyClass "kanban-active"}}

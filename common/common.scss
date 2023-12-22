@@ -3,13 +3,14 @@ html:has(body.kanban-active) {
 }
 
 .discourse-kanban {
+  position: relative;
   height: 100%;
   --d-sidebar-gap: 2em;
   @media screen and (max-width: 1000px) {
     --d-sidebar-gap: 1em;
   }
 
-  &.fullscreen {
+  &.kanban-fullscreen {
     position: fixed;
     top: 0;
     bottom: 0;
@@ -32,6 +33,25 @@ html:has(body.kanban-active) {
     .fullscreen-close-wrapper {
       padding: 10px 0 10px 10px;
       display: flex;
+    }
+  }
+
+  // No sidebar. Make container fill the viewport width and center lists
+  body:not(.has-sidebar-page) &:not(.kanban-fullscreen) {
+    width: 100vw;
+    left: calc(-50vw + 50%);
+
+    .discourse-kanban-container {
+      padding: 0 10px;
+    }
+
+    .discourse-kanban-list {
+      &:first-of-type {
+        margin-left: auto;
+      }
+      &:last-of-type {
+        margin-right: auto;
+      }
     }
   }
 }
@@ -187,10 +207,7 @@ html:has(body.kanban-active) {
 }
 
 body.kanban-active {
-  overflow: hidden;
-
   #main-outlet {
-    overflow: hidden;
     height: calc(100dvh - var(--header-offset) - 2.5em);
   }
 
