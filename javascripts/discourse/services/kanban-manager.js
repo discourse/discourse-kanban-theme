@@ -47,7 +47,7 @@ export default class KanbanManager extends Service {
   }
 
   get discoveryTopTags() {
-    return this.discoveryRouteAttribute("topic_list.top_tags");
+    return this.discoveryRouteAttribute("list.topic_list.top_tags");
   }
 
   get discoveryCategory() {
