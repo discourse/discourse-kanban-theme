@@ -22,7 +22,7 @@ show_tags:
   description:
     en: Show tags on topic cards?
 card_style:
-  default: simple
+  default: detailed
   type: enum
   choices:
     - simple
