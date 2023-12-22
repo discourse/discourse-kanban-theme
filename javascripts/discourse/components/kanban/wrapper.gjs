@@ -1,13 +1,34 @@
 import Component from "@glimmer/component";
 import { tracked } from "@glimmer/tracking";
 import { action } from "@ember/object";
+import didInsert from "@ember/render-modifiers/modifiers/did-insert";
+import { schedule } from "@ember/runloop";
 import { inject as service } from "@ember/service";
+import { modifier } from "ember-modifier";
 import DButton from "discourse/components/d-button";
 import bodyClass from "discourse/helpers/body-class";
 import concatClass from "discourse/helpers/concat-class";
 import i18n from "discourse-common/helpers/i18n";
 import DiscourseKanbanList from "./list";
 import KanbanOptionsModal from "./modal/options";
+
+const onWindowResize = modifier((element, [callback]) => {
+  const wrappedCallback = () => callback(element);
+  window.addEventListener("resize", wrappedCallback);
+
+  return () => {
+    window.removeEventListener("resize", wrappedCallback);
+  };
+});
+
+function calcOffset(element) {
+  schedule("afterRender", () => {
+    element.style.setProperty(
+      "--kanban-offset-top",
+      `${element.getBoundingClientRect().top}px`
+    );
+  });
+}
 
 export default class Kanban extends Component {
   @service kanbanManager;
@@ -38,6 +59,8 @@ export default class Kanban extends Component {
           "discourse-kanban"
           (if this.kanbanManager.fullscreen "kanban-fullscreen" "kanban-inline")
         }}
+        {{onWindowResize calcOffset}}
+        {{didInsert calcOffset}}
       >
         {{#if this.kanbanManager.fullscreen}}
           <div class="fullscreen-close-wrapper">
