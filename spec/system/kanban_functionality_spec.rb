@@ -18,11 +18,11 @@ RSpec.describe "Testing A Theme or Theme Component", system: true do
   fab!(:modern_js_backlog) { tagged_topic(modern_js, backlog) }
   fab!(:chat_backlog) { tagged_topic(chat, backlog) }
 
-  fab!(:user) { Fabricate(:admin) }
+  fab!(:user) { Fabricate(:admin, refresh_auto_groups: true) }
 
   let!(:theme) { upload_theme_component }
 
-  before {     sign_in user }
+  before { sign_in user }
 
   it "should function without tag / category filters" do
     visit "/"
