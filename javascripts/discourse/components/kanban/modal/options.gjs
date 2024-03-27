@@ -3,7 +3,7 @@ import { tracked } from "@glimmer/tracking";
 import { fn, hash } from "@ember/helper";
 import { action } from "@ember/object";
 import { equal } from "@ember/object/computed";
-import { inject as service } from "@ember/service";
+import { service } from "@ember/service";
 import DButton from "discourse/components/d-button";
 import DModal from "discourse/components/d-modal";
 import DiscourseURL from "discourse/lib/url";
@@ -86,7 +86,7 @@ export default class KanbanOptionsController extends Component {
             @onChange={{fn (mut this.mode)}}
             @valueProperty="id"
             @nameProperty="id"
-            @class="kanban-mode-chooser"
+            class="kanban-mode-chooser"
           />
         </div>
 
@@ -98,7 +98,7 @@ export default class KanbanOptionsController extends Component {
               @allowCreate={{false}}
               @filterPlaceholder={{i18n (themePrefix "modal.tags_placeholder")}}
               @everyTag={{true}}
-              @class="kanban-tag-chooser"
+              class="kanban-tag-chooser"
             />
           {{else if this.isCategories}}
             <MultiSelect

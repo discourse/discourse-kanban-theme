@@ -1,6 +1,6 @@
 import { tracked } from "@glimmer/tracking";
 import { get } from "@ember/object";
-import Service, { inject as service } from "@ember/service";
+import Service, { service } from "@ember/service";
 import Category from "discourse/models/category";
 import buildAssignedLists from "../lib/kanban-list-builders/assigned";
 import buildCategoryLists from "../lib/kanban-list-builders/categories";

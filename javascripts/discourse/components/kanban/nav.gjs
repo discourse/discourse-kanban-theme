@@ -1,5 +1,5 @@
 import Component from "@glimmer/component";
-import { inject as service } from "@ember/service";
+import { service } from "@ember/service";
 import concatClass from "discourse/helpers/concat-class";
 import i18n from "discourse-common/helpers/i18n";
 import { displayConnector } from "../../lib/kanban-utilities";
