@@ -116,10 +116,12 @@ export default class KanbanCard extends Component {
             {{/if}}
 
             {{#if @topic.indirectly_assigned_to}}
+              {{! eslint-disable no-unused-vars }}{{! workaround https://github.com/ember-cli/eslint-plugin-ember/issues/2118 }}
               {{#each-in
                 @topic.indirectly_assigned_to
                 as |target_id assignment|
               }}
+                {{! eslint-enable no-unused-vars }}
                 {{! template-lint-disable no-nested-interactive }}
                 <div class="assigned-to">
                   <a href="/t/{{@topic.id}}/{{assignment.post_number}}">
