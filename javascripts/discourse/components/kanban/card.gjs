@@ -160,7 +160,7 @@ export default class KanbanCard extends Component {
                 @topic.indirectly_assigned_to
                 as |target_id assignment|
               }}
-              {{! eslint-enable no-unused-vars }}
+                {{! eslint-enable no-unused-vars }}
                 {{htmlSafe
                   (renderAvatar
                     assignment.assigned_to
