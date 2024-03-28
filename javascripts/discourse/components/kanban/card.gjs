@@ -3,7 +3,7 @@ import { tracked } from "@glimmer/tracking";
 import { hash } from "@ember/helper";
 import { on } from "@ember/modifier";
 import { action } from "@ember/object";
-import { inject as service } from "@ember/service";
+import { service } from "@ember/service";
 import { htmlSafe } from "@ember/template";
 import PluginOutlet from "discourse/components/plugin-outlet";
 import TopicStatus from "discourse/components/topic-status";
@@ -116,10 +116,12 @@ export default class KanbanCard extends Component {
             {{/if}}
 
             {{#if @topic.indirectly_assigned_to}}
+              {{! eslint-disable no-unused-vars }}{{! workaround https://github.com/ember-cli/eslint-plugin-ember/issues/2118 }}
               {{#each-in
                 @topic.indirectly_assigned_to
                 as |target_id assignment|
               }}
+                {{! eslint-enable no-unused-vars }}
                 {{! template-lint-disable no-nested-interactive }}
                 <div class="assigned-to">
                   <a href="/t/{{@topic.id}}/{{assignment.post_number}}">
@@ -153,10 +155,12 @@ export default class KanbanCard extends Component {
             {{/if}}
 
             {{#if @topic.indirectly_assigned_to}}
+              {{! eslint-disable no-unused-vars }}{{! workaround https://github.com/ember-cli/eslint-plugin-ember/issues/2118 }}
               {{#each-in
                 @topic.indirectly_assigned_to
                 as |target_id assignment|
               }}
+                {{! eslint-enable no-unused-vars }}
                 {{htmlSafe
                   (renderAvatar
                     assignment.assigned_to
