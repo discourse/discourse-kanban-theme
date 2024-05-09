@@ -49,7 +49,10 @@ export default {
         );
       };
 
-      ["category", "categoryNone"].forEach(function (route) {
+      [
+		...["category", "categoryNone"].map(route => `route:discovery.${route}`),
+		'group.messages.inbox'
+	  ].forEach(function (route) {
         api.modifyClass(`route:discovery.${route}`, {
           pluginId: PLUGIN_ID,
           router: service(),
