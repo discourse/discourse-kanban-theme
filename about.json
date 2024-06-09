@@ -1,8 +1,8 @@
 {
-  "name": "Discourse Kanban",
+  "name": "Kanban Board",
   "component": true,
-  "license_url": null,
-  "about_url": null,
+  "license_url": "https://github.com/discourse/discourse-kanban-theme/blob/main/LICENSE",
+  "about_url": "https://meta.discourse.org/t/kanban-board/118164",
   "authors": "David Taylor",
   "theme_version": "1.0",
   "minimum_discourse_version": null,
