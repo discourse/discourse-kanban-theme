@@ -68,7 +68,7 @@ export default class Kanban extends Component {
               class="fullscreen-close"
               @icon="times"
               @action={{this.exitFullscreen}}
-              title={{themePrefix "fullscreen"}}
+              @title={{themePrefix "fullscreen"}}
             />
           </div>
         {{/if}}
