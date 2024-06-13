@@ -96,16 +96,18 @@ export default class KanbanOptionsController extends Component {
             <TagChooser
               @tags={{this.tags}}
               @allowCreate={{false}}
-              @filterPlaceholder={{i18n (themePrefix "modal.tags_placeholder")}}
               @everyTag={{true}}
+              @options={{hash
+                filterPlaceholder=(themePrefix "modal.tags_placeholder")
+              }}
               class="kanban-tag-chooser"
             />
           {{else if this.isCategories}}
             <MultiSelect
               @content={{this.site.categories}}
               @value={{this.categories}}
-              @filterPlaceholder={{i18n
-                (themePrefix "modal.categories_placeholder")
+              @options={{hash
+                filterPlaceholder=(themePrefix "modal.categories_placeholder")
               }}
             />
           {{else if this.isAssigned}}
