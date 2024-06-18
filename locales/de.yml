@@ -5,3 +5,25 @@
 # https://translate.discourse.org/
 
 de:
+  no_topics: keine Themen
+  confirm_change_tags: '''#%{remove}'' entfernen und ''#%{add}'' zu ''%{title}'' hinzufügen?'
+  confirm_close: Thema '%{title}' schließen?
+  confirm_open: Thema '%{title}' erneut öffnen?
+  confirm_change_category: Thema '%{title}' verschieben?
+  menu_label: "Board"
+  copy_link: "Link in die Zwischenablage kopieren"
+  configure: "Kanban-Board konfigurieren"
+  fullscreen: "Vollbild an-/ausschalten"
+  no_lists: "Keine Kanban-Listen konfiguriert..."
+  controls: "Kanban-Board-Steuerelemente"
+  last_post_by: "Letzter Beitrag von"
+  modal:
+    title: "Kanban konfigurieren"
+    tags_placeholder: Anzuzeigende Tags...
+    categories_placeholder: Anzuzeigende Kategorien...
+    usernames_placeholder: Anzuzeigende Benutzer...
+    apply: Anwenden
+    mode: Board-Modus
+    lists: Listen
+  theme_metadata:
+    description: Diese Theme-Komponente ermöglicht es dir, Themen mit Hilfe einer Kanban-Board-Oberfläche anzuzeigen und zu organisieren. Oben auf dem Bildschirm wird ein neuer Reiter "Board" eingefügt.
