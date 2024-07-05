@@ -27,3 +27,7 @@ card_style:
   choices:
     - simple
     - detailed
+show_topic_thumbnail:
+  default: false
+  description:
+    en: Display the topic thumbnail at the bottom of the card
