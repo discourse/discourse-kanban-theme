@@ -186,7 +186,7 @@ export default class KanbanCard extends Component {
 
       {{#if this.showImage}}
         <div class="card-row card-row__thumbnail-row">
-          <img class="thumbnail" src="{{this.imageUrl}}" />
+          <img class="thumbnail" src={{this.imageUrl}} />
         </div>
       {{/if}}
 
