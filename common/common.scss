@@ -138,6 +138,10 @@ html:has(body.kanban-active) {
           }
         }
 
+        &__thumbnail-row {
+          margin-top: 5px;
+        }
+
         .last-post-by,
         .topic-title {
           flex-grow: 1;
@@ -160,6 +164,11 @@ html:has(body.kanban-active) {
             font-size: $font-down-2;
             color: var(--primary-medium);
           }
+        }
+
+        .thumbnail {
+          overflow: hidden;
+          width: 100%;
         }
 
         .last-post-by {

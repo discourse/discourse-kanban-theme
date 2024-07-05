@@ -51,6 +51,14 @@ export default class KanbanCard extends Component {
       .map((t) => renderTag(t));
   }
 
+  get showImage() {
+    return settings.show_topic_thumbnail && this.imageUrl;
+  }
+
+  get imageUrl() {
+    return this.args.topic.image_url;
+  }
+
   get showCategory() {
     const definitionCategory = this.args.definition.params.category;
     const discoveryCategory = this.kanbanManager.discoveryCategory;
@@ -173,6 +181,12 @@ export default class KanbanCard extends Component {
               {{/each-in}}
             {{/if}}
           </div>
+        </div>
+      {{/if}}
+
+      {{#if this.showImage}}
+        <div class="card-row card-row__thumbnail-row">
+          <img class="thumbnail" src="{{this.imageUrl}}" />
         </div>
       {{/if}}
 
