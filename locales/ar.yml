@@ -5,3 +5,25 @@
 # https://translate.discourse.org/
 
 ar:
+  no_topics: لا توجد موضوعات
+  confirm_change_tags: 'هل تريد إزالة ''#%{remove}'' وإضافة ''#%{add}'' إلى ''%{title}''؟'
+  confirm_close: هل تريد إغلاق الموضوع '%{title}'؟
+  confirm_open: هل تريد إعادة فتح الموضوع '%{title}'؟
+  confirm_change_category: هل تريد نقل الموضوع '%{title}'؟
+  menu_label: "لوحة"
+  copy_link: "نسخ الرابط إلى الحافظة"
+  configure: "تكوين لوحة كانبان"
+  fullscreen: "تبديل ملء الشاشة"
+  no_lists: "لم يتم تكوين أي قوائم كانبان..."
+  controls: "عناصر التحكم في لوحة كانبان"
+  last_post_by: "آخر منشور بواسطة"
+  modal:
+    title: "تكوين كانبان"
+    tags_placeholder: الوسوم التي سيتم عرضها...
+    categories_placeholder: الفئات التي سيتم عرضها...
+    usernames_placeholder: المستخدمون الذين سيتم عرضهم...
+    apply: تطبيق
+    mode: وضع اللوحة
+    lists: القوائم
+  theme_metadata:
+    description: يتيح لك مكوِّن السمة هذا عرض الموضوعات وتنظيمها باستخدام واجهة لوحة كانبان. سيتم إضافة علامة تبويب جديد باسم "لوحة" إلى أعلى الشاشة.

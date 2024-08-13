@@ -5,3 +5,25 @@
 # https://translate.discourse.org/
 
 it:
+  no_topics: nessun argomento
+  confirm_change_tags: 'Rimuovere "#%{remove}" e aggiungere "#%{add}" a "%{title}"?'
+  confirm_close: Chiudere l'argomento "%{title}"?
+  confirm_open: Riaprire l'argomento "%{title}"?
+  confirm_change_category: Spostare l'argomento "%{title}"?
+  menu_label: "Bacheca"
+  copy_link: "Copia il link negli appunti"
+  configure: "Configura la bacheca kanban"
+  fullscreen: "Attiva schermo intero"
+  no_lists: "Nessun elenco Kanban configurato..."
+  controls: "Controlli della bacheca Kanban"
+  last_post_by: "Ultimo post di"
+  modal:
+    title: "Configura Kanban"
+    tags_placeholder: Etichette da visualizzare...
+    categories_placeholder: Categorie da visualizzare...
+    usernames_placeholder: Utenti da visualizzare...
+    apply: Applica
+    mode: Modalità bacheca
+    lists: Elenchi
+  theme_metadata:
+    description: Questo componente tematico consente di visualizzare e organizzare gli argomenti tramite un'interfaccia di bacheca kanban. Una nuova scheda "bacheca" verrà aggiunta in cima allo schermo.

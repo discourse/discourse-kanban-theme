@@ -5,3 +5,25 @@
 # https://translate.discourse.org/
 
 es:
+  no_topics: no hay temas
+  confirm_change_tags: '¿Eliminar «#%{remove}» y añadir «#%{add}» a «%{title}»?'
+  confirm_close: '¿Cerrar el tema «%{title}»?'
+  confirm_open: '¿Reabrir el tema «%{title}»?'
+  confirm_change_category: '¿Mover el tema «%{title}»?'
+  menu_label: "Tablero"
+  copy_link: "Copiar enlace al portapapeles"
+  configure: "Configurar tablero kanban"
+  fullscreen: "Alternar pantalla completa"
+  no_lists: "No hay listas Kanban configuradas..."
+  controls: "Controles del tablero Kanban"
+  last_post_by: "Última publicación de"
+  modal:
+    title: "Configurar Kanban"
+    tags_placeholder: Etiquetas para mostrar...
+    categories_placeholder: Categorías para mostrar...
+    usernames_placeholder: Usuarios para mostrar...
+    apply: Aplicar
+    mode: Modo de tablero
+    lists: Listas
+  theme_metadata:
+    description: Este componente de tema te permite ver y organizar temas utilizando una interfaz de tablero kanban. Se añadirá una nueva pestaña «tablero» en la parte superior de la pantalla.
