@@ -5,3 +5,25 @@
 # https://translate.discourse.org/
 
 zh_CN:
+  no_topics: 无话题
+  confirm_change_tags: '是否移除 ''#%{remove}'' 并将 ''#%{add}'' 添加到 ''%{title}''？'
+  confirm_close: 是否关闭话题 '%{title}'？
+  confirm_open: 是否重新打开话题 '%{title}'？
+  confirm_change_category: 是否移动话题 '%{title}'？
+  menu_label: "面板"
+  copy_link: "将链接复制到剪贴板"
+  configure: "配置看板面板"
+  fullscreen: "切换全屏"
+  no_lists: "未配置看板列表…"
+  controls: "看板面板控件"
+  last_post_by: "最后发布者"
+  modal:
+    title: "配置看板"
+    tags_placeholder: 要显示的标签...
+    categories_placeholder: 要显示的类别...
+    usernames_placeholder: 要显示的用户...
+    apply: 应用
+    mode: 看板模式
+    lists: 列表
+  theme_metadata:
+    description: 此主题组件可以让您使用看板面板界面查看和组织各个话题。屏幕顶部将增加一个新的“看板”标签页。

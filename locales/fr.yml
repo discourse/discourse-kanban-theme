@@ -5,3 +5,25 @@
 # https://translate.discourse.org/
 
 fr:
+  no_topics: aucun sujet
+  confirm_change_tags: 'Supprimer « #%{remove} » et ajouter « #%{add} » à « %{title} » ?'
+  confirm_close: Fermer le sujet « %{title} » ?
+  confirm_open: Rouvrir le sujet « %{title} » ?
+  confirm_change_category: Déplacer le sujet « %{title} » ?
+  menu_label: "Tableau"
+  copy_link: "Copier le lien dans le presse-papier"
+  configure: "Configurer le tableau Kanban"
+  fullscreen: "Activer/désactiver le mode plein écran"
+  no_lists: "Aucune liste Kanban n'a été configurée..."
+  controls: "Contrôles du tableau Kanban"
+  last_post_by: "Dernière publication par"
+  modal:
+    title: "Configurer Kanban"
+    tags_placeholder: Étiquettes à afficher...
+    categories_placeholder: Catégories à afficher...
+    usernames_placeholder: Utilisateurs à afficher...
+    apply: Appliquer
+    mode: Mode Tableau
+    lists: Listes
+  theme_metadata:
+    description: Ce composant de thème vous permet d'afficher et d'organiser les sujets à l'aide d'une interface de tableau Kanban. Un nouvel onglet « tableau » sera ajouté en haut de l'écran.

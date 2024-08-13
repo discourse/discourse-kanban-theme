@@ -5,3 +5,25 @@
 # https://translate.discourse.org/
 
 fi:
+  no_topics: ei ketjuja
+  confirm_change_tags: 'Poistetaanko #%{remove} ja lisätään #%{add} ketjuun %{title}?'
+  confirm_close: Suljetaanko ketju %{title}?
+  confirm_open: Avataanko ketju %{title} uudelleen?
+  confirm_change_category: Siirretäänkö ketju %{title}?
+  menu_label: "Taulu"
+  copy_link: "Kopioi linkki leikepöydälle"
+  configure: "Määritä kanban-taulu"
+  fullscreen: "Koko näyttö päälle/pois"
+  no_lists: "Kanban-luetteloita ei ole määritetty..."
+  controls: "Kanban-taulujen hallinta"
+  last_post_by: "Viimeisimmän viestin kirjoittaja"
+  modal:
+    title: "Määritä Kanban"
+    tags_placeholder: Näytettävät tunnisteet...
+    categories_placeholder: Näytettävät alueet...
+    usernames_placeholder: Näytettävät käyttäjät...
+    apply: Käytä
+    mode: Taulutila
+    lists: Luettelot
+  theme_metadata:
+    description: Tämän teemakomponentin avulla voit tarkastella ja järjestää ketjuja kanban-taulukäyttöliittymän avulla. Uusi välilehti "taulu" lisätään näytön yläosaan.

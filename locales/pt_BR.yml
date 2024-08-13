@@ -5,3 +5,25 @@
 # https://translate.discourse.org/
 
 pt_BR:
+  no_topics: nenhum tópico
+  confirm_change_tags: 'Remover "#%{remove}" e adicionar "#%{add}" a "%{title}"?'
+  confirm_close: Encerrar o tópico "%{title}"?
+  confirm_open: Reabrir o tópico "%{title}"?
+  confirm_change_category: Mover o tópico "%{title}"?
+  menu_label: "Quadro"
+  copy_link: "Copiar link para a área de transferência"
+  configure: "Configurar quadro de kanban"
+  fullscreen: "Alternar tela cheia"
+  no_lists: "Sem lista de kanban configurada..."
+  controls: "Controles do quadro de kanban"
+  last_post_by: "Última postagem de"
+  modal:
+    title: "Configurar kanban"
+    tags_placeholder: Etiquetas para exibir
+    categories_placeholder: Categorias para exibir
+    usernames_placeholder: Usuários(as) para exibir...
+    apply: Aplicar
+    mode: Modo de Quadro
+    lists: Listas
+  theme_metadata:
+    description: Com este componente to tema, você pode visualizar e organizar os tópicos usando a interface do quadro de kanban. Será adicionada uma nova aba "quadro" ao topo da tela.

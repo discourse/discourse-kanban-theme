@@ -5,3 +5,25 @@
 # https://translate.discourse.org/
 
 nl:
+  no_topics: geen topics
+  confirm_change_tags: '''#%{remove}'' verwijderen en ''#%{add}'' toevoegen aan ''%{title}''?'
+  confirm_close: Topic '%{title}' sluiten?
+  confirm_open: Topic '%{title}' heropenen?
+  confirm_change_category: Topic '%{title}' verplaatsen?
+  menu_label: "Bord"
+  copy_link: "Link kopiëren naar klembord"
+  configure: "Kanbanbord configureren"
+  fullscreen: "Volledig scherm in-/uitschakelen"
+  no_lists: "Geen Kanban-lijsten geconfigureerd..."
+  controls: "Kanban-bordelementen"
+  last_post_by: "Laatste bericht door"
+  modal:
+    title: "Kanban configureren"
+    tags_placeholder: Weer te geven tags...
+    categories_placeholder: Weer te geven categorieën...
+    usernames_placeholder: Weer te geven gebruikers...
+    apply: Toepassen
+    mode: Bordmodus
+    lists: Lijsten
+  theme_metadata:
+    description: Met deze themacomponent kun je topics bekijken en ordenen met behulp van een kanbanbordinterface. Er wordt een nieuw tabblad "bord" toegevoegd bovenin het scherm.

@@ -5,3 +5,25 @@
 # https://translate.discourse.org/
 
 tr_TR:
+  no_topics: konu yok
+  confirm_change_tags: '''#%{remove}'' işaretini kaldırıp ''%{title}'' işaretine ''#%{add}'' işareti eklensin mi?'
+  confirm_close: '''%{title}'' konusu kapatılsın mı?'
+  confirm_open: '''%{title}'' konusu yeniden açılsın mı?'
+  confirm_change_category: '''%{title}'' konusu taşınsın mı?'
+  menu_label: "Pano"
+  copy_link: "Bağlantıyı panoya kopyala"
+  configure: "Kanban panosu yapılandır"
+  fullscreen: "Tam ekranı aç/kapat"
+  no_lists: "Kanban listesi yapılandırılmadı..."
+  controls: "Kanban Panosu Kontrolleri"
+  last_post_by: "Son gönderi sahibi:"
+  modal:
+    title: "Kanban'ı yapılandır"
+    tags_placeholder: Gösterilecek etiketler...
+    categories_placeholder: Gösterilecek kategoriler...
+    usernames_placeholder: Gösterilecek kullanıcılar...
+    apply: Uygula
+    mode: Pano Modu
+    lists: Listeler
+  theme_metadata:
+    description: Bu tema bileşeni, bir kanban panosu arayüzü kullanarak konuları görüntülemenize ve düzenlemenize olanak tanır. Ekranın üstüne yeni bir "pano" sekmesi eklenir.

@@ -5,3 +5,25 @@
 # https://translate.discourse.org/
 
 ja:
+  no_topics: トピックなし
+  confirm_change_tags: '「#%{remove}」を削除して、「%{title}」に「#%{add}」を追加しますか？'
+  confirm_close: トピック「%{title}」をクローズにしますか？
+  confirm_open: トピック「%{title}」を再開しますか？
+  confirm_change_category: トピック「%{title}」を移動しますか？
+  menu_label: "ボード"
+  copy_link: "リンクをクリップボードにコピー"
+  configure: "かんばんボードを構成"
+  fullscreen: "全画面表示に切り替え"
+  no_lists: "かんばんリストが構成されていません..."
+  controls: "かんばんボード制御"
+  last_post_by: "最終投稿者"
+  modal:
+    title: "かんばんの構成"
+    tags_placeholder: 表示するタグ...
+    categories_placeholder: 表示するカテゴリ...
+    usernames_placeholder: 表示するユーザー...
+    apply: 適用
+    mode: ボードモード
+    lists: リスト
+  theme_metadata:
+    description: このテーマコンポーネントでは、かんばんボードインターフェースを使ってトピックの表示と編成を行えます。新しい「ボード」タブが画面の上部に追加されます。
