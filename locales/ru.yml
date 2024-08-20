@@ -5,3 +5,25 @@
 # https://translate.discourse.org/
 
 ru:
+  no_topics: нет тем
+  confirm_change_tags: 'Удалить ''#%{remove}'' и добавить ''#%{add}'' к ''%{title}''?'
+  confirm_close: Закрыть тему '%{title}'?
+  confirm_open: Снова открыть тему '%{title}'?
+  confirm_change_category: Переместить тему '%{title}'?
+  menu_label: "Доска"
+  copy_link: "Копировать ссылку в буфер обмена"
+  configure: "Настроить канбан-доску"
+  fullscreen: "Полноэкранный режим"
+  no_lists: "Канбан-списки не настроены..."
+  controls: "Элементы управления канбан-досок"
+  last_post_by: "Автор последней публикации"
+  modal:
+    title: "Настройка Kanban"
+    tags_placeholder: Теги для показа...
+    categories_placeholder: Категории для показа...
+    usernames_placeholder: Пользователи для показа...
+    apply: Применить
+    mode: Режим доски
+    lists: Списки
+  theme_metadata:
+    description: Этот компонент темы позволяет просматривать и организовывать темы с помощью интерфейса канбан-доски. Новая вкладка «Доска» будет добавлена в верхнюю часть экрана.
