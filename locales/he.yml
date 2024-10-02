@@ -5,3 +5,25 @@
 # https://translate.discourse.org/
 
 he:
+  no_topics: אין נושאים
+  confirm_change_tags: 'להסיר את ‚‎#%{remove}’ ולהוסיף את ‚‎#%{add}’ אל ‚%{title}’?'
+  confirm_close: לסגור את הנושא ‚%{title}’?
+  confirm_open: לפתוח את הנושא ‚%{title}’ מחדש?
+  confirm_change_category: להעביר את הנושא ‚%{title}’?
+  menu_label: "לוח"
+  copy_link: "העתקת קישור ללוח הגזירים"
+  configure: "הגדרת לוח קנבן"
+  fullscreen: "החלפת מצב מסך מלא"
+  no_lists: "לא מוגדרות רשימות קנבן…"
+  controls: "בקרי לוח קנבן"
+  last_post_by: "פוסט אחרון מאת"
+  modal:
+    title: "הגדרת קנבן"
+    tags_placeholder: תגיות להצגה…
+    categories_placeholder: קטגוריות להצגה…
+    usernames_placeholder: משתמשים להצגה…
+    apply: החלה
+    mode: מצב לוח
+    lists: רשימות
+  theme_metadata:
+    description: רכיב ערכת העיצוב הזה מאפשר לך לצפות ולסדר נושאים דרך מנשק לוח קנבן. לשונית „לוח” חדשה תווסף לראש המסך.
