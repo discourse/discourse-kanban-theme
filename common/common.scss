@@ -119,6 +119,14 @@ html:has(body.kanban-active) {
         background-color: var(--tertiary-low);
       }
 
+      &.card-no-recent-activity {
+        background-color: var(--highlight-bg);
+      }
+
+      &.card-stale {
+        background-color: var(--quaternary-low);
+      }
+
       .card-row {
         display: flex;
         align-items: baseline;

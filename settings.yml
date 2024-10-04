@@ -31,3 +31,7 @@ show_topic_thumbnail:
   default: false
   description:
     en: Display the topic thumbnail at the bottom of the card
+show_activity_indicators:
+  default: false
+  description:
+    en: Display an indicator of a card's activity. If the topic has been bumped more than 7 days agoor more than 20 days ago a different CSS class will be applied.
