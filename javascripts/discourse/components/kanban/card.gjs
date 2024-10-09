@@ -74,12 +74,30 @@ export default class KanbanCard extends Component {
       poster.extras?.includes("latest")
     );
   }
+
+  get cardActivityCssClass() {
+    if (!settings.show_activity_indicators) {
+      return "";
+    }
+
+    const bumpedAt = moment(this.args.topic.bumpedAt);
+    if (bumpedAt < moment().add(-20, "days")) {
+      return "card-stale";
+    }
+    if (bumpedAt < moment().add(-7, "days")) {
+      return "card-no-recent-activity";
+    }
+
+    return "";
+  }
+
   <template>
     <a
       class={{concatClass
         "topic-card"
         (if this.topic.unseen "topic-unseen")
         (if this.dragging "dragging")
+        this.cardActivityCssClass
       }}
       draggable="true"
       href={{@topic.lastUnreadUrl}}
