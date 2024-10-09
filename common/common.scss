@@ -120,11 +120,11 @@ html:has(body.kanban-active) {
       }
 
       &.card-no-recent-activity {
-        background-color: var(--highlight-bg);
+        border-left: 5px solid var(--danger-low);
       }
 
       &.card-stale {
-        background-color: var(--quaternary-low);
+        border-left: 5px solid var(--danger-medium);
       }
 
       .card-row {

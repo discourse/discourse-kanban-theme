@@ -87,6 +87,7 @@ export default class KanbanCard extends Component {
     if (bumpedAt < moment().add(-7, "days")) {
       return "card-no-recent-activity";
     }
+
     return "";
   }
 
