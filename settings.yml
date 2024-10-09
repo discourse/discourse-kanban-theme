@@ -34,4 +34,4 @@ show_topic_thumbnail:
 show_activity_indicators:
   default: false
   description:
-    en: Display an indicator of a card's activity. If the topic has been bumped more than 7 days ago or more than 20 days ago a different CSS class will be applied.
+    en: Display an indicator of a card's activity. If the topic has been bumped more than 7 days ago or more than 20 days ago a different style will be applied.
