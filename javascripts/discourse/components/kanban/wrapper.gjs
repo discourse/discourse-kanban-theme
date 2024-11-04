@@ -8,6 +8,7 @@ import { modifier } from "ember-modifier";
 import DButton from "discourse/components/d-button";
 import bodyClass from "discourse/helpers/body-class";
 import concatClass from "discourse/helpers/concat-class";
+import htmlClass from "discourse/helpers/html-class";
 import i18n from "discourse-common/helpers/i18n";
 import DiscourseKanbanList from "./list";
 import KanbanOptionsModal from "./modal/options";
@@ -92,6 +93,7 @@ export default class Kanban extends Component {
           {{/each}}
         </div>
 
+        {{htmlClass "kanban-active"}}
         {{bodyClass "kanban-active"}}
       </div>
     {{/if}}
