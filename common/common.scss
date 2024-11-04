@@ -1,4 +1,4 @@
-html:has(body.kanban-active) {
+html.kanban-active {
   overscroll-behavior: none;
 
   #list-area {
