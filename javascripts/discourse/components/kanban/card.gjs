@@ -142,7 +142,6 @@ export default class KanbanCard extends Component {
             {{/if}}
 
             {{#if @topic.indirectly_assigned_to}}
-              {{! workaround https://github.com/ember-cli/eslint-plugin-ember/issues/2118 }}
               {{#each-in
                 @topic.indirectly_assigned_to
                 as |target_id assignment|
@@ -181,7 +180,6 @@ export default class KanbanCard extends Component {
             {{/if}}
 
             {{#if @topic.indirectly_assigned_to}}
-              {{! workaround https://github.com/ember-cli/eslint-plugin-ember/issues/2118 }}
               {{#each-in
                 @topic.indirectly_assigned_to
                 as |target_id assignment|
