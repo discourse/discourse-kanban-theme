@@ -37,6 +37,11 @@ export default class Kanban extends Component {
 
   @tracked dragData;
 
+  constructor() {
+    super(...arguments);
+    this.kanbanManager.fullscreen = true; // Set fullscreen to true by default
+  }
+
   @action
   setDragData(data) {
     this.dragData = data;

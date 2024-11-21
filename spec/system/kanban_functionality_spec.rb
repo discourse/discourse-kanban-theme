@@ -28,10 +28,11 @@ RSpec.describe "Testing A Theme or Theme Component", system: true do
     visit "/"
 
     expect(page).to have_css(".topic-list-item") # Fully loaded
-    expect(page).not_to have_css("body.kanban-active")
+    expect(page).to have_css("body.kanban-fullscreen")
 
     find(".kanban-nav").click
 
+    expect(page).not_to have_css("body.kanban-fullscreen")
     expect(page).to have_css("body.kanban-active")
     expect(page).to have_css(".discourse-kanban-list", count: 1)
     expect(page).to have_css(".discourse-kanban-list .topic-card", count: 4)
