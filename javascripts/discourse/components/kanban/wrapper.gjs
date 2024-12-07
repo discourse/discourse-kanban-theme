@@ -67,7 +67,7 @@ export default class Kanban extends Component {
           <div class="fullscreen-close-wrapper">
             <DButton
               class="fullscreen-close"
-              @icon="times"
+              @icon="xmark"
               @action={{this.exitFullscreen}}
               @title={{themePrefix "fullscreen"}}
             />
