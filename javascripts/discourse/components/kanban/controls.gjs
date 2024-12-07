@@ -29,7 +29,7 @@ export default class KanbanControls extends Component {
     {{#if this.kanbanManager.active}}
       <DMenu
         class="kanban-controls"
-        @icon="far-list-alt"
+        @icon="far-rectangle-list"
         @title={{i18n (themePrefix "controls")}}
         as |menu|
       >
