@@ -16,7 +16,6 @@ export default class KanbanControls extends Component {
   @action
   toggleFullscreen() {
     this.kanbanManager.fullscreen = !this.kanbanManager.fullscreen;
-    this.kanbanManager.calcListsHeights();
   }
 
   @action
