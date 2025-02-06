@@ -7,7 +7,7 @@ import { service } from "@ember/service";
 import DButton from "discourse/components/d-button";
 import DModal from "discourse/components/d-modal";
 import DiscourseURL from "discourse/lib/url";
-import i18n from "discourse-common/helpers/i18n";
+import { i18n } from "discourse-i18n";
 import ComboBox from "select-kit/components/combo-box";
 import EmailGroupUserChooser from "select-kit/components/email-group-user-chooser";
 import MultiSelect from "select-kit/components/multi-select";

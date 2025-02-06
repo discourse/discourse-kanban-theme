@@ -9,10 +9,10 @@ import PluginOutlet from "discourse/components/plugin-outlet";
 import TopicStatus from "discourse/components/topic-status";
 import categoryBadge from "discourse/helpers/category-badge";
 import concatClass from "discourse/helpers/concat-class";
+import icon from "discourse/helpers/d-icon";
 import formatDate from "discourse/helpers/format-date";
 import { renderAvatar } from "discourse/helpers/user-avatar";
 import renderTag from "discourse/lib/render-tag";
-import icon from "discourse-common/helpers/d-icon";
 
 export default class KanbanCard extends Component {
   @service kanbanManager;

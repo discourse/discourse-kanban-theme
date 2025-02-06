@@ -3,7 +3,7 @@ import { tracked } from "@glimmer/tracking";
 import { action } from "@ember/object";
 import DButton from "discourse/components/d-button";
 import concatClass from "discourse/helpers/concat-class";
-import discourseDebounce from "discourse-common/lib/debounce";
+import discourseDebounce from "discourse/lib/debounce";
 
 export default class KanbanCopyLinkButton extends Component {
   @tracked copyConfirm = false;

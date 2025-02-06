@@ -1,7 +1,7 @@
 import { next } from "@ember/runloop";
 import { service } from "@ember/service";
+import discourseComputed from "discourse/lib/decorators";
 import { withPluginApi } from "discourse/lib/plugin-api";
-import discourseComputed from "discourse-common/utils/decorators";
 import DiscourseKanbanControls from "../components/kanban/controls";
 import DiscourseKanbanNav from "../components/kanban/nav";
 import {
