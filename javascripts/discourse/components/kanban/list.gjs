@@ -5,11 +5,10 @@ import { action } from "@ember/object";
 import { service } from "@ember/service";
 import { modifier } from "ember-modifier";
 import concatClass from "discourse/helpers/concat-class";
+import icon from "discourse/helpers/d-icon";
 import { popupAjaxError } from "discourse/lib/ajax-error";
 import Topic from "discourse/models/topic";
-import icon from "discourse-common/helpers/d-icon";
-import i18n from "discourse-common/helpers/i18n";
-import I18n from "I18n";
+import { i18n } from "discourse-i18n";
 import DiscourseKanbanCard from "./card";
 
 function removedElements(before, after) {
@@ -177,7 +176,7 @@ export default class KanbanList extends Component {
           popupAjaxError(error);
         }
       };
-      confirmationMessage = I18n.t(themePrefix("confirm_change_tags"), {
+      confirmationMessage = i18n(themePrefix("confirm_change_tags"), {
         remove: toRemove,
         add: toAdd,
         title: topic.title,
@@ -215,7 +214,7 @@ export default class KanbanList extends Component {
         this.refreshTopics();
         oldRefresh();
       };
-      confirmationMessage = I18n.t(themePrefix("confirm_close"), {
+      confirmationMessage = i18n(themePrefix("confirm_close"), {
         title: topic.title,
       });
     } else if (
@@ -227,7 +226,7 @@ export default class KanbanList extends Component {
         this.refreshTopics();
         oldRefresh();
       };
-      confirmationMessage = I18n.t(themePrefix("confirm_open"), {
+      confirmationMessage = i18n(themePrefix("confirm_open"), {
         title: topic.title,
       });
     } else if (
@@ -247,7 +246,7 @@ export default class KanbanList extends Component {
           popupAjaxError(error);
         }
       };
-      confirmationMessage = I18n.t(themePrefix("confirm_change_category"), {
+      confirmationMessage = i18n(themePrefix("confirm_change_category"), {
         title: topic.title,
       });
     }
