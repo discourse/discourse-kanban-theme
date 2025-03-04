@@ -1,10 +1,4 @@
-# WARNING: Never edit this file.
-# It will be overwritten when translations are pulled from Crowdin.
-#
-# To work with us on translations, join this project:
-# https://translate.discourse.org/
-
-zh_CN:
+zh-CN:
   no_topics: 无话题
   confirm_change_tags: '是否移除 ''#%{remove}'' 并将 ''#%{add}'' 添加到 ''%{title}''？'
   confirm_close: 是否关闭话题 '%{title}'？

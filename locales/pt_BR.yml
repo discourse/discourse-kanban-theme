@@ -1,10 +1,4 @@
-# WARNING: Never edit this file.
-# It will be overwritten when translations are pulled from Crowdin.
-#
-# To work with us on translations, join this project:
-# https://translate.discourse.org/
-
-pt_BR:
+pt:
   no_topics: nenhum tópico
   confirm_change_tags: 'Remover "#%{remove}" e adicionar "#%{add}" a "%{title}"?'
   confirm_close: Encerrar o tópico "%{title}"?

@@ -1,9 +1,3 @@
-# WARNING: Never edit this file.
-# It will be overwritten when translations are pulled from Crowdin.
-#
-# To work with us on translations, join this project:
-# https://translate.discourse.org/
-
 ja:
   no_topics: トピックなし
   confirm_change_tags: '「#%{remove}」を削除して、「%{title}」に「#%{add}」を追加しますか？'
