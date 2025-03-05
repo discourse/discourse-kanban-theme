@@ -24,22 +24,25 @@ export default {
         refreshModel: true,
       });
 
-      api.modifyClass("component:navigation-item", {
-        pluginId: PLUGIN_ID,
+      api.modifyClass(
+        "component:navigation-item",
+        (Superclass) =>
+          class extends Superclass {
+            @service kanbanManager;
 
-        kanbanManager: service(),
-        @discourseComputed(
-          "content.filterMode",
-          "filterMode",
-          "kanbanManager.active"
-        )
-        active(contentFilterMode, filterMode, active) {
-          if (active) {
-            return false;
+            @discourseComputed(
+              "content.filterMode",
+              "filterMode",
+              "kanbanManager.active"
+            )
+            active(contentFilterMode, filterMode, active) {
+              if (active) {
+                return false;
+              }
+              return super.active;
+            }
           }
-          return this._super(contentFilterMode, filterMode);
-        },
-      });
+      );
 
       const routeToBoard = (transition, categorySlug) => {
         return (
