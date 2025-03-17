@@ -19,7 +19,6 @@ html.kanban-active {
 
   // Use the desired height, unless it is smaller than 500px
   height: max(var(--desired-height), 500px);
-
   padding-bottom: 10px;
   overflow-x: scroll;
   box-sizing: border-box;
@@ -63,6 +62,7 @@ html.kanban-active {
       &:first-of-type {
         margin-left: auto;
       }
+
       &:last-of-type {
         margin-right: auto;
       }
@@ -92,7 +92,6 @@ html.kanban-active {
     &.accept-drag {
       background: var(--primary-300);
     }
-
     width: 350px;
     flex-shrink: 0;
     padding-top: 10px;
@@ -112,12 +111,10 @@ html.kanban-active {
     .topic-card {
       display: block;
       color: var(--primary);
-
       margin: 10px 0;
-
       background: var(--secondary);
       padding: 10px;
-      box-shadow: var(--primary-low) 0px 3px 6px;
+      box-shadow: var(--primary-low) 0 3px 6px;
       border: 1px solid var(--primary-low);
 
       &.dragging {
@@ -125,14 +122,14 @@ html.kanban-active {
       }
 
       &.card-no-recent-activity {
-        box-shadow: inset 5px 0px 0 0px var(--danger-low);
-        border-left: 0px;
+        box-shadow: inset 5px 0 0 0 var(--danger-low);
+        border-left: 0;
         padding-left: 15px;
       }
 
       &.card-stale {
-        box-shadow: inset 5px 0px 0 0px var(--danger-medium);
-        border-left: 0px;
+        box-shadow: inset 5px 0 0 0 var(--danger-medium);
+        border-left: 0;
         padding-left: 15px;
       }
 
@@ -205,7 +202,6 @@ html.kanban-active {
         .assigned-to {
           margin-top: auto;
           margin-bottom: auto;
-
           font-size: var(--font-down-1);
           vertical-align: baseline;
 
