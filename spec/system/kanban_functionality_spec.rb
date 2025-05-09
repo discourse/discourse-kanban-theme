@@ -42,12 +42,13 @@ RSpec.describe "Testing A Theme or Theme Component", system: true do
     mode_chooser = PageObjects::Components::SelectKit.new(".kanban-mode-chooser")
     mode_chooser.expand
     mode_chooser.select_row_by_value("tags")
-
-    mode_chooser = PageObjects::Components::SelectKit.new(".kanban-tag-chooser")
-    mode_chooser.expand
-    mode_chooser.select_row_by_value("active")
-    mode_chooser.select_row_by_value("backlog")
     mode_chooser.collapse
+
+    tag_chooser = PageObjects::Components::SelectKit.new(".kanban-tag-chooser")
+    tag_chooser.expand
+    tag_chooser.select_row_by_value("active")
+    tag_chooser.select_row_by_value("backlog")
+    tag_chooser.collapse
 
     find(".kanban-modal .btn-primary").click
 
@@ -62,8 +63,9 @@ RSpec.describe "Testing A Theme or Theme Component", system: true do
     expect(active_list).to have_css(".topic-card", count: 2)
     expect(backlog_list).to have_css(".topic-card", count: 2)
 
-    active_list.find("[data-topic-id='#{chat_active.id}']").drag_to(backlog_list)
-
+    card = active_list.find("[data-topic-id='#{chat_active.id}']")
+    page.execute_script("arguments[0].scrollIntoView();", card)
+    card.drag_to(backlog_list)
     find(".dialog-content .btn-primary").click
 
     expect(active_list).to have_css(".topic-card", count: 1)
