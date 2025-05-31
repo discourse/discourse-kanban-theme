@@ -1,6 +1,5 @@
 import Component from "@glimmer/component";
 import { tracked } from "@glimmer/tracking";
-import { hash } from "@ember/helper";
 import { on } from "@ember/modifier";
 import { action } from "@ember/object";
 import { service } from "@ember/service";
@@ -11,6 +10,7 @@ import categoryBadge from "discourse/helpers/category-badge";
 import concatClass from "discourse/helpers/concat-class";
 import icon from "discourse/helpers/d-icon";
 import formatDate from "discourse/helpers/format-date";
+import lazyHash from "discourse/helpers/lazy-hash";
 import { renderAvatar } from "discourse/helpers/user-avatar";
 import renderTag from "discourse/lib/render-tag";
 
@@ -208,7 +208,7 @@ export default class KanbanCard extends Component {
 
       <PluginOutlet
         @name="kanban-card-bottom"
-        @outletArgs={{hash topic=@topic}}
+        @outletArgs={{lazyHash topic=@topic}}
       />
     </a>
   </template>
