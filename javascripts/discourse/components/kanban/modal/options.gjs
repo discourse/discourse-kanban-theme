@@ -100,6 +100,7 @@ export default class KanbanOptionsController extends Component {
               @options={{hash
                 filterPlaceholder=(themePrefix "modal.tags_placeholder")
               }}
+              @unlimitedTagCount={{true}}
               class="kanban-tag-chooser"
             />
           {{else if this.isCategories}}
