@@ -11,13 +11,7 @@ import { i18n } from "discourse-i18n";
 import ComboBox from "select-kit/components/combo-box";
 import EmailGroupUserChooser from "select-kit/components/email-group-user-chooser";
 import MultiSelect from "select-kit/components/multi-select";
-import { selectKitOptions } from "select-kit/components/select-kit";
 import TagChooser from "select-kit/components/tag-chooser";
-
-@selectKitOptions({
-  maximum: null, // ignoring max_tags_per_topic setting
-})
-class UncappedTagChooser extends TagChooser {}
 
 export default class KanbanOptionsController extends Component {
   @service kanbanManager;
@@ -99,13 +93,14 @@ export default class KanbanOptionsController extends Component {
         <div class="control-group">
           <label>{{i18n (themePrefix "modal.lists")}}</label>
           {{#if this.isTags}}
-            <UncappedTagChooser
+            <TagChooser
               @tags={{this.tags}}
               @allowCreate={{false}}
               @everyTag={{true}}
               @options={{hash
                 filterPlaceholder=(themePrefix "modal.tags_placeholder")
               }}
+              @unlimitedTagCount={{true}}
               class="kanban-tag-chooser"
             />
           {{else if this.isCategories}}
