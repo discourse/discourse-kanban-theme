@@ -15,7 +15,7 @@ const PLUGIN_ID = "kanban-board";
 export default {
   name: "my-initializer",
   initialize() {
-    withPluginApi("0.8.7", (api) => {
+    withPluginApi((api) => {
       api.renderInOutlet("extra-nav-item", DiscourseKanbanNav);
       api.renderInOutlet("before-create-topic-button", DiscourseKanbanControls);
 
