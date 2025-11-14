@@ -1,8 +1,8 @@
 html.kanban-active {
   overscroll-behavior: none;
 
-  body.kanban-active #main-outlet-wrapper #main-outlet>.list-controls,
-  body.kanban-active #main-outlet-wrapper #main-outlet>.list-container {
+  body.kanban-active #main-outlet-wrapper #main-outlet > .list-controls,
+  body.kanban-active #main-outlet-wrapper #main-outlet > .list-container {
     max-width: unset;
   }
 
