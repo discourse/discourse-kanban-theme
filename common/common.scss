@@ -5,6 +5,8 @@ html.kanban-active {
     margin-bottom: 0;
   }
 
+  .list-controls .btn.notifications-tracking-trigger,
+  .list-controls .btn.bulk-select,
   .topic-list-layout-trigger,
   .powered-by-discourse {
     display: none;
