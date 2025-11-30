@@ -27,9 +27,8 @@ html.kanban-active {
   // Use the desired height, unless it is smaller than 500px
   height: max(var(--desired-height), 500px);
   padding-bottom: 10px;
-  padding-left: 100vw; // Hidden scroll space before first column
+  padding-left: 50vw; // Add space to scroll left before first column
   overflow-x: scroll;
-  overflow-y: clip; // Hide the padding areas visually
   box-sizing: border-box;
 
   &.kanban-fullscreen {
@@ -83,9 +82,8 @@ html.kanban-active {
   height: 100%;
   display: flex;
   gap: 0 10px;
-  padding-right: 100vw; // Hidden scroll space after last column
-  padding-bottom: 100vh; // Hidden scroll space below content
-  overflow: clip; // Hide padding areas visually
+  padding-right: 100vw; // Add space to scroll right beyond last column
+  padding-bottom: 100vh; // Add space to scroll down beyond content
 
   .discourse-kanban-list {
     background: var(--primary-100);

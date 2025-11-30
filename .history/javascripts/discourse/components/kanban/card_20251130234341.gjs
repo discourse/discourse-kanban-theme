@@ -25,14 +25,16 @@ const touchDrag = modifier((element, [component]) => {
   let cloneY = 0;
   let dropButton = null;
   let cancelButton = null;
+  let scrollX = 0;
+  let scrollY = 0;
+  let lastScrollX = 0;
+  let lastScrollY = 0;
   let animationFrameId = null;
   let scrollContainer = null;
-  let clickBlocker = null;
   
   const handleTouchStart = (e) => {
-    // Don't allow picking up another card if ANY card is being dragged
-    const existingClone = document.querySelector('.kanban-dragging-clone');
-    if (existingClone) {
+    // Don't allow picking up another card if already dragging
+    if (isDragging) {
       e.preventDefault();
       return;
     }
@@ -54,7 +56,6 @@ const touchDrag = modifier((element, [component]) => {
     
     // Create visual clone at fixed position
     clone = element.cloneNode(true);
-    clone.classList.add('kanban-dragging-clone');
     clone.style.position = 'fixed';
     clone.style.zIndex = '10000';
     clone.style.opacity = '0.8';
@@ -125,37 +126,21 @@ const touchDrag = modifier((element, [component]) => {
     };
     document.body.appendChild(cancelButton);
     
-    // Create full-screen click blocker to prevent all other interactions
-    clickBlocker = document.createElement('div');
-    clickBlocker.style.position = 'fixed';
-    clickBlocker.style.top = '0';
-    clickBlocker.style.left = '0';
-    clickBlocker.style.width = '100vw';
-    clickBlocker.style.height = '100vh';
-    clickBlocker.style.zIndex = '9999'; // Below clone but above everything else
-    clickBlocker.style.pointerEvents = 'auto';
-    clickBlocker.style.cursor = 'grabbing';
-    clickBlocker.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-    }, true);
-    clickBlocker.addEventListener('touchstart', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-    }, true);
-    document.body.appendChild(clickBlocker);
-    
     // Find the scrolling container
     scrollContainer = element.closest('.discourse-kanban');
     
-    // Start animation loop for position updates
-    const trackPosition = () => {
+    // Track initial scroll position
+    lastScrollX = scrollContainer ? scrollContainer.scrollLeft : 0;
+    lastScrollY = window.scrollY;
+    
+    // Start animation loop for scroll tracking
+    const trackScroll = () => {
       if (isDragging) {
         updateClonePosition();
-        animationFrameId = requestAnimationFrame(trackPosition);
+        animationFrameId = requestAnimationFrame(trackScroll);
       }
     };
-    animationFrameId = requestAnimationFrame(trackPosition);
+    animationFrameId = requestAnimationFrame(trackScroll);
     
     // Dim original card
     element.style.opacity = '0.3';
@@ -180,7 +165,7 @@ const touchDrag = modifier((element, [component]) => {
       animationFrameId = null;
     }
     
-    // Remove clone, buttons, and click blocker
+    // Remove clone, buttons
     if (clone) {
       clone.remove();
       clone = null;
@@ -192,10 +177,6 @@ const touchDrag = modifier((element, [component]) => {
     if (cancelButton) {
       cancelButton.remove();
       cancelButton = null;
-    }
-    if (clickBlocker) {
-      clickBlocker.remove();
-      clickBlocker = null;
     }
     
     // Restore original card
@@ -227,7 +208,7 @@ const touchDrag = modifier((element, [component]) => {
     const targetElement = document.elementFromPoint(centerX, centerY);
     const listElement = targetElement?.closest('.discourse-kanban-list');
     
-    // Remove clone, buttons, and click blocker
+    // Remove clone and buttons
     if (clone) {
       clone.remove();
       clone = null;
@@ -239,10 +220,6 @@ const touchDrag = modifier((element, [component]) => {
     if (cancelButton) {
       cancelButton.remove();
       cancelButton = null;
-    }
-    if (clickBlocker) {
-      clickBlocker.remove();
-      clickBlocker = null;
     }
     
     // Restore original card
@@ -284,43 +261,76 @@ const touchDrag = modifier((element, [component]) => {
   const updateClonePosition = () => {
     if (!clone || !scrollContainer) return;
     
-    // Get the Kanban container boundaries in viewport
+    const currentScrollX = scrollContainer.scrollLeft;
+    const currentScrollY = window.scrollY;
+    const scrollDeltaX = currentScrollX - lastScrollX;
+    const scrollDeltaY = currentScrollY - lastScrollY;
+    
+    // Only process if there's actual scroll change
+    if (scrollDeltaX === 0 && scrollDeltaY === 0) return;
+    
+    // Get the actual content boundaries (without padding)
     const containerRect = scrollContainer.getBoundingClientRect();
+    const firstList = scrollContainer.querySelector('.discourse-kanban-list:first-child');
+    const lastList = scrollContainer.querySelector('.discourse-kanban-list:last-child');
+    
+    let contentLeft = 0;
+    let contentRight = 0;
+    
+    if (firstList && lastList) {
+      const firstRect = firstList.getBoundingClientRect();
+      const lastRect = lastList.getBoundingClientRect();
+      contentLeft = firstRect.left - containerRect.left + currentScrollX;
+      contentRight = lastRect.right - containerRect.left + currentScrollX;
+    }
+    
+    const maxScrollX = scrollContainer.scrollWidth - scrollContainer.clientWidth;
+    const maxScrollY = document.documentElement.scrollHeight - window.innerHeight;
+    
     const cloneWidth = clone.offsetWidth;
     const cloneHeight = clone.offsetHeight;
     
-    // Card stays locked to its initial viewport position
-    // But constrain it to stay within the visible Kanban container
-    let finalX = cloneX;
-    let finalY = cloneY;
+    // Card stays locked to viewport by default - don't update scrollX/scrollY accumulation
+    // Only adjust when we're scrolling beyond table boundaries
     
-    // Keep card within horizontal bounds of container
-    if (finalX < containerRect.left) {
-      finalX = containerRect.left;
-    } else if (finalX + cloneWidth > containerRect.right) {
-      finalX = containerRect.right - cloneWidth;
+    // Check if scrolling beyond left boundary (trying to scroll left of first column)
+    if (currentScrollX < contentLeft && scrollDeltaX < 0) {
+      // Scrolling left beyond content - move card right (opposite direction)
+      cloneX -= scrollDeltaX; // Subtract negative = add, moves right
+    }
+    // Check if scrolling beyond right boundary (trying to scroll right of last column)
+    else if (currentScrollX + scrollContainer.clientWidth > contentRight && scrollDeltaX > 0) {
+      // Scrolling right beyond content - move card left (opposite direction)
+      cloneX -= scrollDeltaX; // Subtract positive = subtract, moves left
     }
     
-    // Keep card within vertical bounds of container  
-    if (finalY < containerRect.top) {
-      finalY = containerRect.top;
-    } else if (finalY + cloneHeight + 44 > containerRect.bottom) {
-      finalY = containerRect.bottom - cloneHeight - 44;
+    // Check if scrolling beyond top
+    if (currentScrollY <= 0 && scrollDeltaY < 0) {
+      // At top and trying to scroll up - move card down (opposite direction)
+      cloneY -= scrollDeltaY;
+    }
+    // Check if scrolling beyond bottom
+    else if (currentScrollY >= maxScrollY && scrollDeltaY > 0) {
+      // At bottom and trying to scroll down - move card up (opposite direction)
+      cloneY -= scrollDeltaY;
     }
     
-    // Update positions
-    clone.style.left = finalX + 'px';
-    clone.style.top = finalY + 'px';
+    // Update positions (card stays locked to viewport unless adjusted above)
+    clone.style.left = cloneX + 'px';
+    clone.style.top = cloneY + 'px';
     
     if (dropButton) {
-      dropButton.style.left = finalX + 'px';
-      dropButton.style.top = (finalY + cloneHeight + 4) + 'px';
+      dropButton.style.left = cloneX + 'px';
+      dropButton.style.top = (cloneY + cloneHeight + 4) + 'px';
     }
     
     if (cancelButton) {
-      cancelButton.style.left = (finalX + cloneWidth - 30) + 'px';
-      cancelButton.style.top = (finalY + 4) + 'px';
+      cancelButton.style.left = (cloneX + cloneWidth - 30) + 'px';
+      cancelButton.style.top = (cloneY + 4) + 'px';
     }
+    
+    lastScrollX = currentScrollX;
+    lastScrollY = currentScrollY;
   };
   
   const handleTouchEnd = (e) => {
