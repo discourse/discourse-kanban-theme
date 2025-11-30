@@ -24,11 +24,6 @@ const touchDrag = modifier((element, [component]) => {
   let cloneX = 0;
   let cloneY = 0;
   let dropButton = null;
-  let cancelButton = null;
-  let scrollX = 0;
-  let scrollY = 0;
-  let lastScrollX = 0;
-  let lastScrollY = 0;
   
   const handleTouchStart = (e) => {
     const touch = e.touches[0];
@@ -85,37 +80,6 @@ const touchDrag = modifier((element, [component]) => {
     };
     document.body.appendChild(dropButton);
     
-    // Create cancel button (X) at top right of clone
-    cancelButton = document.createElement('button');
-    cancelButton.textContent = '✕';
-    cancelButton.style.position = 'fixed';
-    cancelButton.style.left = (cloneX + element.offsetWidth - 30) + 'px';
-    cancelButton.style.top = (cloneY + 4) + 'px';
-    cancelButton.style.width = '26px';
-    cancelButton.style.height = '26px';
-    cancelButton.style.zIndex = '10002';
-    cancelButton.style.padding = '0';
-    cancelButton.style.fontSize = '18px';
-    cancelButton.style.fontWeight = 'bold';
-    cancelButton.style.color = '#ffffff';
-    cancelButton.style.backgroundColor = 'rgba(255, 0, 0, 0.8)';
-    cancelButton.style.border = 'none';
-    cancelButton.style.borderRadius = '50%';
-    cancelButton.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.5)';
-    cancelButton.style.cursor = 'pointer';
-    cancelButton.style.lineHeight = '26px';
-    cancelButton.style.textAlign = 'center';
-    cancelButton.onclick = (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      cancelDrag();
-    };
-    document.body.appendChild(cancelButton);
-    
-    // Track initial scroll position
-    lastScrollX = window.scrollX;
-    lastScrollY = window.scrollY;
-    
     // Dim original card
     element.style.opacity = '0.3';
     
@@ -130,37 +94,6 @@ const touchDrag = modifier((element, [component]) => {
     if (navigator.vibrate) navigator.vibrate(50);
   };
   
-  const cancelDrag = () => {
-    if (!isDragging) return;
-    
-    // Remove clone, buttons
-    if (clone) {
-      clone.remove();
-      clone = null;
-    }
-    if (dropButton) {
-      dropButton.remove();
-      dropButton = null;
-    }
-    if (cancelButton) {
-      cancelButton.remove();
-      cancelButton = null;
-    }
-    
-    // Restore original card
-    element.style.opacity = '';
-    
-    // Trigger dragend event without dropping
-    const dragEndEvent = new DragEvent('dragend', {
-      bubbles: true,
-      cancelable: true
-    });
-    element.dispatchEvent(dragEndEvent);
-    
-    isDragging = false;
-    if (navigator.vibrate) navigator.vibrate(20);
-  };
-  
   const dropCard = () => {
     if (!isDragging) return;
     
@@ -170,7 +103,7 @@ const touchDrag = modifier((element, [component]) => {
     const targetElement = document.elementFromPoint(centerX, centerY);
     const listElement = targetElement?.closest('.discourse-kanban-list');
     
-    // Remove clone and buttons
+    // Remove clone and drop button
     if (clone) {
       clone.remove();
       clone = null;
@@ -178,10 +111,6 @@ const touchDrag = modifier((element, [component]) => {
     if (dropButton) {
       dropButton.remove();
       dropButton = null;
-    }
-    if (cancelButton) {
-      cancelButton.remove();
-      cancelButton = null;
     }
     
     // Restore original card
@@ -217,82 +146,7 @@ const touchDrag = modifier((element, [component]) => {
       longPressTimer = null;
     }
     
-    // If dragging, check if we need to move the clone based on scroll position
-    if (isDragging) {
-      updateClonePosition();
-    }
-    
     // Allow free scrolling whether dragging or not
-  };
-  
-  const handleScroll = () => {
-    if (isDragging) {
-      updateClonePosition();
-    }
-  };
-  
-  const updateClonePosition = () => {
-    if (!clone) return;
-    
-    const currentScrollX = window.scrollX;
-    const currentScrollY = window.scrollY;
-    const scrollDeltaX = currentScrollX - lastScrollX;
-    const scrollDeltaY = currentScrollY - lastScrollY;
-    
-    // Accumulate scroll deltas
-    scrollX += scrollDeltaX;
-    scrollY += scrollDeltaY;
-    
-    // Get viewport dimensions
-    const viewportWidth = window.innerWidth;
-    const viewportHeight = window.innerHeight;
-    const cloneWidth = clone.offsetWidth;
-    const cloneHeight = clone.offsetHeight;
-    
-    // Calculate current clone position relative to viewport
-    let newCloneX = cloneX - scrollX;
-    let newCloneY = cloneY - scrollY;
-    
-    // Edge threshold (when to start moving the clone)
-    const edgeThreshold = 50;
-    
-    // Check if clone is at edges and move it if needed
-    if (newCloneX < 0) {
-      // Hit left edge, move clone right
-      cloneX -= scrollDeltaX;
-      newCloneX = cloneX - scrollX;
-    } else if (newCloneX + cloneWidth > viewportWidth) {
-      // Hit right edge, move clone left
-      cloneX -= scrollDeltaX;
-      newCloneX = cloneX - scrollX;
-    }
-    
-    if (newCloneY < 0) {
-      // Hit top edge, move clone down
-      cloneY -= scrollDeltaY;
-      newCloneY = cloneY - scrollY;
-    } else if (newCloneY + cloneHeight + 40 > viewportHeight) {
-      // Hit bottom edge (accounting for drop button), move clone up
-      cloneY -= scrollDeltaY;
-      newCloneY = cloneY - scrollY;
-    }
-    
-    // Update positions
-    clone.style.left = (cloneX - scrollX) + 'px';
-    clone.style.top = (cloneY - scrollY) + 'px';
-    
-    if (dropButton) {
-      dropButton.style.left = (cloneX - scrollX) + 'px';
-      dropButton.style.top = (cloneY - scrollY + cloneHeight + 4) + 'px';
-    }
-    
-    if (cancelButton) {
-      cancelButton.style.left = (cloneX - scrollX + cloneWidth - 30) + 'px';
-      cancelButton.style.top = (cloneY - scrollY + 4) + 'px';
-    }
-    
-    lastScrollX = currentScrollX;
-    lastScrollY = currentScrollY;
   };
   
   const handleTouchEnd = (e) => {
@@ -313,19 +167,14 @@ const touchDrag = modifier((element, [component]) => {
   element.addEventListener('touchmove', handleTouchMove, { passive: false });
   element.addEventListener('touchend', handleTouchEnd, { passive: false });
   element.addEventListener('contextmenu', handleContextMenu);
-  window.addEventListener('scroll', handleScroll, true);
   
   return () => {
     if (longPressTimer) clearTimeout(longPressTimer);
-    // Cancel any active drag on cleanup (e.g., navigation)
-    if (isDragging) {
-      cancelDrag();
-    }
+    if (clone) clone.remove();
     element.removeEventListener('touchstart', handleTouchStart);
     element.removeEventListener('touchmove', handleTouchMove);
     element.removeEventListener('touchend', handleTouchEnd);
     element.removeEventListener('contextmenu', handleContextMenu);
-    window.removeEventListener('scroll', handleScroll, true);
   };
 });
 
