@@ -29,8 +29,6 @@ const touchDrag = modifier((element, [component]) => {
   let scrollY = 0;
   let lastScrollX = 0;
   let lastScrollY = 0;
-  let animationFrameId = null;
-  let scrollContainer = null;
   
   const handleTouchStart = (e) => {
     const touch = e.touches[0];
@@ -120,21 +118,9 @@ const touchDrag = modifier((element, [component]) => {
     };
     document.body.appendChild(cancelButton);
     
-    // Find the scrolling container
-    scrollContainer = element.closest('.discourse-kanban');
-    
     // Track initial scroll position
-    lastScrollX = scrollContainer ? scrollContainer.scrollLeft : 0;
+    lastScrollX = window.scrollX;
     lastScrollY = window.scrollY;
-    
-    // Start animation loop for scroll tracking
-    const trackScroll = () => {
-      if (isDragging) {
-        updateClonePosition();
-        animationFrameId = requestAnimationFrame(trackScroll);
-      }
-    };
-    animationFrameId = requestAnimationFrame(trackScroll);
     
     // Dim original card
     element.style.opacity = '0.3';
@@ -152,12 +138,6 @@ const touchDrag = modifier((element, [component]) => {
   
   const cancelDrag = () => {
     if (!isDragging) return;
-    
-    // Cancel animation frame
-    if (animationFrameId) {
-      cancelAnimationFrame(animationFrameId);
-      animationFrameId = null;
-    }
     
     // Remove clone, buttons
     if (clone) {
@@ -189,12 +169,6 @@ const touchDrag = modifier((element, [component]) => {
   
   const dropCard = () => {
     if (!isDragging) return;
-    
-    // Cancel animation frame
-    if (animationFrameId) {
-      cancelAnimationFrame(animationFrameId);
-      animationFrameId = null;
-    }
     
     // Find what's under the clone's center position
     const centerX = cloneX + (clone.offsetWidth / 2);
@@ -249,19 +223,27 @@ const touchDrag = modifier((element, [component]) => {
       longPressTimer = null;
     }
     
+    // If dragging, check if we need to move the clone based on scroll position
+    if (isDragging) {
+      updateClonePosition();
+    }
+    
     // Allow free scrolling whether dragging or not
   };
   
+  const handleScroll = () => {
+    if (isDragging) {
+      updateClonePosition();
+    }
+  };
+  
   const updateClonePosition = () => {
-    if (!clone || !scrollContainer) return;
+    if (!clone) return;
     
-    const currentScrollX = scrollContainer.scrollLeft;
+    const currentScrollX = window.scrollX;
     const currentScrollY = window.scrollY;
     const scrollDeltaX = currentScrollX - lastScrollX;
     const scrollDeltaY = currentScrollY - lastScrollY;
-    
-    // Only process if there's actual scroll change
-    if (scrollDeltaX === 0 && scrollDeltaY === 0) return;
     
     // Update scroll accumulation
     scrollX += scrollDeltaX;
@@ -330,10 +312,10 @@ const touchDrag = modifier((element, [component]) => {
   element.addEventListener('touchmove', handleTouchMove, { passive: false });
   element.addEventListener('touchend', handleTouchEnd, { passive: false });
   element.addEventListener('contextmenu', handleContextMenu);
+  window.addEventListener('scroll', handleScroll, true);
   
   return () => {
     if (longPressTimer) clearTimeout(longPressTimer);
-    if (animationFrameId) cancelAnimationFrame(animationFrameId);
     // Cancel any active drag on cleanup (e.g., navigation)
     if (isDragging) {
       cancelDrag();
@@ -342,6 +324,7 @@ const touchDrag = modifier((element, [component]) => {
     element.removeEventListener('touchmove', handleTouchMove);
     element.removeEventListener('touchend', handleTouchEnd);
     element.removeEventListener('contextmenu', handleContextMenu);
+    window.removeEventListener('scroll', handleScroll, true);
   };
 });
 
