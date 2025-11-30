@@ -27,7 +27,6 @@ html.kanban-active {
   // Use the desired height, unless it is smaller than 500px
   height: max(var(--desired-height), 500px);
   padding-bottom: 10px;
-  padding-left: 50vw; // Add space to scroll left before first column
   overflow-x: scroll;
   box-sizing: border-box;
 

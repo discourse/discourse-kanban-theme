@@ -269,64 +269,60 @@ const touchDrag = modifier((element, [component]) => {
     // Only process if there's actual scroll change
     if (scrollDeltaX === 0 && scrollDeltaY === 0) return;
     
-    // Get the actual content boundaries (without padding)
-    const containerRect = scrollContainer.getBoundingClientRect();
-    const firstList = scrollContainer.querySelector('.discourse-kanban-list:first-child');
-    const lastList = scrollContainer.querySelector('.discourse-kanban-list:last-child');
-    
-    let contentLeft = 0;
-    let contentRight = 0;
-    
-    if (firstList && lastList) {
-      const firstRect = firstList.getBoundingClientRect();
-      const lastRect = lastList.getBoundingClientRect();
-      contentLeft = firstRect.left - containerRect.left + currentScrollX;
-      contentRight = lastRect.right - containerRect.left + currentScrollX;
-    }
-    
+    // Get scroll limits
     const maxScrollX = scrollContainer.scrollWidth - scrollContainer.clientWidth;
     const maxScrollY = document.documentElement.scrollHeight - window.innerHeight;
     
+    // Get viewport dimensions
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
     const cloneWidth = clone.offsetWidth;
     const cloneHeight = clone.offsetHeight;
     
-    // Card stays locked to viewport by default - don't update scrollX/scrollY accumulation
-    // Only adjust when we're scrolling beyond table boundaries
+    // Calculate where clone currently is in viewport (before updating scroll)
+    const viewportX = cloneX - scrollX;
+    const viewportY = cloneY - scrollY;
     
-    // Check if scrolling beyond left boundary (trying to scroll left of first column)
-    if (currentScrollX < contentLeft && scrollDeltaX < 0) {
-      // Scrolling left beyond content - move card right (opposite direction)
-      cloneX -= scrollDeltaX; // Subtract negative = add, moves right
-    }
-    // Check if scrolling beyond right boundary (trying to scroll right of last column)
-    else if (currentScrollX + scrollContainer.clientWidth > contentRight && scrollDeltaX > 0) {
-      // Scrolling right beyond content - move card left (opposite direction)
-      cloneX -= scrollDeltaX; // Subtract positive = subtract, moves left
-    }
+    // Update scroll accumulation
+    scrollX += scrollDeltaX;
+    scrollY += scrollDeltaY;
     
-    // Check if scrolling beyond top
-    if (currentScrollY <= 0 && scrollDeltaY < 0) {
-      // At top and trying to scroll up - move card down (opposite direction)
-      cloneY -= scrollDeltaY;
-    }
-    // Check if scrolling beyond bottom
-    else if (currentScrollY >= maxScrollY && scrollDeltaY > 0) {
-      // At bottom and trying to scroll down - move card up (opposite direction)
-      cloneY -= scrollDeltaY;
+    // Calculate where clone would be after this scroll
+    const newViewportX = cloneX - scrollX;
+    const newViewportY = cloneY - scrollY;
+    
+    // Only move the clone if we're at a scroll limit AND the clone would go off-screen
+    
+    // Horizontal: Check if at left or right scroll limit
+    if (currentScrollX <= 0 && newViewportX < 0) {
+      // At left limit and would go off left edge - move clone left
+      cloneX -= newViewportX;
+    } else if (currentScrollX >= maxScrollX && newViewportX + cloneWidth > viewportWidth) {
+      // At right limit and would go off right edge - move clone right
+      cloneX += (newViewportX + cloneWidth - viewportWidth);
     }
     
-    // Update positions (card stays locked to viewport unless adjusted above)
-    clone.style.left = cloneX + 'px';
-    clone.style.top = cloneY + 'px';
+    // Vertical: Check if at top or bottom scroll limit
+    if (currentScrollY <= 0 && newViewportY < 0) {
+      // At top limit and would go off top edge - move clone up
+      cloneY -= newViewportY;
+    } else if (currentScrollY >= maxScrollY && newViewportY + cloneHeight + 44 > viewportHeight) {
+      // At bottom limit and would go off bottom edge - move clone down
+      cloneY += (newViewportY + cloneHeight + 44 - viewportHeight);
+    }
+    
+    // Update positions
+    clone.style.left = (cloneX - scrollX) + 'px';
+    clone.style.top = (cloneY - scrollY) + 'px';
     
     if (dropButton) {
-      dropButton.style.left = cloneX + 'px';
-      dropButton.style.top = (cloneY + cloneHeight + 4) + 'px';
+      dropButton.style.left = (cloneX - scrollX) + 'px';
+      dropButton.style.top = (cloneY - scrollY + cloneHeight + 4) + 'px';
     }
     
     if (cancelButton) {
-      cancelButton.style.left = (cloneX + cloneWidth - 30) + 'px';
-      cancelButton.style.top = (cloneY + 4) + 'px';
+      cancelButton.style.left = (cloneX - scrollX + cloneWidth - 30) + 'px';
+      cancelButton.style.top = (cloneY - scrollY + 4) + 'px';
     }
     
     lastScrollX = currentScrollX;
