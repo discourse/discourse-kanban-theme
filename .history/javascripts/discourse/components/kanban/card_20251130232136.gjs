@@ -33,12 +33,6 @@ const touchDrag = modifier((element, [component]) => {
   let scrollContainer = null;
   
   const handleTouchStart = (e) => {
-    // Don't allow picking up another card if already dragging
-    if (isDragging) {
-      e.preventDefault();
-      return;
-    }
-    
     const touch = e.touches[0];
     startX = touch.clientX;
     startY = touch.clientY;
@@ -269,10 +263,6 @@ const touchDrag = modifier((element, [component]) => {
     // Only process if there's actual scroll change
     if (scrollDeltaX === 0 && scrollDeltaY === 0) return;
     
-    // Get scroll limits
-    const maxScrollX = scrollContainer.scrollWidth - scrollContainer.clientWidth;
-    const maxScrollY = document.documentElement.scrollHeight - window.innerHeight;
-    
     // Get viewport dimensions
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
@@ -287,27 +277,25 @@ const touchDrag = modifier((element, [component]) => {
     scrollX += scrollDeltaX;
     scrollY += scrollDeltaY;
     
-    // Calculate where clone would be after this scroll
+    // Check if clone would go off-screen after this scroll, and adjust if needed
     const newViewportX = cloneX - scrollX;
     const newViewportY = cloneY - scrollY;
     
-    // Only move the clone if we're at a scroll limit AND the clone would go off-screen
-    
-    // Horizontal: Check if at left or right scroll limit
-    if (currentScrollX <= 0 && newViewportX < 0) {
-      // At left limit and would go off left edge - move clone left
-      cloneX -= newViewportX;
-    } else if (currentScrollX >= maxScrollX && newViewportX + cloneWidth > viewportWidth) {
-      // At right limit and would go off right edge - move clone right
+    // Horizontal edge handling
+    if (newViewportX < 0) {
+      // Would go off left edge - move clone left to keep it visible
+      cloneX -= newViewportX; // Add the negative amount to bring it back to 0
+    } else if (newViewportX + cloneWidth > viewportWidth) {
+      // Would go off right edge - move clone right to keep it visible
       cloneX += (newViewportX + cloneWidth - viewportWidth);
     }
     
-    // Vertical: Check if at top or bottom scroll limit
-    if (currentScrollY <= 0 && newViewportY < 0) {
-      // At top limit and would go off top edge - move clone up
+    // Vertical edge handling
+    if (newViewportY < 0) {
+      // Would go off top edge - move clone up to keep it visible
       cloneY -= newViewportY;
-    } else if (currentScrollY >= maxScrollY && newViewportY + cloneHeight + 44 > viewportHeight) {
-      // At bottom limit and would go off bottom edge - move clone down
+    } else if (newViewportY + cloneHeight + 44 > viewportHeight) {
+      // Would go off bottom edge - move clone down to keep it visible
       cloneY += (newViewportY + cloneHeight + 44 - viewportHeight);
     }
     
