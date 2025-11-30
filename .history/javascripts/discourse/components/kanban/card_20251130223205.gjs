@@ -56,22 +56,22 @@ const touchDrag = modifier((element, [component]) => {
     clone.style.top = cloneY + 'px';
     document.body.appendChild(clone);
     
-    // Create drop button underneath the clone
+    // Create drop button
     dropButton = document.createElement('button');
     dropButton.textContent = 'Drop Card';
     dropButton.style.position = 'fixed';
-    dropButton.style.left = cloneX + 'px';
-    dropButton.style.top = (cloneY + clone.offsetHeight + 4) + 'px';
-    dropButton.style.width = element.offsetWidth + 'px';
+    dropButton.style.bottom = '20px';
+    dropButton.style.left = '50%';
+    dropButton.style.transform = 'translateX(-50%)';
     dropButton.style.zIndex = '10001';
-    dropButton.style.padding = '6px';
-    dropButton.style.fontSize = '14px';
+    dropButton.style.padding = '12px 24px';
+    dropButton.style.fontSize = '16px';
     dropButton.style.fontWeight = 'bold';
     dropButton.style.color = '#ffffff';
     dropButton.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
     dropButton.style.border = 'none';
-    dropButton.style.borderRadius = '4px';
-    dropButton.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.5)';
+    dropButton.style.borderRadius = '8px';
+    dropButton.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.5)';
     dropButton.style.cursor = 'pointer';
     dropButton.onclick = (e) => {
       e.preventDefault();
