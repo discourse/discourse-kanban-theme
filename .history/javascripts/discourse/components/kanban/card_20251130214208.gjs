@@ -18,48 +18,31 @@ import { modifier } from "ember-modifier";
 const touchDrag = modifier((element, [component]) => {
   let longPressTimer = null;
   let isDragging = false;
-  let startX = 0;
-  let startY = 0;
   
   const handleTouchStart = (e) => {
-    const touch = e.touches[0];
-    startX = touch.clientX;
-    startY = touch.clientY;
-    
+    e.preventDefault(); // Prevent browser context menu
     longPressTimer = setTimeout(() => {
       isDragging = true;
-      e.preventDefault(); // Now prevent defaults for dragging
-      component.dragStart({ dataTransfer: { dropEffect: "move" }, stopPropagation: () => {}, preventDefault: () => {} });
+      component.dragStart({ dataTransfer: {}, stopPropagation: () => {}, preventDefault: () => {} });
       if (navigator.vibrate) navigator.vibrate(50);
     }, 500);
   };
   
   const handleTouchMove = (e) => {
-    const touch = e.touches[0];
-    const deltaX = Math.abs(touch.clientX - startX);
-    const deltaY = Math.abs(touch.clientY - startY);
-    
-    // Cancel long press if finger moves too much before timer fires
-    if (longPressTimer && (deltaX > 10 || deltaY > 10)) {
-      clearTimeout(longPressTimer);
-      longPressTimer = null;
-    }
-    
-    // Only prevent default if we're actually dragging
-    if (isDragging) {
-      e.preventDefault();
-    }
-  };
-  
-  const handleTouchEnd = (e) => {
+    e.preventDefault(); // Prevent scrolling while potentially dragging
     if (longPressTimer) {
       clearTimeout(longPressTimer);
       longPressTimer = null;
     }
+  };
+  
+  const handleTouchEnd = (e) => {
+    e.preventDefault(); // Prevent click/navigation
+    if (longPressTimer) {
+      clearTimeout(longPressTimer);
+    }
     
     if (isDragging) {
-      e.preventDefault(); // Prevent navigation
-      
       const touch = e.changedTouches[0];
       const targetElement = document.elementFromPoint(touch.clientX, touch.clientY);
       const listElement = targetElement?.closest('.discourse-kanban-list');
@@ -75,22 +58,15 @@ const touchDrag = modifier((element, [component]) => {
     }
   };
   
-  const handleContextMenu = (e) => {
-    // Prevent context menu always during touch interaction
-    e.preventDefault();
-  };
-  
   element.addEventListener('touchstart', handleTouchStart, { passive: false });
   element.addEventListener('touchmove', handleTouchMove, { passive: false });
   element.addEventListener('touchend', handleTouchEnd, { passive: false });
-  element.addEventListener('contextmenu', handleContextMenu);
   
   return () => {
     if (longPressTimer) clearTimeout(longPressTimer);
     element.removeEventListener('touchstart', handleTouchStart);
     element.removeEventListener('touchmove', handleTouchMove);
     element.removeEventListener('touchend', handleTouchEnd);
-    element.removeEventListener('contextmenu', handleContextMenu);
   };
 });
 
