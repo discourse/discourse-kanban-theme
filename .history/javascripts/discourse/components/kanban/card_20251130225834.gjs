@@ -53,9 +53,6 @@ const touchDrag = modifier((element, [component]) => {
     clone.style.opacity = '0.8';
     clone.style.pointerEvents = 'none';
     clone.style.width = element.offsetWidth + 'px';
-    clone.style.backgroundColor = 'rgba(255, 255, 255, 0.15)';
-    clone.style.border = '2px solid rgba(255, 255, 255, 0.3)';
-    clone.style.borderRadius = '4px';
     
     // Get the original card's position in viewport
     const rect = element.getBoundingClientRect();

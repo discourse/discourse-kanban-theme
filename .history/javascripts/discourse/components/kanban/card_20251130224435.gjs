@@ -53,16 +53,10 @@ const touchDrag = modifier((element, [component]) => {
     clone.style.opacity = '0.8';
     clone.style.pointerEvents = 'none';
     clone.style.width = element.offsetWidth + 'px';
-    clone.style.backgroundColor = 'rgba(255, 255, 255, 0.15)';
-    clone.style.border = '2px solid rgba(255, 255, 255, 0.3)';
-    clone.style.borderRadius = '4px';
     
-    // Get the original card's position in viewport
-    const rect = element.getBoundingClientRect();
-    
-    // Position clone directly above the original card (same horizontal position)
-    cloneX = rect.left;
-    cloneY = rect.top - clone.offsetHeight - 44; // Move up by clone height + space for buttons
+    // Position clone where user tapped
+    cloneX = touch.clientX - element.offsetWidth / 2;
+    cloneY = touch.clientY - element.offsetHeight / 2;
     clone.style.left = cloneX + 'px';
     clone.style.top = cloneY + 'px';
     document.body.appendChild(clone);
@@ -245,42 +239,43 @@ const touchDrag = modifier((element, [component]) => {
     const scrollDeltaX = currentScrollX - lastScrollX;
     const scrollDeltaY = currentScrollY - lastScrollY;
     
+    // Accumulate scroll deltas
+    scrollX += scrollDeltaX;
+    scrollY += scrollDeltaY;
+    
     // Get viewport dimensions
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
     const cloneWidth = clone.offsetWidth;
     const cloneHeight = clone.offsetHeight;
     
-    // Calculate where clone would be after scroll (without adjustment)
-    let targetCloneX = cloneX - (currentScrollX - window.scrollX + scrollX);
-    let targetCloneY = cloneY - (currentScrollY - window.scrollY + scrollY);
+    // Calculate current clone position relative to viewport
+    let newCloneX = cloneX - scrollX;
+    let newCloneY = cloneY - scrollY;
     
-    // Check if clone would go beyond edges and adjust cloneX/cloneY if needed
-    if (scrollDeltaX !== 0) {
-      const newPosX = cloneX - scrollX - scrollDeltaX;
-      if (newPosX < 0) {
-        // Would go past left edge - move clone left
-        cloneX += scrollDeltaX;
-      } else if (newPosX + cloneWidth > viewportWidth) {
-        // Would go past right edge - move clone right  
-        cloneX += scrollDeltaX;
-      }
+    // Edge threshold (when to start moving the clone)
+    const edgeThreshold = 50;
+    
+    // Check if clone is at edges and move it if needed
+    if (newCloneX < 0) {
+      // Hit left edge, move clone right
+      cloneX -= scrollDeltaX;
+      newCloneX = cloneX - scrollX;
+    } else if (newCloneX + cloneWidth > viewportWidth) {
+      // Hit right edge, move clone left
+      cloneX -= scrollDeltaX;
+      newCloneX = cloneX - scrollX;
     }
     
-    if (scrollDeltaY !== 0) {
-      const newPosY = cloneY - scrollY - scrollDeltaY;
-      if (newPosY < 0) {
-        // Would go past top edge - move clone up
-        cloneY += scrollDeltaY;
-      } else if (newPosY + cloneHeight + 44 > viewportHeight) {
-        // Would go past bottom edge - move clone down
-        cloneY += scrollDeltaY;
-      }
+    if (newCloneY < 0) {
+      // Hit top edge, move clone down
+      cloneY -= scrollDeltaY;
+      newCloneY = cloneY - scrollY;
+    } else if (newCloneY + cloneHeight + 40 > viewportHeight) {
+      // Hit bottom edge (accounting for drop button), move clone up
+      cloneY -= scrollDeltaY;
+      newCloneY = cloneY - scrollY;
     }
-    
-    // Track scroll accumulation
-    scrollX += scrollDeltaX;
-    scrollY += scrollDeltaY;
     
     // Update positions
     clone.style.left = (cloneX - scrollX) + 'px';
