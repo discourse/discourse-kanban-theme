@@ -159,7 +159,6 @@ export default class KanbanCard extends Component {
       data-topic-id={{@topic.id}}
       {{on "dragstart" this.dragStart}}
       {{on "dragend" this.dragEnd}}
-      {{touchDrag this}}
     >
       <div class="card-row card-row__topic-details">
         <TopicStatus @topic={{@topic}} />
