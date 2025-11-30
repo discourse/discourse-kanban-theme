@@ -28,15 +28,8 @@ const touchDrag = modifier((element, [component]) => {
     
     longPressTimer = setTimeout(() => {
       isDragging = true;
-      
-      // Trigger the native dragstart event
-      const dragStartEvent = new DragEvent('dragstart', {
-        bubbles: true,
-        cancelable: true,
-        dataTransfer: new DataTransfer()
-      });
-      element.dispatchEvent(dragStartEvent);
-      
+      e.preventDefault(); // Now prevent defaults for dragging
+      component.dragStart({ dataTransfer: { dropEffect: "move" }, stopPropagation: () => {}, preventDefault: () => {} });
       if (navigator.vibrate) navigator.vibrate(50);
     }, 500);
   };
@@ -69,20 +62,11 @@ const touchDrag = modifier((element, [component]) => {
       const listElement = targetElement?.closest('.discourse-kanban-list');
       
       if (listElement) {
-        const dropEvent = new DragEvent('drop', {
-          bubbles: true,
-          cancelable: true
-        });
+        const dropEvent = new Event('drop', { bubbles: true });
         listElement.dispatchEvent(dropEvent);
       }
       
-      // Trigger dragend event
-      const dragEndEvent = new DragEvent('dragend', {
-        bubbles: true,
-        cancelable: true
-      });
-      element.dispatchEvent(dragEndEvent);
-      
+      component.dragEnd({ stopPropagation: () => {} });
       isDragging = false;
       if (navigator.vibrate) navigator.vibrate(30);
     }
