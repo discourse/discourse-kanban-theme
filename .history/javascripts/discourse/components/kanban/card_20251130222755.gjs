@@ -149,12 +149,6 @@ const touchDrag = modifier((element, [component]) => {
       longPressTimer = null;
     }
     
-    // If dragging, prevent the touch from triggering a click
-    if (isDragging) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
-    
     // Don't drop on touch end - wait for double tap
   };
   

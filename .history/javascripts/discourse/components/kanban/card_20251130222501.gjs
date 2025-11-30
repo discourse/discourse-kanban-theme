@@ -36,20 +36,9 @@ const touchDrag = modifier((element, [component]) => {
       // Double tap detected - drop the card
       e.preventDefault();
       e.stopPropagation();
-      e.stopImmediatePropagation();
       dropCard();
-      lastTapTime = 0; // Reset to prevent triple-tap issues
       return;
     }
-    
-    // If currently dragging but not a double-tap, prevent the tap from doing anything
-    if (isDragging) {
-      e.preventDefault();
-      e.stopPropagation();
-      lastTapTime = currentTime;
-      return;
-    }
-    
     lastTapTime = currentTime;
     
     // Only start long press if not already dragging
@@ -147,12 +136,6 @@ const touchDrag = modifier((element, [component]) => {
     if (longPressTimer) {
       clearTimeout(longPressTimer);
       longPressTimer = null;
-    }
-    
-    // If dragging, prevent the touch from triggering a click
-    if (isDragging) {
-      e.preventDefault();
-      e.stopPropagation();
     }
     
     // Don't drop on touch end - wait for double tap
