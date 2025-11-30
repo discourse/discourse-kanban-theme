@@ -23,97 +23,43 @@ const touchDrag = modifier((element, [component]) => {
   let clone = null;
   let cloneX = 0;
   let cloneY = 0;
-  let lastTapTime = 0;
   
   const handleTouchStart = (e) => {
     const touch = e.touches[0];
     startX = touch.clientX;
     startY = touch.clientY;
     
-    // Check for double tap to drop
-    const currentTime = Date.now();
-    if (isDragging && currentTime - lastTapTime < 300) {
-      // Double tap detected - drop the card
-      dropCard();
-      return;
-    }
-    lastTapTime = currentTime;
-    
-    // Only start long press if not already dragging
-    if (!isDragging) {
-      longPressTimer = setTimeout(() => {
-        pickUpCard(touch);
-      }, 500);
-    }
-  };
-  
-  const pickUpCard = (touch) => {
-    isDragging = true;
-    
-    // Create visual clone at fixed position
-    clone = element.cloneNode(true);
-    clone.style.position = 'fixed';
-    clone.style.zIndex = '10000';
-    clone.style.opacity = '0.8';
-    clone.style.pointerEvents = 'none';
-    clone.style.width = element.offsetWidth + 'px';
-    
-    // Position clone where user tapped
-    cloneX = touch.clientX - element.offsetWidth / 2;
-    cloneY = touch.clientY - element.offsetHeight / 2;
-    clone.style.left = cloneX + 'px';
-    clone.style.top = cloneY + 'px';
-    document.body.appendChild(clone);
-    
-    // Dim original card
-    element.style.opacity = '0.3';
-    
-    // Trigger the native dragstart event
-    const dragStartEvent = new DragEvent('dragstart', {
-      bubbles: true,
-      cancelable: true,
-      dataTransfer: new DataTransfer()
-    });
-    element.dispatchEvent(dragStartEvent);
-    
-    if (navigator.vibrate) navigator.vibrate(50);
-  };
-  
-  const dropCard = () => {
-    if (!isDragging) return;
-    
-    // Find what's under the clone's center position
-    const centerX = cloneX + (clone.offsetWidth / 2);
-    const centerY = cloneY + (clone.offsetHeight / 2);
-    const targetElement = document.elementFromPoint(centerX, centerY);
-    const listElement = targetElement?.closest('.discourse-kanban-list');
-    
-    // Remove clone
-    if (clone) {
-      clone.remove();
-      clone = null;
-    }
-    
-    // Restore original card
-    element.style.opacity = '';
-    
-    if (listElement) {
-      const dropEvent = new DragEvent('drop', {
+    longPressTimer = setTimeout(() => {
+      isDragging = true;
+      
+      // Create visual clone at fixed position
+      clone = element.cloneNode(true);
+      clone.style.position = 'fixed';
+      clone.style.zIndex = '10000';
+      clone.style.opacity = '0.8';
+      clone.style.pointerEvents = 'none';
+      clone.style.width = element.offsetWidth + 'px';
+      
+      // Position clone where user tapped
+      cloneX = touch.clientX - element.offsetWidth / 2;
+      cloneY = touch.clientY - element.offsetHeight / 2;
+      clone.style.left = cloneX + 'px';
+      clone.style.top = cloneY + 'px';
+      document.body.appendChild(clone);
+      
+      // Dim original card
+      element.style.opacity = '0.3';
+      
+      // Trigger the native dragstart event
+      const dragStartEvent = new DragEvent('dragstart', {
         bubbles: true,
-        cancelable: true
+        cancelable: true,
+        dataTransfer: new DataTransfer()
       });
-      listElement.dispatchEvent(dropEvent);
-    }
-    
-    // Trigger dragend event
-    const dragEndEvent = new DragEvent('dragend', {
-      bubbles: true,
-      cancelable: true
-    });
-    element.dispatchEvent(dragEndEvent);
-    
-    isDragging = false;
-    if (navigator.vibrate) navigator.vibrate(30);
+      element.dispatchEvent(dragStartEvent);
+      
+      if (navigator.vibrate) navigator.vibrate(50);
+    }, 500);
   };
   
   const handleTouchMove = (e) => {
@@ -127,7 +73,7 @@ const touchDrag = modifier((element, [component]) => {
       longPressTimer = null;
     }
     
-    // Allow free scrolling whether dragging or not
+    // Clone stays in fixed position - user scrolls the board underneath
   };
   
   const handleTouchEnd = (e) => {
@@ -136,7 +82,42 @@ const touchDrag = modifier((element, [component]) => {
       longPressTimer = null;
     }
     
-    // Don't drop on touch end - wait for double tap
+    if (isDragging) {
+      e.preventDefault(); // Prevent navigation
+      
+      // Find what's under the clone's center position
+      const centerX = cloneX + (clone.offsetWidth / 2);
+      const centerY = cloneY + (clone.offsetHeight / 2);
+      const targetElement = document.elementFromPoint(centerX, centerY);
+      const listElement = targetElement?.closest('.discourse-kanban-list');
+      
+      // Remove clone
+      if (clone) {
+        clone.remove();
+        clone = null;
+      }
+      
+      // Restore original card
+      element.style.opacity = '';
+      
+      if (listElement) {
+        const dropEvent = new DragEvent('drop', {
+          bubbles: true,
+          cancelable: true
+        });
+        listElement.dispatchEvent(dropEvent);
+      }
+      
+      // Trigger dragend event
+      const dragEndEvent = new DragEvent('dragend', {
+        bubbles: true,
+        cancelable: true
+      });
+      element.dispatchEvent(dragEndEvent);
+      
+      isDragging = false;
+      if (navigator.vibrate) navigator.vibrate(30);
+    }
   };
   
   const handleContextMenu = (e) => {
