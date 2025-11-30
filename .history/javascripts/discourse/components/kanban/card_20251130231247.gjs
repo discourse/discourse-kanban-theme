@@ -263,40 +263,35 @@ const touchDrag = modifier((element, [component]) => {
     // Only process if there's actual scroll change
     if (scrollDeltaX === 0 && scrollDeltaY === 0) return;
     
+    // Update scroll accumulation
+    scrollX += scrollDeltaX;
+    scrollY += scrollDeltaY;
+    
     // Get viewport dimensions
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
     const cloneWidth = clone.offsetWidth;
     const cloneHeight = clone.offsetHeight;
     
-    // Calculate where clone currently is in viewport (before updating scroll)
+    // Calculate where clone currently is in viewport
     const viewportX = cloneX - scrollX;
     const viewportY = cloneY - scrollY;
     
-    // Update scroll accumulation
-    scrollX += scrollDeltaX;
-    scrollY += scrollDeltaY;
-    
-    // Check if clone would go off-screen after this scroll, and adjust if needed
-    const newViewportX = cloneX - scrollX;
-    const newViewportY = cloneY - scrollY;
-    
-    // Horizontal edge handling
-    if (newViewportX < 0) {
-      // Would go off left edge - move clone left to keep it visible
-      cloneX -= newViewportX; // Add the negative amount to bring it back to 0
-    } else if (newViewportX + cloneWidth > viewportWidth) {
-      // Would go off right edge - move clone right to keep it visible
-      cloneX += (newViewportX + cloneWidth - viewportWidth);
+    // If clone is at an edge and user scrolls in that direction, move the clone
+    if (viewportX <= 0 && scrollDeltaX < 0) {
+      // At left edge and scrolling left - move clone left
+      cloneX += scrollDeltaX;
+    } else if (viewportX + cloneWidth >= viewportWidth && scrollDeltaX > 0) {
+      // At right edge and scrolling right - move clone right
+      cloneX += scrollDeltaX;
     }
     
-    // Vertical edge handling
-    if (newViewportY < 0) {
-      // Would go off top edge - move clone up to keep it visible
-      cloneY -= newViewportY;
-    } else if (newViewportY + cloneHeight + 44 > viewportHeight) {
-      // Would go off bottom edge - move clone down to keep it visible
-      cloneY += (newViewportY + cloneHeight + 44 - viewportHeight);
+    if (viewportY <= 0 && scrollDeltaY < 0) {
+      // At top edge and scrolling up - move clone up
+      cloneY += scrollDeltaY;
+    } else if (viewportY + cloneHeight + 44 >= viewportHeight && scrollDeltaY > 0) {
+      // At bottom edge and scrolling down - move clone down
+      cloneY += scrollDeltaY;
     }
     
     // Update positions
