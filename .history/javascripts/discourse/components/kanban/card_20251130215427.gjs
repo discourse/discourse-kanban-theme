@@ -45,7 +45,10 @@ const touchDrag = modifier((element, [component]) => {
       longPressTimer = null;
     }
     
-    // Allow scrolling even when dragging
+    // Only prevent default if we're actually dragging
+    if (isDragging) {
+      e.preventDefault();
+    }
   };
   
   const handleTouchEnd = (e) => {
