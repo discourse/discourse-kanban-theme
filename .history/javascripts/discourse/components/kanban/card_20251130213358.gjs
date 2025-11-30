@@ -20,7 +20,6 @@ const touchDrag = modifier((element, [component]) => {
   let isDragging = false;
   
   const handleTouchStart = (e) => {
-    e.preventDefault(); // Prevent browser context menu
     longPressTimer = setTimeout(() => {
       isDragging = true;
       component.dragStart({ dataTransfer: {}, stopPropagation: () => {}, preventDefault: () => {} });
@@ -28,8 +27,7 @@ const touchDrag = modifier((element, [component]) => {
     }, 500);
   };
   
-  const handleTouchMove = (e) => {
-    e.preventDefault(); // Prevent scrolling while potentially dragging
+  const handleTouchMove = () => {
     if (longPressTimer) {
       clearTimeout(longPressTimer);
       longPressTimer = null;
@@ -37,7 +35,6 @@ const touchDrag = modifier((element, [component]) => {
   };
   
   const handleTouchEnd = (e) => {
-    e.preventDefault(); // Prevent click/navigation
     if (longPressTimer) {
       clearTimeout(longPressTimer);
     }
@@ -58,9 +55,9 @@ const touchDrag = modifier((element, [component]) => {
     }
   };
   
-  element.addEventListener('touchstart', handleTouchStart, { passive: false });
-  element.addEventListener('touchmove', handleTouchMove, { passive: false });
-  element.addEventListener('touchend', handleTouchEnd, { passive: false });
+  element.addEventListener('touchstart', handleTouchStart, { passive: true });
+  element.addEventListener('touchmove', handleTouchMove, { passive: true });
+  element.addEventListener('touchend', handleTouchEnd, { passive: true });
   
   return () => {
     if (longPressTimer) clearTimeout(longPressTimer);
