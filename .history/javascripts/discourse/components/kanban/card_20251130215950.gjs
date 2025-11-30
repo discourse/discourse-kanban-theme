@@ -20,7 +20,6 @@ const touchDrag = modifier((element, [component]) => {
   let isDragging = false;
   let startX = 0;
   let startY = 0;
-  let clone = null;
   
   const handleTouchStart = (e) => {
     const touch = e.touches[0];
@@ -29,20 +28,6 @@ const touchDrag = modifier((element, [component]) => {
     
     longPressTimer = setTimeout(() => {
       isDragging = true;
-      
-      // Create visual clone
-      clone = element.cloneNode(true);
-      clone.style.position = 'fixed';
-      clone.style.zIndex = '10000';
-      clone.style.opacity = '0.8';
-      clone.style.pointerEvents = 'none';
-      clone.style.width = element.offsetWidth + 'px';
-      clone.style.left = (touch.clientX - element.offsetWidth / 2) + 'px';
-      clone.style.top = (touch.clientY - element.offsetHeight / 2) + 'px';
-      document.body.appendChild(clone);
-      
-      // Dim original card
-      element.style.opacity = '0.3';
       
       // Trigger the native dragstart event
       const dragStartEvent = new DragEvent('dragstart', {
@@ -67,11 +52,7 @@ const touchDrag = modifier((element, [component]) => {
       longPressTimer = null;
     }
     
-    // Update clone position while dragging
-    if (isDragging && clone) {
-      clone.style.left = (touch.clientX - clone.offsetWidth / 2) + 'px';
-      clone.style.top = (touch.clientY - clone.offsetHeight / 2) + 'px';
-    }
+    // Allow scrolling even when dragging
   };
   
   const handleTouchEnd = (e) => {
@@ -82,15 +63,6 @@ const touchDrag = modifier((element, [component]) => {
     
     if (isDragging) {
       e.preventDefault(); // Prevent navigation
-      
-      // Remove clone
-      if (clone) {
-        clone.remove();
-        clone = null;
-      }
-      
-      // Restore original card
-      element.style.opacity = '';
       
       const touch = e.changedTouches[0];
       const targetElement = document.elementFromPoint(touch.clientX, touch.clientY);
@@ -128,7 +100,6 @@ const touchDrag = modifier((element, [component]) => {
   
   return () => {
     if (longPressTimer) clearTimeout(longPressTimer);
-    if (clone) clone.remove();
     element.removeEventListener('touchstart', handleTouchStart);
     element.removeEventListener('touchmove', handleTouchMove);
     element.removeEventListener('touchend', handleTouchEnd);
