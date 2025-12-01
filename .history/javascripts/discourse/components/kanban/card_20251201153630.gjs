@@ -394,12 +394,6 @@ export default class KanbanCard extends Component {
 
   @action
   dragStart(event) {
-    // Don't allow drag if user is not logged in
-    if (!this.currentUser) {
-      event.preventDefault();
-      return;
-    }
-    
     this.dragging = true;
     this.args.setDragData({ topic: this.args.topic });
     if (event.dataTransfer) {
