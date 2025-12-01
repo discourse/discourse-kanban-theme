@@ -251,13 +251,6 @@ const touchDrag = modifier((element, [component]) => {
       clickBlocker = null;
     }
     
-    // Restore pointer events on all cards
-    const blockedCards = document.querySelectorAll('[data-drag-blocked="true"]');
-    blockedCards.forEach(card => {
-      card.style.pointerEvents = '';
-      delete card.dataset.dragBlocked;
-    });
-    
     // Restore original card
     element.style.opacity = '';
     

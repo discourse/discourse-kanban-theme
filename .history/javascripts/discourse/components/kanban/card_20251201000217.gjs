@@ -125,7 +125,7 @@ const touchDrag = modifier((element, [component]) => {
     };
     document.body.appendChild(cancelButton);
     
-    // Create full-screen overlay that blocks clicks but not scrolling
+    // Create full-screen click blocker to prevent card clicks
     clickBlocker = document.createElement('div');
     clickBlocker.style.position = 'fixed';
     clickBlocker.style.top = '0';
@@ -133,16 +133,14 @@ const touchDrag = modifier((element, [component]) => {
     clickBlocker.style.width = '100vw';
     clickBlocker.style.height = '100vh';
     clickBlocker.style.zIndex = '9999'; // Below clone but above everything else
-    clickBlocker.style.pointerEvents = 'none'; // Allow scrolling
+    clickBlocker.style.pointerEvents = 'none'; // Don't block scrolling
     clickBlocker.style.cursor = 'grabbing';
+    // Only block clicks on cards, not scrolling
+    clickBlocker.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+    }, true);
     document.body.appendChild(clickBlocker);
-    
-    // Block clicks on all cards
-    const allCards = document.querySelectorAll('.topic-card');
-    allCards.forEach(card => {
-      card.style.pointerEvents = 'none';
-      card.dataset.dragBlocked = 'true';
-    });
     
     // Find the scrolling container
     scrollContainer = element.closest('.discourse-kanban');
@@ -197,13 +195,6 @@ const touchDrag = modifier((element, [component]) => {
       clickBlocker = null;
     }
     
-    // Restore pointer events on all cards
-    const blockedCards = document.querySelectorAll('[data-drag-blocked="true"]');
-    blockedCards.forEach(card => {
-      card.style.pointerEvents = '';
-      delete card.dataset.dragBlocked;
-    });
-    
     // Restore original card
     element.style.opacity = '';
     
@@ -250,13 +241,6 @@ const touchDrag = modifier((element, [component]) => {
       clickBlocker.remove();
       clickBlocker = null;
     }
-    
-    // Restore pointer events on all cards
-    const blockedCards = document.querySelectorAll('[data-drag-blocked="true"]');
-    blockedCards.forEach(card => {
-      card.style.pointerEvents = '';
-      delete card.dataset.dragBlocked;
-    });
     
     // Restore original card
     element.style.opacity = '';
