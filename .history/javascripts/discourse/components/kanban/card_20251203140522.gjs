@@ -290,8 +290,8 @@ const touchDrag = modifier((element, [component]) => {
     const deltaX = Math.abs(touch.clientX - startX);
     const deltaY = Math.abs(touch.clientY - startY);
     
-    // Cancel long press if finger moves too much before timer fires
-    if (longPressTimer && (deltaX > 10 || deltaY > 10)) {
+    // Cancel long press if finger moves more than 5px before timer fires
+    if (longPressTimer && (deltaX > 5 || deltaY > 5)) {
       clearTimeout(longPressTimer);
       longPressTimer = null;
     }

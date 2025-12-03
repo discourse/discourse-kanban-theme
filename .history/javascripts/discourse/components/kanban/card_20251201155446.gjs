@@ -42,6 +42,9 @@ const touchDrag = modifier((element, [component]) => {
       return;
     }
     
+    // Prevent iOS/Android text selection and callout menu
+    e.preventDefault();
+    
     const touch = e.touches[0];
     startX = touch.clientX;
     startY = touch.clientY;

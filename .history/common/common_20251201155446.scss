@@ -1,0 +1,288 @@
+html.kanban-active {
+  overscroll-behavior: none;
+
+  body.kanban-active #main-outlet-wrapper #main-outlet > .list-controls,
+  body.kanban-active #main-outlet-wrapper #main-outlet > .list-container {
+    max-width: unset;
+  }
+
+  #list-area {
+    margin-bottom: 0;
+  }
+
+  .list-controls .btn.notifications-tracking-trigger,
+  .list-controls .btn.bulk-select,
+  .topic-list-layout-trigger,
+  .powered-by-discourse {
+    display: none;
+  }
+}
+
+.discourse-kanban {
+  position: relative;
+
+  // The amount of space available without causing the page to scroll:
+  --desired-height: calc(100vh - var(--kanban-offset-top));
+
+  // Use the desired height, unless it is smaller than 500px
+  height: max(var(--desired-height), 500px);
+  padding-bottom: 10px;
+  overflow-x: scroll;
+  box-sizing: border-box;
+
+  &.kanban-fullscreen {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: z("fullscreen");
+    background-color: var(--secondary);
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    display: flex;
+
+    .discourse-kanban-container {
+      height: auto;
+      padding: 10px !important;
+      max-height: 100%;
+    }
+
+    .fullscreen-close-wrapper {
+      padding: 10px 0 10px 10px;
+      display: flex;
+    }
+  }
+
+  // No sidebar. Make container fill the viewport width and center lists
+  body:not(.has-sidebar-page) &:not(.kanban-fullscreen) {
+    width: 100vw;
+    left: calc(-50vw + 50%);
+
+    .discourse-kanban-container {
+      padding: 0 10px;
+    }
+
+    .discourse-kanban-list {
+      &:first-of-type {
+        margin-left: auto;
+      }
+
+      &:last-of-type {
+        margin-right: auto;
+      }
+    }
+  }
+}
+
+  .discourse-kanban-container {
+  height: 100%;
+  display: flex;
+  gap: 0 10px;
+
+  // Add invisible scroll space using pseudo-elements
+  &::before {
+    content: '';
+    min-width: 100vw;
+    height: 1px;
+    flex-shrink: 0;
+  }
+
+  &::after {
+    content: '';
+    min-width: 100vw;
+    height: 1px;
+    flex-shrink: 0;
+  }
+
+  .discourse-kanban-list {
+    background: var(--primary-100);
+    border: 1px solid var(--primary-low);
+    display: flex;
+    flex-direction: column;
+
+    &.kanban-empty-state {
+      padding: 2em 1em;
+      text-align: center;
+      justify-content: center;
+      gap: 1em;
+      height: 6em;
+    }
+
+    &.accept-drag {
+      background: var(--primary-300);
+    }
+    width: 350px;
+    flex-shrink: 0;
+    padding-top: 10px;
+
+    .list-title {
+      font-weight: bold;
+      margin-left: calc(11px + 0.15em);
+      font-size: $font-up-1;
+    }
+
+    .topics {
+      overflow-y: scroll;
+      padding: 0 8px;
+      height: 100%;
+      padding-bottom: 100vh; // Allow scrolling down to position cards at bottom
+    }
+
+    .topic-card {
+      display: block;
+      color: var(--primary);
+      margin: 10px 0;
+      background: var(--secondary);
+      padding: 10px;
+      box-shadow: var(--primary-low) 0 3px 6px;
+      border: 1px solid var(--primary-low);
+      
+      // Prevent iOS/Android long-press text selection and callout menu
+      -webkit-user-select: none;
+      user-select: none;
+      -webkit-touch-callout: none;
+      -webkit-tap-highlight-color: transparent;
+
+      &.dragging {
+        background-color: var(--tertiary-low);
+      }
+
+      &.card-no-recent-activity {
+        box-shadow: inset 5px 0 0 0 var(--danger-low);
+        border-left: 0;
+        padding-left: 15px;
+      }
+
+      &.card-stale {
+        box-shadow: inset 5px 0 0 0 var(--danger-medium);
+        border-left: 0;
+        padding-left: 15px;
+      }
+
+      .card-row {
+        display: flex;
+        align-items: baseline;
+
+        * {
+          flex-grow: 0;
+        }
+
+        &__user-details-row {
+          min-height: 24px;
+          align-items: center;
+        }
+
+        &__topic-details {
+          .relative-date {
+            font-size: $font-down-2;
+          }
+        }
+
+        &__thumbnail-row {
+          margin-top: 5px;
+        }
+
+        .last-post-by,
+        .topic-title {
+          flex-grow: 1;
+          word-wrap: break-word;
+          overflow: hidden;
+        }
+
+        .topic-assignments {
+          text-align: right;
+        }
+
+        .topic-assignments-with-avatars {
+          text-align: right;
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+
+          .d-icon {
+            margin-right: 0.25em;
+            font-size: $font-down-2;
+            color: var(--primary-medium);
+          }
+        }
+
+        .thumbnail {
+          overflow: hidden;
+          width: 100%;
+        }
+
+        .last-post-by {
+          text-align: left;
+          font-size: $font-down-2;
+          color: var(--primary-medium);
+        }
+
+        .tags {
+          font-size: var(--font-down-1);
+        }
+
+        .category {
+          flex-grow: 1;
+        }
+
+        .assigned-to {
+          margin-top: auto;
+          margin-bottom: auto;
+          font-size: var(--font-down-1);
+          vertical-align: baseline;
+
+          a {
+            color: var(--primary-medium);
+          }
+        }
+      }
+    }
+
+    .no_topics {
+      width: 100%;
+      text-align: center;
+      margin-top: 50px;
+      min-height: 100px;
+    }
+  }
+}
+
+.modal .kanban-modal {
+  width: 400px;
+
+  .control-label,
+  .controls {
+    margin: 5px;
+  }
+
+  .control-label {
+    margin-top: 15px;
+  }
+
+  .select-kit,
+  div.ac-wrap {
+    width: 100%;
+  }
+}
+
+ul.kanban-controls {
+  padding: 0.5rem;
+  margin: 0;
+  list-style: none;
+
+  li .btn {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  li {
+    margin-bottom: 2px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
