@@ -1,2 +1,5 @@
 node_modules
 .discourse-site
+
+# Local History extension backups
+.history/

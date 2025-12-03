@@ -77,10 +77,25 @@ html.kanban-active {
   }
 }
 
-.discourse-kanban-container {
+  .discourse-kanban-container {
   height: 100%;
   display: flex;
   gap: 0 10px;
+
+  // Add invisible scroll space using pseudo-elements
+  &::before {
+    content: '';
+    min-width: 100vw;
+    height: 1px;
+    flex-shrink: 0;
+  }
+
+  &::after {
+    content: '';
+    min-width: 100vw;
+    height: 1px;
+    flex-shrink: 0;
+  }
 
   .discourse-kanban-list {
     background: var(--primary-100);
@@ -113,6 +128,7 @@ html.kanban-active {
       overflow-y: scroll;
       padding: 0 8px;
       height: 100%;
+      padding-bottom: 100vh; // Allow scrolling down to position cards at bottom
     }
 
     .topic-card {
@@ -123,6 +139,12 @@ html.kanban-active {
       padding: 10px;
       box-shadow: var(--primary-low) 0 3px 6px;
       border: 1px solid var(--primary-low);
+      
+      // Prevent iOS/Android long-press text selection and callout menu
+      -webkit-user-select: none;
+      user-select: none;
+      -webkit-touch-callout: none;
+      -webkit-tap-highlight-color: transparent;
 
       &.dragging {
         background-color: var(--tertiary-low);
