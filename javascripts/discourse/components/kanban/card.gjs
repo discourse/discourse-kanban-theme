@@ -47,7 +47,7 @@ export default class KanbanCard extends Component {
     const listTags = [...definitionTags, discoveryTag];
 
     return this.args.topic.tags
-      .reject((t) => listTags?.includes(t))
+      .filter((t) => !listTags?.includes(t))
       .map((t) => renderTag(t));
   }
 
