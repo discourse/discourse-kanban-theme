@@ -162,8 +162,8 @@ export default class KanbanList extends Component {
       );
       doUpdate = async () => {
         const existingTags = topic.tags;
-        let newTags = existingTags.reject((t) =>
-          toRemove
+        let newTags = existingTags.filter((t) =>
+          !toRemove
             .map((remove) => remove.toLowerCase())
             .includes(t.toLowerCase())
         );
