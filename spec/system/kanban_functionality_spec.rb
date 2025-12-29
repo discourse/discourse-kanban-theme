@@ -73,6 +73,12 @@ RSpec.describe "Testing A Theme or Theme Component", system: true do
   end
 
   it "should function when filtered to tag" do
+    visit "/"
+    tag_drop = PageObjects::Components::SelectKit.new(".category-breadcrumb .tag-drop")
+    tag_drop.select_row_by_name("chat")
+
+    find(".kanban-nav").click
+
     visit "/tag/chat?board=tags:active,backlog"
 
     lists = page.all(".discourse-kanban-list")
