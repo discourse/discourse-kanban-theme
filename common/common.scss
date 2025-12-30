@@ -82,6 +82,21 @@ html.kanban-active {
   display: flex;
   gap: 0 10px;
 
+  // Add invisible scroll space using pseudo-elements
+  &::before {
+    content: "";
+    min-width: 100vw;
+    height: 1px;
+    flex-shrink: 0;
+  }
+
+  &::after {
+    content: "";
+    min-width: 100vw;
+    height: 1px;
+    flex-shrink: 0;
+  }
+
   .discourse-kanban-list {
     background: var(--primary-100);
     border: 1px solid var(--primary-low);
@@ -113,6 +128,7 @@ html.kanban-active {
       overflow-y: scroll;
       padding: 0 8px;
       height: 100%;
+      padding-bottom: 100vh; // Allow scrolling down to position cards at bottom
     }
 
     .topic-card {
@@ -124,8 +140,14 @@ html.kanban-active {
       box-shadow: var(--primary-low) 0 3px 6px;
       border: 1px solid var(--primary-low);
 
+      // Prevent iOS/Android long-press text selection and callout menu
+      user-select: none;
+      -webkit-touch-callout: none;
+      -webkit-tap-highlight-color: transparent;
+
       &.dragging {
-        background-color: var(--tertiary-low);
+        opacity: 0.8 !important;
+        box-shadow: 0 5px 15px rgb(0 0 0 / 0.3) !important;
       }
 
       &.card-no-recent-activity {
@@ -262,5 +284,48 @@ ul.kanban-controls {
     &:last-child {
       margin-bottom: 0;
     }
+  }
+}
+
+// Mobile touch drag styles
+.kanban-dragging-clone {
+  opacity: 0.8;
+  box-shadow: 0 0 15px rgb(var(--primary-rgb) / 0.3);
+
+  // Preserve card padding when moved outside normal container
+  padding: 10px !important;
+}
+
+.kanban-drop-button {
+  padding: 6px;
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--secondary);
+  background-color: var(--success);
+  border: none;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgb(var(--primary-rgb) / 0.5);
+  cursor: pointer;
+
+  &:hover {
+    background-color: var(--success-hover);
+  }
+}
+
+.kanban-cancel-button {
+  padding: 0;
+  font-size: 18px;
+  font-weight: bold;
+  line-height: 26px;
+  text-align: center;
+  color: var(--secondary);
+  background-color: var(--danger);
+  border: none;
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgb(var(--primary-rgb) / 0.5);
+  cursor: pointer;
+
+  &:hover {
+    background-color: var(--danger-hover);
   }
 }
