@@ -90,7 +90,7 @@ export default class KanbanList extends Component {
 
     if (discoveryTag) {
       params.tags = [...(params.tags || [])];
-      params.tags.push(discoveryTag.id);
+      params.tags.push(discoveryTag.name);
     }
 
     try {

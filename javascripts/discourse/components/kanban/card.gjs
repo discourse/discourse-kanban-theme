@@ -43,7 +43,7 @@ export default class KanbanCard extends Component {
 
   get tags() {
     const definitionTags = this.args.definition.params.tags || [];
-    const discoveryTag = this.kanbanManager.discoveryTag?.id;
+    const discoveryTag = this.kanbanManager.discoveryTag?.name;
     const listTags = [...definitionTags, discoveryTag];
 
     return this.args.topic.tags

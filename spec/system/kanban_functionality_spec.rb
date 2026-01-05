@@ -95,4 +95,21 @@ RSpec.describe "Testing A Theme or Theme Component", system: true do
     expect(active_list).not_to have_css(".topic-card")
     expect(backlog_list).to have_css(".topic-card", count: 2)
   end
+
+  it "filters by discovery tag when using default board on tag page" do
+    category = Fabricate(:category, name: "General")
+    topic_with_tag = Fabricate(:topic, category: category, tags: [chat])
+    Fabricate(:post, topic: topic_with_tag)
+    topic_without_tag = Fabricate(:topic, category: category, tags: [modern_js])
+    Fabricate(:post, topic: topic_without_tag)
+
+    visit "/tag/chat?board=default"
+
+    expect(page).to have_css(".discourse-kanban-list")
+    general_list = page.all(".discourse-kanban-list").find { |l| l.find(".list-title").text == "General" }
+
+    expect(general_list).to have_css(".topic-card", count: 1)
+    expect(general_list).to have_css("[data-topic-id='#{topic_with_tag.id}']")
+    expect(general_list).not_to have_css("[data-topic-id='#{topic_without_tag.id}']")
+  end
 end
