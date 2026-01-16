@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative "page_objects/pages/kanban_board"
+
 RSpec.describe "Testing A Theme or Theme Component", system: true do
   def tagged_topic(*tags)
     topic = Fabricate(:topic, tags: tags)
@@ -46,8 +48,8 @@ RSpec.describe "Testing A Theme or Theme Component", system: true do
 
     tag_chooser = PageObjects::Components::SelectKit.new(".kanban-tag-chooser")
     tag_chooser.expand
-    tag_chooser.select_row_by_value("active")
-    tag_chooser.select_row_by_value("backlog")
+    tag_chooser.select_row_by_name("active")
+    tag_chooser.select_row_by_name("backlog")
     tag_chooser.collapse
 
     find(".kanban-modal .btn-primary").click
@@ -106,10 +108,39 @@ RSpec.describe "Testing A Theme or Theme Component", system: true do
     visit "/tag/chat?board=default"
 
     expect(page).to have_css(".discourse-kanban-list")
-    general_list = page.all(".discourse-kanban-list").find { |l| l.find(".list-title").text == "General" }
+    general_list =
+      page.all(".discourse-kanban-list").find { |l| l.find(".list-title").text == "General" }
 
     expect(general_list).to have_css(".topic-card", count: 1)
     expect(general_list).to have_css("[data-topic-id='#{topic_with_tag.id}']")
     expect(general_list).not_to have_css("[data-topic-id='#{topic_without_tag.id}']")
+  end
+
+  it "should function with auto-detected top tags (no explicit tag list)" do
+    kanban_board = PageObjects::Pages::KanbanBoard.new
+
+    visit "/latest?board=tags"
+
+    expect(kanban_board).to have_list_with_title("#active")
+    expect(kanban_board).to have_list_with_title("#backlog")
+    expect(kanban_board).to have_list_with_title("#chat")
+    expect(kanban_board).to have_list_with_title("#modern-js")
+  end
+
+  it "displays untagged topics in @untagged column" do
+    untagged_topic = Fabricate(:topic, title: "Topic without any tags")
+    Fabricate(:post, topic: untagged_topic)
+    kanban_board = PageObjects::Pages::KanbanBoard.new
+
+    visit "/latest?board=tags:active,@untagged"
+
+    expect(kanban_board).to have_list_with_title("#active")
+    expect(kanban_board).to have_list_with_title("Untagged")
+    expect(kanban_board).to have_topics_in_list(
+      "#active",
+      count: 2,
+      topics: [modern_js_active, chat_active],
+    )
+    expect(kanban_board).to have_topics_in_list("Untagged", count: 1, topics: [untagged_topic])
   end
 end
