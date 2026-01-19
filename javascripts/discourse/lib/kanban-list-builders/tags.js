@@ -1,9 +1,11 @@
+import getTagName from "../get-tag-name";
+
 export default function buildTagLists({ kanbanManager, param }) {
   const tags = [];
   if (param) {
     tags.push(...param.split(","));
   } else if (kanbanManager.discoveryTopTags) {
-    tags.push(...kanbanManager.discoveryTopTags);
+    tags.push(...kanbanManager.discoveryTopTags.map(getTagName));
   }
 
   const lists = [];

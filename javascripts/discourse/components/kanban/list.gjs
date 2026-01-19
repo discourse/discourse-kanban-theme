@@ -9,6 +9,7 @@ import icon from "discourse/helpers/d-icon";
 import { popupAjaxError } from "discourse/lib/ajax-error";
 import Topic from "discourse/models/topic";
 import { i18n } from "discourse-i18n";
+import getTagName from "../../lib/get-tag-name";
 import DiscourseKanbanCard from "./card";
 
 function removedElements(before, after) {
@@ -161,7 +162,7 @@ export default class KanbanList extends Component {
         thisDefinition.params.tags
       );
       doUpdate = async () => {
-        const existingTags = topic.tags;
+        const existingTags = topic.tags.map(getTagName);
         let newTags = existingTags.filter(
           (t) =>
             !toRemove
