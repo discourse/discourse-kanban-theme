@@ -4,6 +4,7 @@ import { on } from "@ember/modifier";
 import { action } from "@ember/object";
 import { service } from "@ember/service";
 import { htmlSafe } from "@ember/template";
+import { modifier } from "ember-modifier";
 import PluginOutlet from "discourse/components/plugin-outlet";
 import TopicStatus from "discourse/components/topic-status";
 import categoryBadge from "discourse/helpers/category-badge";
@@ -15,16 +16,410 @@ import { renderAvatar } from "discourse/helpers/user-avatar";
 import renderTag from "discourse/lib/render-tag";
 import getTagName from "../../lib/get-tag-name";
 
+const touchDrag = modifier((element, [component]) => {
+  let longPressTimer = null;
+  let isDragging = false;
+  let startX = 0;
+  let startY = 0;
+  let clone = null;
+  let cloneX = 0;
+  let cloneY = 0;
+  let dropButton = null;
+  let cancelButton = null;
+  let animationFrameId = null;
+  let scrollContainer = null;
+  let clickBlocker = null;
+
+  const handleTouchStart = (e) => {
+    // Don't allow drag if user is not logged in
+    if (!component.currentUser) {
+      return;
+    }
+
+    // Don't allow picking up another card if ANY card is being dragged
+    const existingClone = document.querySelector(".kanban-dragging-clone");
+    if (existingClone) {
+      e.preventDefault();
+      return;
+    }
+
+    const touch = e.touches[0];
+    startX = touch.clientX;
+    startY = touch.clientY;
+
+    // Only start long press if not already dragging
+    if (!isDragging) {
+      longPressTimer = setTimeout(() => {
+        pickUpCard(touch);
+      }, 500);
+    }
+  };
+
+  const pickUpCard = () => {
+    isDragging = true;
+
+    // Create visual clone at fixed position
+    clone = element.cloneNode(true);
+    clone.classList.add("kanban-dragging-clone");
+    clone.style.position = "fixed";
+    clone.style.zIndex = "10000";
+    clone.style.pointerEvents = "none";
+    clone.style.width = element.offsetWidth + "px";
+
+    // Get the original card's position in viewport
+    const rect = element.getBoundingClientRect();
+
+    // Position clone directly above the original card (same horizontal position)
+    cloneX = rect.left;
+    cloneY = rect.top - clone.offsetHeight - 44; // Move up by clone height + space for buttons
+    clone.style.left = cloneX + "px";
+    clone.style.top = cloneY + "px";
+    document.body.appendChild(clone);
+
+    // Create drop button underneath the clone
+    dropButton = document.createElement("button");
+    dropButton.textContent = "Drop Card";
+    dropButton.classList.add("kanban-drop-button");
+    dropButton.style.position = "fixed";
+    dropButton.style.left = cloneX + "px";
+    dropButton.style.top = cloneY + clone.offsetHeight + 4 + "px";
+    dropButton.style.width = element.offsetWidth + "px";
+    dropButton.style.zIndex = "10001";
+    dropButton.onclick = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      dropCard();
+    };
+    document.body.appendChild(dropButton);
+
+    // Create cancel button (X) at top right of clone
+    cancelButton = document.createElement("button");
+    cancelButton.textContent = "✕";
+    cancelButton.classList.add("kanban-cancel-button");
+    cancelButton.style.position = "fixed";
+    cancelButton.style.left = cloneX + element.offsetWidth - 30 + "px";
+    cancelButton.style.top = cloneY + 4 + "px";
+    cancelButton.style.width = "26px";
+    cancelButton.style.height = "26px";
+    cancelButton.style.zIndex = "10002";
+    cancelButton.onclick = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      cancelDrag();
+    };
+    document.body.appendChild(cancelButton);
+
+    // Create full-screen overlay that blocks clicks but not scrolling
+    clickBlocker = document.createElement("div");
+    clickBlocker.style.position = "fixed";
+    clickBlocker.style.top = "0";
+    clickBlocker.style.left = "0";
+    clickBlocker.style.width = "100vw";
+    clickBlocker.style.height = "100vh";
+    clickBlocker.style.zIndex = "9999"; // Below clone but above everything else
+    clickBlocker.style.pointerEvents = "none"; // Allow scrolling
+    clickBlocker.style.cursor = "grabbing";
+    document.body.appendChild(clickBlocker);
+
+    // Block clicks on all cards
+    const allCards = document.querySelectorAll(".topic-card");
+    allCards.forEach((card) => {
+      card.style.pointerEvents = "none";
+      card.dataset.dragBlocked = "true";
+    });
+
+    // Find the scrolling container
+    scrollContainer = element.closest(".discourse-kanban");
+
+    // Start animation loop for position updates
+    const trackPosition = () => {
+      if (isDragging) {
+        updateClonePosition();
+        animationFrameId = requestAnimationFrame(trackPosition);
+      }
+    };
+    animationFrameId = requestAnimationFrame(trackPosition);
+
+    // Dim original card ONLY for mobile (when there's a clone floating above)
+    // Desktop drag uses CSS .dragging class instead
+    element.style.opacity = "0.3";
+
+    // Trigger the native dragstart event
+    const dragStartEvent = new DragEvent("dragstart", {
+      bubbles: true,
+      cancelable: true,
+      dataTransfer: new DataTransfer(),
+    });
+    element.dispatchEvent(dragStartEvent);
+
+    if (navigator.vibrate) {
+      navigator.vibrate(50);
+    }
+  };
+
+  const cancelDrag = () => {
+    if (!isDragging) {
+      return;
+    }
+
+    // Cancel animation frame
+    if (animationFrameId) {
+      cancelAnimationFrame(animationFrameId);
+      animationFrameId = null;
+    }
+
+    // Remove clone, buttons, and click blocker
+    if (clone) {
+      clone.remove();
+      clone = null;
+    }
+    if (dropButton) {
+      dropButton.remove();
+      dropButton = null;
+    }
+    if (cancelButton) {
+      cancelButton.remove();
+      cancelButton = null;
+    }
+    if (clickBlocker) {
+      clickBlocker.remove();
+      clickBlocker = null;
+    }
+
+    // Restore pointer events on all cards
+    const blockedCards = document.querySelectorAll(
+      '[data-drag-blocked="true"]'
+    );
+    blockedCards.forEach((card) => {
+      card.style.pointerEvents = "";
+      delete card.dataset.dragBlocked;
+    });
+
+    // Restore original card
+    element.style.opacity = "";
+
+    // Trigger dragend event without dropping
+    const dragEndEvent = new DragEvent("dragend", {
+      bubbles: true,
+      cancelable: true,
+    });
+    element.dispatchEvent(dragEndEvent);
+
+    isDragging = false;
+    if (navigator.vibrate) {
+      navigator.vibrate(20);
+    }
+  };
+
+  const dropCard = () => {
+    if (!isDragging) {
+      return;
+    }
+
+    // Cancel animation frame
+    if (animationFrameId) {
+      cancelAnimationFrame(animationFrameId);
+      animationFrameId = null;
+    }
+
+    // Find what's under the clone's center position
+    const centerX = cloneX + clone.offsetWidth / 2;
+    const centerY = cloneY + clone.offsetHeight / 2;
+    const targetElement = document.elementFromPoint(centerX, centerY);
+    const listElement = targetElement?.closest(".discourse-kanban-list");
+
+    // Remove clone, buttons, and click blocker
+    if (clone) {
+      clone.remove();
+      clone = null;
+    }
+    if (dropButton) {
+      dropButton.remove();
+      dropButton = null;
+    }
+    if (cancelButton) {
+      cancelButton.remove();
+      cancelButton = null;
+    }
+    if (clickBlocker) {
+      clickBlocker.remove();
+      clickBlocker = null;
+    }
+
+    // Restore pointer events on all cards
+    const blockedCards = document.querySelectorAll(
+      '[data-drag-blocked="true"]'
+    );
+    blockedCards.forEach((card) => {
+      card.style.pointerEvents = "";
+      delete card.dataset.dragBlocked;
+    });
+
+    // Restore original card
+    element.style.opacity = "";
+
+    if (listElement) {
+      const dropEvent = new DragEvent("drop", {
+        bubbles: true,
+        cancelable: true,
+      });
+      listElement.dispatchEvent(dropEvent);
+    }
+
+    // Trigger dragend event
+    const dragEndEvent = new DragEvent("dragend", {
+      bubbles: true,
+      cancelable: true,
+    });
+    element.dispatchEvent(dragEndEvent);
+
+    isDragging = false;
+    if (navigator.vibrate) {
+      navigator.vibrate(30);
+    }
+  };
+
+  const handleTouchMove = (e) => {
+    const touch = e.touches[0];
+    const deltaX = Math.abs(touch.clientX - startX);
+    const deltaY = Math.abs(touch.clientY - startY);
+
+    // Cancel long press if finger moves too much before timer fires
+    if (longPressTimer && (deltaX > 10 || deltaY > 10)) {
+      clearTimeout(longPressTimer);
+      longPressTimer = null;
+    }
+
+    // Allow free scrolling whether dragging or not
+  };
+
+  const updateClonePosition = () => {
+    if (!clone || !scrollContainer) {
+      return;
+    }
+
+    // Get the Kanban container boundaries in viewport
+    const containerRect = scrollContainer.getBoundingClientRect();
+    const cloneWidth = clone.offsetWidth;
+    const cloneHeight = clone.offsetHeight;
+
+    // Card stays locked to its initial viewport position
+    // But constrain it to stay within the visible Kanban container
+    let finalX = cloneX;
+    let finalY = cloneY;
+
+    // Keep card within horizontal bounds of container
+    if (finalX < containerRect.left) {
+      finalX = containerRect.left;
+    } else if (finalX + cloneWidth > containerRect.right) {
+      finalX = containerRect.right - cloneWidth;
+    }
+
+    // Keep card within vertical bounds of container
+    if (finalY < containerRect.top) {
+      finalY = containerRect.top;
+    } else if (finalY + cloneHeight + 44 > containerRect.bottom) {
+      finalY = containerRect.bottom - cloneHeight - 44;
+    }
+
+    // Update positions
+    clone.style.left = finalX + "px";
+    clone.style.top = finalY + "px";
+
+    if (dropButton) {
+      dropButton.style.left = finalX + "px";
+      dropButton.style.top = finalY + cloneHeight + 4 + "px";
+    }
+
+    if (cancelButton) {
+      cancelButton.style.left = finalX + cloneWidth - 30 + "px";
+      cancelButton.style.top = finalY + 4 + "px";
+    }
+  };
+
+  const handleTouchEnd = () => {
+    if (longPressTimer) {
+      clearTimeout(longPressTimer);
+      longPressTimer = null;
+    }
+
+    // Don't drop on touch end - wait for drop button click
+  };
+
+  const handleContextMenu = (event) => {
+    // Prevent context menu always during touch interaction
+    event.preventDefault();
+  };
+
+  element.addEventListener("touchstart", handleTouchStart, { passive: false });
+  element.addEventListener("touchmove", handleTouchMove, { passive: false });
+  element.addEventListener("touchend", handleTouchEnd, { passive: false });
+  element.addEventListener("contextmenu", handleContextMenu);
+
+  // Scroll to show first column on initial load
+  const container = element.closest(".discourse-kanban");
+  if (container && container.scrollLeft === 0) {
+    // Check if we're at the very start (in the invisible spacer)
+    const firstList = container.querySelector(
+      ".discourse-kanban-list:first-child"
+    );
+    if (firstList) {
+      setTimeout(() => {
+        firstList.scrollIntoView({
+          inline: "start",
+          block: "nearest",
+          behavior: "auto",
+        });
+      }, 100);
+    }
+  }
+
+  return () => {
+    if (longPressTimer) {
+      clearTimeout(longPressTimer);
+    }
+    if (animationFrameId) {
+      cancelAnimationFrame(animationFrameId);
+    }
+    // Cancel any active drag on cleanup (e.g., navigation)
+    if (isDragging) {
+      cancelDrag();
+    }
+    element.removeEventListener("touchstart", handleTouchStart);
+    element.removeEventListener("touchmove", handleTouchMove);
+    element.removeEventListener("touchend", handleTouchEnd);
+    element.removeEventListener("contextmenu", handleContextMenu);
+  };
+});
+
 export default class KanbanCard extends Component {
   @service kanbanManager;
+  @service currentUser;
 
   @tracked dragging;
 
   @action
   dragStart(event) {
-    this.dragging = true;
+    // Don't allow drag if user is not logged in
+    if (!this.currentUser) {
+      event.preventDefault();
+      return;
+    }
+
+    // Always set drag data (needed for both mobile and desktop)
     this.args.setDragData({ topic: this.args.topic });
-    event.dataTransfer.dropEffect = "move";
+
+    // Don't set dragging state if mobile touch drag is active
+    // (Mobile handles its own visual styling via the clone)
+    const existingClone = document.querySelector(".kanban-dragging-clone");
+    if (existingClone) {
+      return;
+    }
+
+    this.dragging = true;
+    if (event.dataTransfer) {
+      event.dataTransfer.dropEffect = "move";
+    }
     event.stopPropagation();
   }
 
@@ -110,6 +505,7 @@ export default class KanbanCard extends Component {
       data-topic-id={{@topic.id}}
       {{on "dragstart" this.dragStart}}
       {{on "dragend" this.dragEnd}}
+      {{touchDrag this}}
     >
       <div class="card-row card-row__topic-details">
         <TopicStatus @topic={{@topic}} />
