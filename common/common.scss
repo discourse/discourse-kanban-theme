@@ -166,7 +166,7 @@ html.kanban-active {
         .last-post-by,
         .topic-title {
           flex-grow: 1;
-          word-wrap: break-word;
+          overflow-wrap: break-word;
           overflow: hidden;
         }
 
