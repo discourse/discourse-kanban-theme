@@ -13,7 +13,6 @@ import formatDate from "discourse/helpers/format-date";
 import lazyHash from "discourse/helpers/lazy-hash";
 import { renderAvatar } from "discourse/helpers/user-avatar";
 import renderTag from "discourse/lib/render-tag";
-import getTagName from "../../lib/get-tag-name";
 
 export default class KanbanCard extends Component {
   @service kanbanManager;
@@ -49,9 +48,8 @@ export default class KanbanCard extends Component {
 
     const result = [];
     for (const t of this.args.topic.tags) {
-      const name = getTagName(t);
-      if (!listTags?.includes(name)) {
-        result.push(renderTag(name));
+      if (!listTags?.includes(t.name)) {
+        result.push(renderTag(t.name));
       }
     }
     return result;

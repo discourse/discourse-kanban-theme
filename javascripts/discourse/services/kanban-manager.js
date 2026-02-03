@@ -16,9 +16,9 @@ export default class KanbanManager extends Service {
     const categorySlug = category ? Category.slugFor(category) : null;
     let url;
     if (category && tag) {
-      url = `/tags/c/${categorySlug}/${tag.name}?board=${descriptor}`;
+      url = `/tags/c/${categorySlug}/${tag.name}/${tag.id}?board=${descriptor}`;
     } else if (tag) {
-      url = `/tag/${tag.name}?board=${descriptor}`;
+      url = `${tag.url}?board=${descriptor}`;
     } else if (category) {
       url = `/c/${categorySlug}/l/latest?board=${descriptor}`;
     } else {
