@@ -12,7 +12,6 @@ import ComboBox from "select-kit/components/combo-box";
 import EmailGroupUserChooser from "select-kit/components/email-group-user-chooser";
 import MultiSelect from "select-kit/components/multi-select";
 import TagChooser from "select-kit/components/tag-chooser";
-import getTagName from "../../../lib/get-tag-name";
 
 export default class KanbanOptionsController extends Component {
   @service kanbanManager;
@@ -48,7 +47,7 @@ export default class KanbanOptionsController extends Component {
     if (this.isTags) {
       descriptor += "tags";
       if (this.tags.length > 0) {
-        descriptor += `:${this.tags.map(getTagName).join(",")}`;
+        descriptor += `:${this.tags.map((t) => t.name ?? t).join(",")}`;
       }
     } else if (this.isCategories) {
       descriptor += "categories";

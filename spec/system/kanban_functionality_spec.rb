@@ -81,7 +81,7 @@ RSpec.describe "Testing A Theme or Theme Component", system: true do
 
     find(".kanban-nav").click
 
-    visit "/tag/chat?board=tags:active,backlog"
+    visit "#{chat.url}?board=tags:active,backlog"
 
     lists = page.all(".discourse-kanban-list")
     active_list = lists[0]
@@ -105,7 +105,7 @@ RSpec.describe "Testing A Theme or Theme Component", system: true do
     topic_without_tag = Fabricate(:topic, category: category, tags: [modern_js])
     Fabricate(:post, topic: topic_without_tag)
 
-    visit "/tag/chat?board=default"
+    visit "#{chat.url}?board=default"
 
     expect(page).to have_css(".discourse-kanban-list")
     general_list =
@@ -142,5 +142,15 @@ RSpec.describe "Testing A Theme or Theme Component", system: true do
       topics: [modern_js_active, chat_active],
     )
     expect(kanban_board).to have_topics_in_list("Untagged", count: 1, topics: [untagged_topic])
+  end
+
+  it "navigates to kanban board from tag page via nav link" do
+    kanban_board = PageObjects::Pages::KanbanBoard.new
+
+    visit "/tag/#{chat.name}"
+    find(".kanban-nav").click
+
+    expect(page).to have_css("body.kanban-active")
+    expect(kanban_board).to have_list_with_title("Uncategorized")
   end
 end
