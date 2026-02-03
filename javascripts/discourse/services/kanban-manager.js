@@ -1,7 +1,9 @@
 import { tracked } from "@glimmer/tracking";
 import { get } from "@ember/object";
 import Service, { service } from "@ember/service";
+import { getCategoryAndTagUrl } from "discourse/lib/url";
 import Category from "discourse/models/category";
+import getTagName from "../lib/get-tag-name";
 import buildAssignedLists from "../lib/kanban-list-builders/assigned";
 import buildCategoryLists from "../lib/kanban-list-builders/categories";
 import buildTagLists from "../lib/kanban-list-builders/tags";
@@ -12,14 +14,16 @@ export default class KanbanManager extends Service {
 
   @tracked fullscreen;
 
+  // TODO: Once 2026.2.0 is released, add a .discourse-compatibility entry
+  // and remove the pre-2026.2.0 fallbacks here and the getTagName helper.
+  // After that, tag.url and tag.name can be used directly.
   getBoardUrl({ category, tag, descriptor = "default" }) {
-    const categorySlug = category ? Category.slugFor(category) : null;
     let url;
-    if (category && tag) {
-      url = `/tags/c/${categorySlug}/${tag.name}?board=${descriptor}`;
-    } else if (tag) {
-      url = `/tag/${tag.name}?board=${descriptor}`;
+    if (tag) {
+      const tagParam = tag.url ? tag : getTagName(tag);
+      url = `${getCategoryAndTagUrl(category, true, tagParam)}?board=${descriptor}`;
     } else if (category) {
+      const categorySlug = Category.slugFor(category);
       url = `/c/${categorySlug}/l/latest?board=${descriptor}`;
     } else {
       url = `/latest?board=${descriptor}`;

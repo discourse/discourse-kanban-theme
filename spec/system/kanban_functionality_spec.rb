@@ -23,6 +23,7 @@ RSpec.describe "Testing A Theme or Theme Component", system: true do
   fab!(:user) { Fabricate(:admin, refresh_auto_groups: true) }
 
   let!(:theme) { upload_theme_component }
+  let(:kanban_board) { PageObjects::Pages::KanbanBoard.new }
 
   before { sign_in user }
 
@@ -81,7 +82,7 @@ RSpec.describe "Testing A Theme or Theme Component", system: true do
 
     find(".kanban-nav").click
 
-    visit "/tag/chat?board=tags:active,backlog"
+    kanban_board.visit_tag_board(chat, descriptor: "tags:active,backlog")
 
     lists = page.all(".discourse-kanban-list")
     active_list = lists[0]
@@ -105,7 +106,7 @@ RSpec.describe "Testing A Theme or Theme Component", system: true do
     topic_without_tag = Fabricate(:topic, category: category, tags: [modern_js])
     Fabricate(:post, topic: topic_without_tag)
 
-    visit "/tag/chat?board=default"
+    kanban_board.visit_tag_board(chat)
 
     expect(page).to have_css(".discourse-kanban-list")
     general_list =
@@ -117,8 +118,6 @@ RSpec.describe "Testing A Theme or Theme Component", system: true do
   end
 
   it "should function with auto-detected top tags (no explicit tag list)" do
-    kanban_board = PageObjects::Pages::KanbanBoard.new
-
     visit "/latest?board=tags"
 
     expect(kanban_board).to have_list_with_title("#active")
@@ -130,7 +129,6 @@ RSpec.describe "Testing A Theme or Theme Component", system: true do
   it "displays untagged topics in @untagged column" do
     untagged_topic = Fabricate(:topic, title: "Topic without any tags")
     Fabricate(:post, topic: untagged_topic)
-    kanban_board = PageObjects::Pages::KanbanBoard.new
 
     visit "/latest?board=tags:active,@untagged"
 
@@ -142,5 +140,13 @@ RSpec.describe "Testing A Theme or Theme Component", system: true do
       topics: [modern_js_active, chat_active],
     )
     expect(kanban_board).to have_topics_in_list("Untagged", count: 1, topics: [untagged_topic])
+  end
+
+  it "navigates to kanban board from tag page via nav link" do
+    kanban_board.visit_tag_page(chat)
+    kanban_board.click_nav
+
+    expect(kanban_board).to be_active
+    expect(kanban_board).to have_list_with_title("Uncategorized")
   end
 end

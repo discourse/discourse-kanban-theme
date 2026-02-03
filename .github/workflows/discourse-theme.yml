@@ -9,3 +9,13 @@ on:
 jobs:
   ci:
     uses: discourse/.github/.github/workflows/discourse-theme.yml@v1
+
+  ci-before-tag-route-migration:
+    uses: discourse/.github/.github/workflows/discourse-theme.yml@v1
+    with:
+      core_ref: d02d0afbab7d96addd01827f10c4aecbc1d81a79
+
+  ci-before-tag-object-expansion:
+    uses: discourse/.github/.github/workflows/discourse-theme.yml@v1
+    with:
+      core_ref: 42da6860fdc64f5e0cd01fb4ed089dcb318e523a
