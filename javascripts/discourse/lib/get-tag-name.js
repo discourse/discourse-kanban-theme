@@ -1,5 +1,5 @@
-// TODO(https://github.com/discourse/discourse/pull/36678): The string check can be
-// removed using .discourse-compatibility once the PR is merged.
+// TODO: Once 2026.2.0 is released, add a .discourse-compatibility entry and
+// remove this helper. After that, tag.name can be used directly.
 export default function getTagName(tag) {
   return typeof tag === "string" ? tag : tag.name;
 }
