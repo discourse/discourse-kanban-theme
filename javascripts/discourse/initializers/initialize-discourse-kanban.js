@@ -1,6 +1,6 @@
+import { computed } from "@ember/object";
 import { next } from "@ember/runloop";
 import { service } from "@ember/service";
-import discourseComputed from "discourse/lib/decorators";
 import { withPluginApi } from "discourse/lib/plugin-api";
 import DiscourseKanbanControls from "../components/kanban/controls";
 import DiscourseKanbanNav from "../components/kanban/nav";
@@ -30,13 +30,13 @@ export default {
           class extends Superclass {
             @service kanbanManager;
 
-            @discourseComputed(
+            @computed(
               "content.filterMode",
               "filterMode",
               "kanbanManager.active"
             )
-            active(contentFilterMode, filterMode, active) {
-              if (active) {
+            get active() {
+              if (this.kanbanManager?.active) {
                 return false;
               }
               return super.active;
