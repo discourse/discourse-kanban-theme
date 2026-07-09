@@ -80,6 +80,8 @@ RSpec.describe "Testing A Theme or Theme Component", system: true do
     tag_drop = PageObjects::Components::SelectKit.new(".category-breadcrumb .tag-drop")
     tag_drop.select_row_by_name("chat")
 
+    expect(page).to have_css(".topic-list-item", count: 2)
+
     find(".kanban-nav").click
 
     kanban_board.visit_tag_board(chat, descriptor: "tags:active,backlog")
